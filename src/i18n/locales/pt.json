@@ -1,0 +1,93 @@
+{
+  "meta": {
+    "title": "Nuelltech — Automação e Inteligência Artificial para Gestão de Negócio",
+    "description": "Nuelltech transforma dados dispersos e processos manuais em decisões de gestão automatizadas. Margens, custos, stock e desempenho com Inteligência Artificial."
+  },
+  "nav": {
+    "home": "Início",
+    "rcm": "RCM",
+    "auditor": "Auditor Pro",
+    "sales": "Simulador de Vendas",
+    "custom": "Engenharia à Medida",
+    "about": "Sobre",
+    "lab": "Laboratório",
+    "contact": "Contacto"
+  },
+  "hero": {
+    "title": "Nuelltech transforma dados dispersos e processos manuais em decisões de gestão automatizadas",
+    "subtitle": "Reduza entre 12 a 15 horas de trabalho manual por semana e proteja as suas margens de lucro com Inteligência Artificial aplicada ao seu negócio.",
+    "ctaPrimary": "Agendar Diagnóstico Gratuito",
+    "ctaSecondary": "Ver Como Funciona"
+  },
+  "demos": {
+    "header": "Provas de valor interativas",
+    "ocrTitle": "Como é que a IA lê uma fatura e deteta desvios de preço?",
+    "ocrDesc": "Extração de dados por visão computacional e auditoria automática face ao histórico.",
+    "ocrFooter": "Esta é a mesma engenharia usada no RCM",
+    "biTitle": "Como cruzar fontes de dados e prever perdas de stock?",
+    "biDesc": "Reconciliação inteligente entre stock físico e vendas para antecipar quebras antes de expirar.",
+    "biFooter": "Este é o motor construído à medida para um caso real em farmácia — aplicável ao seu negócio",
+    "agentTitle": "Como funciona um assistente virtual com base de conhecimento própria?",
+    "agentDesc": "O NUELL (no canto inferior) demonstra a nossa capacidade de criar agentes conversacionais focados em conversão.",
+    "generalization": "Criámos estas simulações para demonstrar na prática a nossa capacidade de extrair valor de dados e automatizar processos. Escolha um cenário abaixo para testar a exatidão, a integração e os resultados operacionais que a nossa engenharia pode trazer para o seu negócio."
+  },
+  "problem": {
+    "title": "As dores invisíveis que corroem as margens das PMEs",
+    "p1": "Erros manuais na introdução de faturas, margens de lucro que se degradam silenciosamente devido a aumentos de preços não detetados e ruturas ou perdas de stock por falta de alertas atempados.",
+    "p2": "Decisões de negócio cruciais continuam a ser tomadas sem cruzar dados de fontes independentes, resultando em desperdício de tempo e recursos em tarefas administrativas repetitivas."
+  },
+  "solutions": {
+    "title": "Soluções SaaS Desenhadas para Proteger o Seu Negócio",
+    "rcmName": "RCM · Restaurant Cost Management",
+    "rcmDesc": "Lê faturas por OCR, atualiza custos de receitas em tempo real e alerta quando a margem cai. Sugere o PVP correto e gera listas de compras automáticas.",
+    "rcmContext": "Aplicado em: Restauração",
+    "rcmLink": "Ver Ficha do RCM",
+    "auditorName": "Auditor Pro",
+    "auditorDesc": "Simula cenários financeiros (aumento de custos de estrutura ou matérias-primas, impacto de marketing) a partir do seu rendimento real, sem necessidade de fichas técnicas complexas.",
+    "auditorContext": "Aplicado em: Restauração",
+    "auditorLink": "Ver Simulador Auditor Pro",
+    "salesName": "Simulador de Vendas por Voz",
+    "salesDesc": "Treino comportamental por voz com IA. Lida com objeções, interrupções e simula perfis reais de clientes (automóvel, imobiliário, farmacêutico) com avaliação de desempenho detalhada.",
+    "salesContext": "Aplicado em: Equipas Comerciais (Multi-setor)",
+    "salesLink": "Pedir Acesso Beta",
+    "badgeBeta": "Beta Fechada"
+  },
+  "custom": {
+    "title": "Quando o problema é específico, construímos a solução à medida",
+    "subtitle": "Desenvolvemos engenharia dedicada para ligar sistemas, automatizar fluxos e criar ferramentas exclusivas.",
+    "biPharmaName": "BI Pharma (Caso de Estudo)",
+    "biPharmaDesc": "Reconciliação automática de bases de dados (inventário vs. histórico de vendas homólogo) desenvolvida para farmácias, prevendo perdas e automatizando campanhas sazonais.",
+    "logisticsName": "Plataforma de Logística (Caso de Estudo)",
+    "logisticsDesc": "Plataforma cloud multi-utilizador de gestão de entregas desenvolvida para distribuição alimentar, substituindo folhas de cálculo manuais por fluxos de trabalho com níveis de acesso dedicados.",
+    "cta": "Falar sobre um projeto à medida"
+  },
+  "about": {
+    "title": "A nossa trajetória",
+    "pedigree": "Antes da Nuelltech, acumulei 15+ anos a implementar sistemas complexos de Oracle Retail em cadeias multinacionais como Tesco, Morrisons, Sonae e Ahold. Hoje, aplico essa mesma disciplina de engenharia de software de grande escala à Inteligência Artificial e Automação para PMEs.",
+    "progression": "Começámos a aplicar este motor de automação no setor da restauração e hoje a nossa infraestrutura está validada e pronta para escalar a qualquer negócio ou operação multi-unidade.",
+    "link": "Saiba mais sobre nós"
+  },
+  "faq": {
+    "title": "Perguntas Frequentes",
+    "q1": "A Nuelltech só trabalha com restaurantes?",
+    "a1": "Não. Embora tenhamos produtos SaaS específicos para restauração (como o RCM e o Auditor Pro), a nossa engenharia de dados, OCR de faturas e assistentes de IA aplicam-se a qualquer setor (ginásios, farmácias, clínicas, distribuição e retalho). O motor tecnológico é o mesmo; adapta-se apenas o documento ou base de dados.",
+    "q2": "Quanto tempo demora a implementação?",
+    "a2": "Os nossos produtos SaaS prontos a usar podem ser configurados em poucos dias. Para projetos de engenharia à medida, o prazo médio de desenvolvimento e implementação varia entre 3 a 6 semanas, dependendo da complexidade das integrações.",
+    "q3": "Fazem projetos à medida ou apenas vendem produtos prontos?",
+    "a3": "Fazemos ambos. Se os seus processos não se enquadram nas nossas soluções padrão, criamos integrações, dashboards e fluxos de trabalho à medida das necessidades operacionais do seu negócio.",
+    "q4": "Quanto custa a implementação?",
+    "a4": "O investimento varia com base na complexidade técnica e no volume de dados. Por essa razão, iniciamos sempre com um diagnóstico inicial gratuito, onde analisamos o seu processo atual e apresentamos uma proposta com retorno sobre o investimento (ROI) claro.",
+    "q5": "Trabalham com empresas fora de Portugal?",
+    "a5": "Sim. Desenvolvemos soluções com arquitetura multilingue nativa e trabalhamos de forma remota com empresas em qualquer mercado geográfico, com especial enfoque na União Europeia."
+  },
+  "ctaFinal": {
+    "title": "Não venda o seu tempo a tarefas repetitivas",
+    "text": "Descubra como a Inteligência Artificial e a Automação podem proteger as suas margens de lucro, otimizar os seus stocks e escalar a sua operação.",
+    "ctaButton": "Agendar Diagnóstico Gratuito"
+  },
+  "footer": {
+    "contacts": "Contactos",
+    "location": "Vila Real, Portugal",
+    "rights": "© 2026 Nuelltech. Todos os direitos reservados."
+  }
+}

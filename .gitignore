@@ -39,3 +39,15 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Project specific ignores
+briefing/
+extracted_files/
+*.zip
+*.txt
+*.png
+!public/logo.png
+!public/llms.txt
+!public/robots.txt
+!public/sitemap.xml
+

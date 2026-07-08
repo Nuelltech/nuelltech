@@ -1,0 +1,93 @@
+{
+  "meta": {
+    "title": "Nuelltech — Automation and Artificial Intelligence for Business Management",
+    "description": "Nuelltech transforms scattered data and manual processes into automated management decisions. Margins, costs, stock, and performance with Artificial Intelligence."
+  },
+  "nav": {
+    "home": "Home",
+    "rcm": "RCM",
+    "auditor": "Auditor Pro",
+    "sales": "Sales Simulator",
+    "custom": "Custom Engineering",
+    "about": "About",
+    "lab": "Lab",
+    "contact": "Contact"
+  },
+  "hero": {
+    "title": "Nuelltech transforms scattered data and manual processes into automated management decisions",
+    "subtitle": "Save between 12 to 15 hours of manual work per week and protect your profit margins with Artificial Intelligence applied to your business.",
+    "ctaPrimary": "Schedule Free Diagnosis",
+    "ctaSecondary": "See How It Works"
+  },
+  "demos": {
+    "header": "Interactive Proofs of Value",
+    "ocrTitle": "How does AI read an invoice and detect price deviations?",
+    "ocrDesc": "Data extraction via computer vision and automatic auditing against historical records.",
+    "ocrFooter": "This is the same engineering used in RCM",
+    "biTitle": "How to cross-reference data sources and predict stock losses?",
+    "biDesc": "Intelligent reconciliation between physical stock and sales to anticipate wastage before expiration.",
+    "biFooter": "This is the engine custom-built for a real case in pharma — applicable to your business",
+    "agentTitle": "How does a virtual assistant with its own knowledge base work?",
+    "agentDesc": "NUELL (in the bottom-right corner) demonstrates our ability to build conversational agents focused on conversion.",
+    "generalization": "We created these simulations to demonstrate in practice our ability to extract value from data and automate processes. Choose a scenario below to test the accuracy, integration, and operational results that our engineering can bring to your business."
+  },
+  "problem": {
+    "title": "The invisible pain points eroding SME margins",
+    "p1": "Manual errors in invoice entry, profit margins silently degrading due to undetected price increases, and stockouts or losses due to lack of timely alerts.",
+    "p2": "Crucial business decisions continue to be made without cross-referencing independent data sources, resulting in wasted time and resources on repetitive administrative tasks."
+  },
+  "solutions": {
+    "title": "SaaS Solutions Designed to Protect Your Business",
+    "rcmName": "RCM · Restaurant Cost Management",
+    "rcmDesc": "Reads supplier invoices via OCR, updates recipe costs in real-time, and alerts when margins drop. Suggests correct selling prices and generates automatic shopping lists.",
+    "rcmContext": "Applied in: Food & Beverage / Restaurants",
+    "rcmLink": "View RCM Details",
+    "auditorName": "Auditor Pro",
+    "auditorDesc": "Simulates financial scenarios (increase in structural costs or raw materials, marketing impact) from your real revenue, without requiring complex technical sheets.",
+    "auditorContext": "Applied in: Food & Beverage / Restaurants",
+    "auditorLink": "View Auditor Pro Simulator",
+    "salesName": "Voice Sales Simulator",
+    "salesDesc": "Behavioral sales training by voice with AI. Handles objections, interruptions, and simulates realistic client profiles (automotive, real estate, pharma) with detailed performance grading.",
+    "salesContext": "Applied in: Commercial Teams (Multi-sector)",
+    "salesLink": "Request Beta Access",
+    "badgeBeta": "Closed Beta"
+  },
+  "custom": {
+    "title": "When the problem is specific, we build the solution to measure",
+    "subtitle": "We develop dedicated engineering to connect systems, automate flows, and create exclusive tools.",
+    "biPharmaName": "BI Pharma (Case Study)",
+    "biPharmaDesc": "Automatic reconciliation of databases (inventory vs. historical sales) developed for pharmacies, predicting losses and automating seasonal campaigns.",
+    "logisticsName": "Logistics Platform (Case Study)",
+    "logisticsDesc": "Multi-user cloud platform for delivery management developed for food distribution, replacing manual spreadsheets with workflows featuring dedicated access levels.",
+    "cta": "Talk about a custom project"
+  },
+  "about": {
+    "title": "Our Journey",
+    "pedigree": "Before Nuelltech, I spent 15+ years implementing complex Oracle Retail systems at multinational chains like Tesco, Morrisons, Sonae, and Ahold. Today, I apply that same large-scale software engineering discipline to AI and Automation for SMEs.",
+    "progression": "We began applying this automation engine in the restaurant sector, and today our infrastructure is validated and ready to scale to any business or multi-unit operation.",
+    "link": "Learn more about us"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "q1": "Does Nuelltech only work with restaurants?",
+    "a1": "No. While we have specific SaaS products for restaurants (like RCM and Auditor Pro), our data engineering, invoice OCR, and AI assistants apply to any sector (gyms, pharmacies, clinics, distribution, and retail). The core engine is the same; only the document or database changes.",
+    "q2": "How long does implementation take?",
+    "a2": "Our ready-to-use SaaS products can be configured in a few days. For custom engineering projects, the average development and implementation time ranges from 3 to 6 weeks, depending on integration complexity.",
+    "q3": "Do you do custom projects or only sell ready-made products?",
+    "a3": "We do both. If your processes don't fit our standard solutions, we create integrations, dashboards, and custom workflows tailored to your operational needs.",
+    "q4": "How much does implementation cost?",
+    "a4": "Investment varies based on technical complexity and data volume. For this reason, we always start with a free initial diagnosis, analyzing your current process and presenting a proposal with a clear return on investment (ROI).",
+    "q5": "Do you work with companies outside Portugal?",
+    "a5": "Yes. We design solutions with a native multi-language architecture and work remotely with businesses in any geographic market, with a special focus on the European Union."
+  },
+  "ctaFinal": {
+    "title": "Don't sell your time to repetitive tasks",
+    "text": "Discover how Artificial Intelligence and Automation can protect your profit margins, optimize your stock, and scale your operation.",
+    "ctaButton": "Schedule Free Diagnosis"
+  },
+  "footer": {
+    "contacts": "Contacts",
+    "location": "Vila Real, Portugal",
+    "rights": "© 2026 Nuelltech. All rights reserved."
+  }
+}

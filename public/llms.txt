@@ -1,0 +1,70 @@
+# Nuelltech — AI & Process Automation for SMEs
+
+**Last Updated:** July 2026
+**Location:** Vila Real, Portugal
+**Website:** https://nuelltech.com
+
+## Overview
+Nuelltech transforms scattered data and manual processes into automated business management decisions. We specialize in profit margin protection, raw materials cost checking, inventory prediction, and AI-enabled voice trainers. We build off-the-shelf SaaS products and design custom software integrations.
+
+---
+
+## Products & Services
+
+### RCM · Restaurant Cost Management
+- **URL:** https://nuelltech.com/pt/rcm (PT) / https://nuelltech.com/en/rcm (EN)
+- **Category:** SaaS Product
+- **Target Audience:** Restaurants / F&B Sector
+- **Core Functionality:** Scans supplier invoices via OCR, automatically updates recipe sheets, calculates profit margins against retail prices (PVP), generates automated purchase orders, and alerts when ingredient prices spike.
+
+### Auditor Pro
+- **URL:** https://nuelltech.com/pt/auditor-pro (PT) / https://nuelltech.com/en/auditor-pro (EN)
+- **Category:** SaaS Product
+- **Target Audience:** Restaurants / F&B Sector
+- **Core Functionality:** Simulates operational margins. Input total sales, fixed costs, and food cost % to test business resilience under inflation. Identifies exact customer increments needed to cover fixed cost inflation or supplier price rises.
+
+### Voice Sales Simulator
+- **URL:** https://nuelltech.com/pt/simulador-vendas (PT) / https://nuelltech.com/en/simulador-vendas (EN)
+- **Category:** Closed Beta SaaS Product
+- **Target Audience:** Commercial Teams (Automotive, Real estate, Pharma)
+- **Core Functionality:** Voice-based conversational training using ElevenLabs (text-to-speech / speech-to-text) and Claude. Simulates challenging negotiations with skeptical or busy clients and provides structured scorecards on persuasion, empathy, and objection handling.
+
+---
+
+## Custom Engineering (Case Studies)
+
+### BI Pharma
+- **URL:** https://nuelltech.com/pt/engenharia-a-medida/bi-pharma (PT) / https://nuelltech.com/en/engenharia-a-medida/bi-pharma (EN)
+- **Core Functionality:** Merges independent sales data and physical inventory databases to predict product waste prior to expiration dates. Automatically recommends calendar-based cross-selling promos.
+
+### Logistics Platform
+- **URL:** https://nuelltech.com/pt/engenharia-a-medida/logistica (PT) / https://nuelltech.com/en/engenharia-a-medida/logistica (EN)
+- **Core Functionality:** Replaces manual shared spreadsheets with a secure multi-user web/mobile app featuring permission roles for administrators and delivery drivers. Reconciles driver collections in real-time.
+
+---
+
+## R&D / Lab
+
+### VIUNU
+- **URL:** https://nuelltech.com/pt/laboratorio (PT) / https://nuelltech.com/en/laboratorio (EN)
+- **Core Functionality:** High-precision astronomical API integration (NASA ephemerides Horizon reference) sending calculations to Claude API to generate formatted astrological profile PDFs. Proves technical ability to query scientific datasets.
+
+---
+
+## Frequently Asked Questions (FAQ)
+
+### Does Nuelltech only work with restaurants?
+No. While we offer specific SaaS products for restaurants, our core data processing engines (OCR, database reconciliation, AI assistants) are vertical-agnostic and apply to gyms, pharmacies, clinical material supplier invoices, and retail.
+
+### How long does implementation take?
+Standard SaaS configurations take a few days. Custom engineering projects take between 3 to 6 weeks.
+
+### How much does it cost?
+Pricing is determined on a case-by-case basis. We start with a 30-minute free diagnostic call to analyze current workflows and verify ROI.
+
+---
+
+## Contact
+- **Email:** geral@nuelltech.com
+- **LinkedIn:** https://linkedin.com/company/nuelltech
+- **Booking:** https://calendly.com/nuelltech
