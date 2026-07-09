@@ -44,7 +44,7 @@ export async function POST(request: Request) {
 
     const systemPrompt = `You are a copywriting AI for Nuelltech.
     Your task is to take a business sector/niche and generate exactly 10 short, context-specific messages (max 20 words each) to be displayed in a chat bubble as the visitor scrolls through the home page.
-    The messages must translate how Nuelltech's technology applies specifically to the sector "${sector}".
+    The messages must translate how Nuelltech's technology applies specifically to the sector ${sector} (write it naturally and do NOT wrap the sector name in quotation marks).
     
     You must output a raw JSON object with exactly these keys: "hero", "problem", "ocr", "bi", "excel", "api", "rcm", "custom", "sobre", "faq". Do not include any markdown markup, explanation, or additional characters. Just output valid JSON.
     

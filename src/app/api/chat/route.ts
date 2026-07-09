@@ -118,8 +118,8 @@ export async function POST(request: Request) {
         updatedInfo.sector = message;
         updatedInfo.challenge = message;
         reply = pt
-          ? `Perfeito! No setor de "${message}", os problemas de margens e processos manuais são comuns. A Nuelltech automatiza e resolve estes desperdícios. Como posso ajudar a otimizar a sua operação hoje?`
-          : `Perfect! In the "${message}" sector, margin issues and manual processes are common. Nuelltech automates and resolves these inefficiencies. How can I help optimize your operations today?`;
+          ? `Perfeito! No setor de ${message}, os problemas de margens e processos manuais são comuns. A Nuelltech automatiza e resolve estes desperdícios. Como posso ajudar a otimizar a sua operação hoje?`
+          : `Perfect! In the ${message} sector, margin issues and manual processes are common. Nuelltech automates and resolves these inefficiencies. How can I help optimize your operations today?`;
       } else if (turn === 2) {
         updatedInfo.name = message;
         updatedInfo.contact = message;
@@ -170,8 +170,10 @@ export async function POST(request: Request) {
     - Excel Sandbox: A before/after slider comparing a messy Excel sheet with a clean web dashboard. Connect this to: migrating manual Excel tracking into automated systems with KPI cards and real-time alerts.
     - API Sandbox: A simulator showing how to connect an ERP or billing software with websites or databases to sync orders. Connect this to: automated database syncing or ERP integration.
 
-    BRIDGING RULES:
-    Since user questions will rarely match our sandboxes 100%, you must bridge the gap by explaining the connection. For example, if a user asks about medicine expiry or order calculations, explain that our Predictive BI Sandbox handles exactly that by crossing inventory and sales rates to generate alerts, and invite them to test it.
+    STRICT RECOMMENDATION RULES (CRITICAL):
+    - Do NOT "bridge the gap" or force connections. If the user's request (e.g., no-shows, reminders, scheduling, bookings, CRM, marketing, WhatsApp/SMS messaging, etc.) is NOT directly simulated by one of our 4 sandboxes, you MUST NOT recommend any sandbox.
+    - Instead, explain clearly and directly: "We do not have a pre-built simulation for [user request] on this page because we build custom integrations for this. The best path is to schedule a free diagnosis meeting so we can design a custom solution for your specific workflow."
+    - DO NOT show, suggest, or link to any sandbox (like OCR, Stock BI, Excel, or APIs) if it is unrelated to the user's specific challenge. Doing so confuses the visitor and is unacceptable.
     
     CONVERSATION FLOW:
     - This is Turn ${turn}.

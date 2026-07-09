@@ -290,12 +290,12 @@ export default function NuellWidget({ lang }: NuellWidgetProps) {
             {
               sender: 'nuell',
               text: pt
-                ? `Olá! Vejo que o seu negócio é no setor de "${sector}" *(não é o seu? [reset:sector:Mudar Setor])*. Sou o NUELL, o seu assistente inteligente.
+                ? `Olá! Vejo que o seu negócio é no setor de ${sector} *(não é o seu? [reset:sector:Mudar Setor])*. Sou o NUELL, o seu assistente inteligente.
 
-Em que processos de "${sector}" gostaria de introduzir IA? Que tarefas rotineiras ou informações gostava de ver aceleradas hoje? Com base na sua resposta, posso mostrar-lhe exemplos práticos ou explicar como desenhar a solução ideal para o que precisa.`
-                : `Hello! I see your business is in the "${sector}" sector *(not yours? [reset:sector:Change Sector])*. I am NUELL, your smart assistant.
+Em que processos de ${sector} gostaria de introduzir IA? Que tarefas rotineiras ou informações gostava de ver aceleradas hoje? Com base na sua resposta, posso mostrar-lhe exemplos práticos ou explicar como desenhar a solução ideal para o que precisa.`
+                : `Hello! I see your business is in the ${sector} sector *(not yours? [reset:sector:Change Sector])*. I am NUELL, your smart assistant.
 
-In which processes of "${sector}" would you like to introduce AI? Which routine tasks or information would you like to see accelerated today? Based on your answer, I can show you practical examples or explain how to design the ideal solution for what you need.`,
+In which processes of ${sector} would you like to introduce AI? Which routine tasks or information would you like to see accelerated today? Based on your answer, I can show you practical examples or explain how to design the ideal solution for what you need.`,
             },
           ]);
           setIsTyping(false);
@@ -461,16 +461,16 @@ In which processes of "${sector}" would you like to introduce AI? Which routine 
         triggerScrollCustomization(userText);
 
         reply = pt
-          ? `Perfeito! No setor de "${userText}", os problemas de margens e processos manuais são muito comuns. A Nuelltech automatiza estes fluxos.
+          ? `Perfeito! No setor de ${userText}, os problemas de margens e processos manuais são muito comuns. A Nuelltech automatiza estes fluxos.
 
 Como prefere avançar?
 👉 **Pergunte-me diretamente o que procura** (ex: *"Como posso ler faturas de fornecedores?"* ou *"Como ligam ao meu software de faturação?"*). Eu respondo e posso guiar-lhe na página ou abrir a demonstração certa.
-👉 **Ou navegue pela página à sua vontade.** O meu balão de fala adapta-se automaticamente explicando como cada secção se aplica ao setor de "${userText}"!`
-          : `Perfect! In the "${userText}" sector, margin issues and manual processes are common. Nuelltech automates these leaks.
+👉 **Ou navegue pela página à sua vontade.** O meu balão de fala adapta-se automaticamente explicando como cada secção se aplica ao setor de ${userText}!`
+          : `Perfect! In the ${userText} sector, margin issues and manual processes are common. Nuelltech automates these leaks.
 
 How would you like to proceed?
 👉 **Ask me directly what you need** (e.g., *"How can I read supplier invoices?"* or *"How do you connect to my billing systems?"*). I will explain and guide you directly to the right demo or section.
-👉 **Or simply scroll through the page.** My speech bubble will dynamically adapt to explain each section for the "${userText}" industry!`;
+👉 **Or simply scroll through the page.** My speech bubble will dynamically adapt to explain each section for the ${userText} industry!`;
       } else if (currentTurn === 2) {
         // Lead details turn
         updatedInfo.name = userText;
@@ -621,9 +621,13 @@ How would you like to proceed?
                             <button
                               key={`action-${matchIndex}`}
                               onClick={() => {
-                                window.dispatchEvent(new CustomEvent('nuell-open-sandbox', {
-                                  detail: { sandbox: target }
+                                window.dispatchEvent(new CustomEvent('nuell-switch-sandbox-tab', {
+                                  detail: { tab: target }
                                 }));
+                                const el = document.getElementById('demos-container');
+                                if (el) {
+                                  el.scrollIntoView({ behavior: 'smooth' });
+                                }
                               }}
                               className="mt-2 inline-flex items-center gap-1 bg-[#10B981]/15 hover:bg-[#10B981]/25 text-[#10B981] font-bold py-1 px-2.5 rounded-lg text-[9px] transition duration-150 uppercase border border-[#10B981]/30 cursor-pointer mr-2 select-none hover:scale-[1.03] active:scale-95"
                             >
