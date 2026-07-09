@@ -1,507 +1,442 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Database, TrendingUp, ArrowRight, FileText, Code, CheckCircle, AlertTriangle, FileSpreadsheet, Activity, ChevronDown, ChevronUp } from 'lucide-react';
 import Link from 'next/link';
-import OcrModal from './OcrModal';
-import BiModal from './BiModal';
-import ExcelModal from './ExcelModal';
-import ApiModal from './ApiModal';
+import { 
+  FileText, 
+  Database, 
+  FileSpreadsheet, 
+  Code,
+  ArrowRight,
+  ChevronDown,
+  ChevronUp
+} from 'lucide-react';
+import OcrSandbox from './OcrSandbox';
+import BiReconciliation from './BiReconciliation';
+import BeforeAfterSlider from './BeforeAfterSlider';
+import ApiSandbox from './ApiSandbox';
 
 interface SandboxHubProps {
-  dict?: unknown;
   isPt: boolean;
+  dict: any;
 }
 
-export default function SandboxHub({ isPt }: SandboxHubProps) {
-  const [activeModal, setActiveModal] = useState<'ocr' | 'bi' | 'excel' | 'api' | null>(null);
+type TabType = 'ocr' | 'bi' | 'excel' | 'api';
+
+export default function SandboxHub({ isPt, dict }: SandboxHubProps) {
+  const [activeTab, setActiveTab] = useState<TabType>('ocr');
   
-  // Collapsible text states for SEO/GEO hybrid model
-  const [expandedText, setExpandedText] = useState<Record<'ocr' | 'bi' | 'excel' | 'api', boolean>>({
+  // Custom states for each tab's detailed texts collapse
+  const [expandedText, setExpandedText] = useState<Record<TabType, boolean>>({
     ocr: false,
     bi: false,
     excel: false,
-    api: false,
+    api: false
   });
 
-  const toggleText = (card: 'ocr' | 'bi' | 'excel' | 'api') => {
-    setExpandedText(prev => ({ ...prev, [card]: !prev[card] }));
+  const toggleText = (tab: TabType) => {
+    setExpandedText(prev => ({
+      ...prev,
+      [tab]: !prev[tab]
+    }));
   };
 
+  // Listen to chat assistant widgets events to automatically switch active tabs
   useEffect(() => {
-    const handleOpenSandbox = (e: Event) => {
-      const customEvent = e as CustomEvent<{ sandbox: 'ocr' | 'bi' | 'excel' | 'api' }>;
-      if (customEvent.detail && customEvent.detail.sandbox) {
-        setActiveModal(customEvent.detail.sandbox);
+    const handleSwitchTab = (e: Event) => {
+      const customEvent = e as CustomEvent<{ tab: TabType }>;
+      if (customEvent.detail && customEvent.detail.tab) {
+        setActiveTab(customEvent.detail.tab);
       }
     };
-    window.addEventListener('nuell-open-sandbox', handleOpenSandbox);
+    
+    window.addEventListener('nuell-switch-sandbox-tab', handleSwitchTab);
     return () => {
-      window.removeEventListener('nuell-open-sandbox', handleOpenSandbox);
+      window.removeEventListener('nuell-switch-sandbox-tab', handleSwitchTab);
     };
   }, []);
 
   return (
-    <>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16 text-left">
+    <div id="demos-container" className="relative w-full bg-[#080B14]/95 border border-[#1E293B] rounded-[2rem] p-6 md:p-8 shadow-[0_0_60px_rgba(99,102,241,0.12)] glass text-left overflow-hidden">
+      {/* Glowing backdrop halos inside the frame */}
+      <div className="absolute -top-48 -right-48 w-[400px] h-[400px] bg-brand-accent/15 rounded-full blur-[130px] pointer-events-none" />
+      <div className="absolute -bottom-48 -left-48 w-[400px] h-[400px] bg-purple-500/10 rounded-full blur-[130px] pointer-events-none" />
+      
+      <div className="relative z-10 flex flex-col gap-8">
         
-        {/* Card 1: OCR Intelligent Processing */}
-        <div id="ocr" className="bg-brand-card/60 border border-brand-border rounded-2xl p-6 hover:border-brand-accent/50 transition duration-300 glass flex flex-col justify-between relative group shadow-lg">
-          <div className="absolute top-4 right-4 bg-brand-accent/10 border border-brand-accent/20 px-2.5 py-0.5 rounded text-[8px] font-mono text-brand-accent-soft uppercase font-bold tracking-wider">
-            {isPt ? 'LEITURA REAL' : 'LIVE DEMO'}
-          </div>
-          <div>
-            <div className="w-10 h-10 rounded-xl bg-brand-accent/10 border border-brand-accent/20 flex items-center justify-center mb-4 text-brand-accent-soft">
-              <FileText className="w-5 h-5" />
-            </div>
-            
-            <span className="text-[9px] font-mono text-brand-accent-soft uppercase font-semibold block mb-1">
-              {isPt ? 'Varredura Óptica & OCR' : 'Optical Scanning & OCR'}
-            </span>
-            
-            {/* Question-based title for SEO/GEO */}
-            <h3 className="text-sm font-bold font-display text-brand-ink mb-3 group-hover:text-brand-accent-soft transition duration-200">
-              {isPt 
-                ? 'Como funciona a extração de dados e auditoria automática de faturas com Inteligência Artificial?' 
-                : 'How does automated invoice data extraction and AI auditing work?'}
-            </h3>
-
-            {/* Premium Mockup Visual representation */}
-            <div className="w-full bg-[#05070C] border border-brand-border/40 rounded-xl p-3.5 mb-4 flex items-center justify-between text-[10px] font-mono select-none overflow-hidden h-24 relative pointer-events-none">
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-brand-accent/5 to-transparent -translate-x-full animate-[shimmer_3s_infinite]" />
-              <div className="flex flex-col gap-1 w-[45%] opacity-75">
-                <span className="text-[7px] text-brand-ink-dim border-b border-brand-border/30 pb-0.5 mb-1 font-bold">FATURA_COMPRA.pdf</span>
-                <span className="text-brand-ink truncate">Fornecedor: Peixaria Mar</span>
-                <span className="text-brand-ink truncate">Robalo Mar: 12.50€/Kg</span>
-                <span className="text-brand-ink truncate">Qtd: 20 Kg | Total: 250.00€</span>
-              </div>
-              <div className="flex flex-col items-center justify-center">
-                <div className="w-6 h-6 rounded-full bg-brand-accent/10 border border-brand-accent/30 flex items-center justify-center text-brand-accent-soft animate-pulse">
-                  &rarr;
-                </div>
-              </div>
-              <div className="flex flex-col gap-1 w-[45%] bg-brand-card/50 border border-brand-accent/20 rounded p-1.5 shadow-inner">
-                <span className="text-[7px] text-brand-accent-soft uppercase font-bold">JSON Extraído</span>
-                <span className="text-[8px] text-brand-ok">"vendor": "Peixaria Mar"</span>
-                <span className="text-[8px] text-brand-ok">"price": 12.50</span>
-                <span className="text-[8px] text-brand-risk">"deviation": "+2.10€"</span>
-              </div>
-            </div>
-            
-            {/* Accordion link to expand/collapse SEO paragraph */}
-            <button
-              onClick={() => toggleText('ocr')}
-              className="text-[10px] font-mono text-brand-accent-soft hover:text-brand-accent flex items-center gap-1 mb-4"
-            >
-              {expandedText.ocr ? (
-                <>
-                  <ChevronUp className="w-3.5 h-3.5" />
-                  {isPt ? 'Ocultar detalhes operacionais' : 'Hide technical details'}
-                </>
-              ) : (
-                <>
-                  <ChevronDown className="w-3.5 h-3.5" />
-                  {isPt ? 'Ver detalhes operacionais' : 'View technical details'}
-                </>
-              )}
-            </button>
-            
-            {/* Detailed Static explanatory paragraph for crawlers (SEO/GEO) */}
-            <div className={`overflow-hidden transition-all duration-300 ${expandedText.ocr ? 'max-h-[300px] opacity-100 mb-4' : 'max-h-0 opacity-0 pointer-events-none'}`}>
-              <p className="text-[11px] text-brand-ink-dim leading-relaxed bg-[#05070C]/50 p-3 rounded-lg border border-brand-border/40">
-                {isPt ? (
-                  <>
-                    A extração de faturas da Nuelltech utiliza algoritmos avançados de visão computacional e processamento de linguagem natural para capturar e auditar automaticamente todos os campos de um documento (Fornecedor, NIF, Linhas de Artigos, Quantidades, Preços Unitários e IVA) em segundos. O motor cruza os preços faturados com os contratos de fornecimento acordados e as guias de transporte assinadas, isolando e resolvendo desvios de preços ou quantidades faturadas indevidamente. 
-                    <span className="block mt-2 font-medium text-brand-ink">
-                      O mesmo motor que lê uma fatura de fornecedor de restaurante lê também uma fatura de material clínico, uma renovação de fornecedor de ginásio, ou uma reposição de farmácia — o processo é idêntico, muda só o documento.
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    Nuelltech&apos;s invoice extraction leverages advanced computer vision and natural language models to automatically capture and audit all fields from any document (Supplier, VAT, line items, quantities, and prices) in seconds. The engine cross-references billed rates against pre-agreed contract catalogs and signed delivery notes, isolating discrepancies on the fly.
-                    <span className="block mt-2 font-medium text-brand-ink">
-                      The same engine that reads a restaurant invoice can read medical supply invoices, gym membership renewals, or pharmacy restocking slips — the process is identical, only the document changes.
-                    </span>
-                  </>
-                )}
-              </p>
-            </div>
-            
-            {/* Product anchor links */}
-            <div className="mb-6">
-              <Link 
-                href={isPt ? "/pt/rcm" : "/en/rcm"}
-                className="text-[10px] font-mono text-brand-accent-soft hover:underline font-bold"
-              >
-                &rarr; {isPt ? 'Esta é a mesma engenharia usada no RCM' : 'This is the same core engineering powering RCM'}
-              </Link>
-            </div>
-            
-            {/* Features check list */}
-            <div className="flex flex-col gap-2 font-mono text-[9px] text-[#A0AEC0] mb-6 border-t border-brand-border/30 pt-3">
-              <div className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-brand-accent-soft" />
-                <span>{isPt ? '99.7% Precisão na Extração' : '99.7% Extraction Accuracy'}</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-brand-accent-soft" />
-                <span>{isPt ? 'Auditoria Automática contra Contrato & Guia' : 'Automated Slip & Catalog Matching'}</span>
-              </div>
-            </div>
-          </div>
+        {/* 1. Tab Selector Bar - Premium GitHub style */}
+        <div className="flex flex-wrap bg-[#05070C]/85 border border-[#172033] rounded-xl p-1.5 gap-1.5 relative z-20 overflow-x-auto scrollbar-none">
+          
           <button
-            onClick={() => setActiveModal('ocr')}
-            className="w-full bg-[#090D1A] border border-brand-border hover:bg-brand-border/40 text-brand-ink font-bold py-3 rounded-xl text-xs transition duration-150 uppercase tracking-wide flex justify-center items-center gap-1.5 mt-auto pointer-events-auto"
+            onClick={() => setActiveTab('ocr')}
+            className={`flex-1 min-w-[140px] flex items-center justify-center gap-2.5 px-4 py-3.5 rounded-lg text-xs sm:text-sm font-mono font-bold transition duration-300 border cursor-pointer ${
+              activeTab === 'ocr'
+                ? 'bg-brand-accent/15 border-brand-accent text-brand-accent-soft shadow-[0_0_12px_rgba(59,130,246,0.15)]'
+                : 'bg-transparent border-transparent text-brand-ink-dim hover:text-brand-ink hover:bg-brand-border/20'
+            }`}
           >
-            {isPt ? 'Abrir Sandbox OCR' : 'Launch OCR Sandbox'}
-            <ArrowRight className="w-3.5 h-3.5 text-brand-accent-soft" />
+            <FileText className="w-4 h-4 flex-shrink-0" />
+            <span>{isPt ? 'OCR & Auditoria' : 'OCR & Audit'}</span>
           </button>
+
+          <button
+            onClick={() => setActiveTab('bi')}
+            className={`flex-1 min-w-[140px] flex items-center justify-center gap-2.5 px-4 py-3.5 rounded-lg text-xs sm:text-sm font-mono font-bold transition duration-300 border cursor-pointer ${
+              activeTab === 'bi'
+                ? 'bg-brand-accent/15 border-brand-accent text-brand-accent-soft shadow-[0_0_12px_rgba(59,130,246,0.15)]'
+                : 'bg-transparent border-transparent text-brand-ink-dim hover:text-brand-ink hover:bg-brand-border/20'
+            }`}
+          >
+            <Database className="w-4 h-4 flex-shrink-0" />
+            <span>{isPt ? 'Stock Preditivo' : 'Predictive Stock'}</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('excel')}
+            className={`flex-1 min-w-[140px] flex items-center justify-center gap-2.5 px-4 py-3.5 rounded-lg text-xs sm:text-sm font-mono font-bold transition duration-300 border cursor-pointer ${
+              activeTab === 'excel'
+                ? 'bg-brand-accent/15 border-brand-accent text-brand-accent-soft shadow-[0_0_12px_rgba(59,130,246,0.15)]'
+                : 'bg-transparent border-transparent text-brand-ink-dim hover:text-brand-ink hover:bg-brand-border/20'
+            }`}
+          >
+            <FileSpreadsheet className="w-4 h-4 flex-shrink-0" />
+            <span>{isPt ? 'Modernizar Excel' : 'Modernize Excel'}</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('api')}
+            className={`flex-1 min-w-[140px] flex items-center justify-center gap-2.5 px-4 py-3.5 rounded-lg text-xs sm:text-sm font-mono font-bold transition duration-300 border cursor-pointer ${
+              activeTab === 'api'
+                ? 'bg-brand-accent/15 border-brand-accent text-brand-accent-soft shadow-[0_0_12px_rgba(59,130,246,0.15)]'
+                : 'bg-transparent border-transparent text-brand-ink-dim hover:text-brand-ink hover:bg-brand-border/20'
+            }`}
+          >
+            <Code className="w-4 h-4 flex-shrink-0" />
+            <span>{isPt ? 'Integração API' : 'API Integration'}</span>
+          </button>
+
         </div>
 
-        {/* Card 2: Predictive Analytics Hub */}
-        <div id="bi" className="bg-brand-card/60 border border-brand-border rounded-2xl p-6 hover:border-brand-accent/50 transition duration-300 glass flex flex-col justify-between relative group shadow-lg">
-          <div className="absolute top-4 right-4 bg-brand-accent/10 border border-brand-accent/20 px-2.5 py-0.5 rounded text-[8px] font-mono text-brand-accent-soft uppercase font-bold tracking-wider">
-            {isPt ? 'INVENTÁRIO' : 'BETA'}
-          </div>
-          <div>
-            <div className="w-10 h-10 rounded-xl bg-brand-accent/10 border border-brand-accent/20 flex items-center justify-center mb-4 text-brand-accent-soft">
-              <Database className="w-5 h-5" />
-            </div>
-            <span className="text-[9px] font-mono text-brand-accent-soft uppercase font-semibold block mb-1">
-              {isPt ? 'Reconciliador de Dados Preditivos' : 'Predictive Data Sync'}
-            </span>
-
-            {/* Question-based title for SEO/GEO */}
-            <h3 className="text-sm font-bold font-display text-brand-ink mb-3 group-hover:text-brand-accent-soft transition duration-200">
-              {isPt 
-                ? 'Como prever desperdício e perdas de stock cruzando bases de dados de inventário e vendas?' 
-                : 'How to predict inventory waste by merging stock levels with sales run-rates?'}
-            </h3>
-
-            {/* Premium Mockup Visual representation */}
-            <div className="w-full bg-[#05070C] border border-brand-border/40 rounded-xl p-3.5 mb-4 flex flex-col justify-between text-[10px] font-mono select-none h-24 relative overflow-hidden pointer-events-none">
-              <div className="flex justify-between items-center text-[7px] text-brand-ink-dim">
-                <span>Escoamento Preditivo (POS vs ERP)</span>
-                <span className="text-brand-warn font-bold animate-pulse">Rotura em 4 dias</span>
-              </div>
-              <div className="flex items-end justify-between h-10 pt-2 gap-1.5 border-b border-brand-border/30">
-                <div className="bg-brand-ok/70 h-[80%] w-full rounded-t-sm" />
-                <div className="bg-brand-ok/70 h-[65%] w-full rounded-t-sm" />
-                <div className="bg-brand-warn/70 h-[45%] w-full rounded-t-sm animate-pulse" />
-                <div className="bg-brand-risk/70 h-[25%] w-full rounded-t-sm animate-pulse" />
-                <div className="bg-brand-risk/30 h-[10%] w-full rounded-t-sm" />
-              </div>
-              <div className="flex justify-between text-[7px] text-brand-accent-soft mt-1">
-                <span>Hoje</span>
-                <span>Dia +3</span>
-                <span>Dia +5 (Rotura)</span>
-              </div>
-            </div>
-
-            {/* Accordion link to expand/collapse SEO paragraph */}
-            <button
-              onClick={() => toggleText('bi')}
-              className="text-[10px] font-mono text-brand-accent-soft hover:text-brand-accent flex items-center gap-1 mb-4"
-            >
-              {expandedText.bi ? (
-                <>
-                  <ChevronUp className="w-3.5 h-3.5" />
-                  {isPt ? 'Ocultar detalhes operacionais' : 'Hide technical details'}
-                </>
-              ) : (
-                <>
-                  <ChevronDown className="w-3.5 h-3.5" />
-                  {isPt ? 'Ver detalhes operacionais' : 'View technical details'}
-                </>
-              )}
-            </button>
-
-            {/* Detailed Static explanatory paragraph for crawlers */}
-            <div className={`overflow-hidden transition-all duration-300 ${expandedText.bi ? 'max-h-[300px] opacity-100 mb-4' : 'max-h-0 opacity-0 pointer-events-none'}`}>
-              <p className="text-[11px] text-brand-ink-dim leading-relaxed bg-[#05070C]/50 p-3 rounded-lg border border-brand-border/40">
-                {isPt ? (
+        {/* 2. SEO/GEO Hybrid Explanatory Panel (Positioned BEFORE Sandbox) */}
+        {/* We keep all blocks in DOM for search engines (SEO/GEO) to crawl them, using conditional CSS for visual hiding */}
+        <div className="bg-[#090D1A]/40 border border-brand-border/60 rounded-2xl p-6 glass">
+          
+          {/* OCR SEO Block */}
+          <div className={activeTab === 'ocr' ? 'block animate-fade-in' : 'hidden'}>
+            <div className="flex flex-col gap-4">
+              <span className="text-[11px] sm:text-xs font-mono text-brand-accent-soft uppercase font-bold tracking-wider sm:tracking-widest">
+                {isPt ? 'Enquadramento Tecnológico · Visão Computacional' : 'Technology Context · Computer Vision'}
+              </span>
+              <h3 className="text-lg sm:text-xl md:text-2xl font-bold font-display text-brand-ink leading-tight">
+                {isPt 
+                  ? 'Como funciona a extração de dados e auditoria automática de faturas com Inteligência Artificial?' 
+                  : 'How does automated invoice data extraction and AI auditing work?'}
+              </h3>
+              
+              {/* Collapse/Expand details */}
+              <button
+                onClick={() => toggleText('ocr')}
+                className="text-xs font-mono text-brand-accent-soft hover:text-brand-accent flex items-center gap-1.5 w-fit cursor-pointer"
+              >
+                {expandedText.ocr ? (
                   <>
-                    A reconciliação preditiva cruza dados independentes do inventário físico (ERP) com o histórico de velocidade de escoamento de vendas (POS). A IA calcula a taxa de expiração de cada artigo e alerta o gestor sobre potenciais perdas de stock antes de expirar a validade, sugerindo campanhas promocionais dinâmicas de venda cruzada baseadas em tendências.
-                    <span className="block mt-2 font-medium text-brand-ink">
-                      O mesmo motor que cruza suplementos ou refeições num restaurante cruza também medicamentos de venda livre em farmácia, consumíveis em clínicas ou pacotes de adesão em ginásios.
-                    </span>
+                    <ChevronUp className="w-3.5 h-3.5" />
+                    {isPt ? 'Ocultar detalhes operacionais' : 'Hide technical details'}
                   </>
                 ) : (
                   <>
-                    The predictive analytics hub merges physical inventory data (ERP) with sales run-rate history (POS). The AI calculates the expiration velocity of each item and warns the manager of potential losses before the shelf life expires, generating dynamic cross-selling promotion templates.
-                    <span className="block mt-2 font-medium text-brand-ink">
-                      The same engine that cross-references sports supplements can cross-reference over-the-counter medicine in pharmacies, clinic consumables, or gym membership packages.
-                    </span>
+                    <ChevronDown className="w-3.5 h-3.5" />
+                    {isPt ? 'Ver detalhes operacionais' : 'View technical details'}
                   </>
                 )}
-              </p>
-            </div>
+              </button>
 
-            {/* Product anchor links */}
-            <div className="mb-6">
-              <Link 
-                href={isPt ? "/pt/engenharia-a-medida" : "/en/engenharia-a-medida"}
-                className="text-[10px] font-mono text-brand-accent-soft hover:underline font-bold"
-              >
-                &rarr; {isPt ? 'Este é o motor construído à medida para um caso real em farmácia — aplicável ao seu negócio' : 'This is the custom engine built for a live pharmacy use case — fully adaptable to your business'}
-              </Link>
-            </div>
-
-            {/* Features check list */}
-            <div className="flex flex-col gap-2 font-mono text-[9px] text-[#A0AEC0] mb-6 border-t border-brand-border/30 pt-3">
-              <div className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-brand-accent-soft" />
-                <span>{isPt ? 'Cálculo de Velocidade de Vendas & Run-rate' : 'Sales Run-Rate Modeling'}</span>
+              <div className={`overflow-hidden transition-all duration-300 ${expandedText.ocr ? 'max-h-[350px] opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
+                <p className="text-xs sm:text-sm text-brand-ink-dim leading-relaxed bg-[#05070C]/50 p-4 rounded-xl border border-brand-border/40">
+                  {isPt ? (
+                    <>
+                      A extração de faturas da Nuelltech utiliza algoritmos avançados de visão computacional e processamento de linguagem natural para capturar e auditar automaticamente todos os campos de um documento (Fornecedor, NIF, Linhas de Artigos, Quantidades, Preços Unitários e IVA) em segundos. O motor cruza os preços faturados com os contratos de fornecimento acordados e as guias de transporte assinadas, isolando e resolvendo desvios de preços ou quantidades faturadas indevidamente. 
+                      <span className="block mt-2 font-medium text-brand-ink">
+                        O mesmo motor que lê uma fatura de fornecedor de restaurante lê também uma fatura de material clínico, uma renovação de fornecedor de ginásio, ou uma reposição de farmácia — o processo é idêntico, muda apenas o documento de entrada.
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      Nuelltech&apos;s invoice extraction leverages advanced computer vision and natural language models to automatically capture and audit all fields from any document (Supplier, VAT, line items, quantities, and prices) in seconds. The engine cross-references billed rates against pre-agreed contract catalogs and signed delivery notes, isolating discrepancies on the fly.
+                      <span className="block mt-2 font-medium text-brand-ink">
+                        The same engine that reads a restaurant invoice can read medical supply invoices, gym membership renewals, or pharmacy restocking slips — the process is identical, only the input document changes.
+                      </span>
+                    </>
+                  )}
+                </p>
               </div>
-              <div className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-brand-accent-soft" />
-                <span>{isPt ? 'Geração de Promoções Dinâmicas Baseadas em Validades' : 'Automated Discount Prompts'}</span>
+
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-brand-border/30 mt-2">
+                <div className="flex flex-col gap-1.5 text-xs font-mono text-[#A0AEC0]">
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-brand-accent-soft" />
+                    <span>{isPt ? '99.7% Precisão na Extração' : '99.7% Extraction Accuracy'}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-brand-accent-soft" />
+                    <span>{isPt ? 'Auditoria Automática contra Contrato & Guia' : 'Automated Slip & Catalog Matching'}</span>
+                  </div>
+                </div>
+                <Link 
+                  href={isPt ? "/pt/rcm" : "/en/rcm"}
+                  className="text-xs font-mono text-brand-accent-soft hover:underline font-bold flex items-center gap-1.5 self-start sm:self-center"
+                >
+                  {isPt ? 'Esta é a mesma engenharia usada no RCM' : 'This is the same core engineering powering RCM'}
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
               </div>
             </div>
           </div>
-          <button
-            onClick={() => setActiveModal('bi')}
-            className="w-full bg-[#090D1A] border border-brand-border hover:bg-brand-border/40 text-brand-ink font-bold py-3 rounded-xl text-xs transition duration-150 uppercase tracking-wide flex justify-center items-center gap-1.5 mt-auto pointer-events-auto"
-          >
-            {isPt ? 'Abrir Sandbox BI' : 'Enter Hub'}
-            <ArrowRight className="w-3.5 h-3.5 text-brand-accent-soft" />
-          </button>
+
+          {/* BI SEO Block */}
+          <div className={activeTab === 'bi' ? 'block animate-fade-in' : 'hidden'}>
+            <div className="flex flex-col gap-4">
+              <span className="text-[11px] sm:text-xs font-mono text-brand-accent-soft uppercase font-bold tracking-wider sm:tracking-widest">
+                {isPt ? 'Enquadramento Tecnológico · Reconciliação Preditiva' : 'Technology Context · Predictive Reconciliation'}
+              </span>
+              <h3 className="text-lg sm:text-xl md:text-2xl font-bold font-display text-brand-ink leading-tight">
+                {isPt 
+                  ? 'Como prever desperdício e perdas de stock cruzando bases de dados de inventário e vendas?' 
+                  : 'How to predict inventory waste by merging stock levels with sales run-rates?'}
+              </h3>
+              
+              {/* Collapse/Expand details */}
+              <button
+                onClick={() => toggleText('bi')}
+                className="text-xs font-mono text-brand-accent-soft hover:text-brand-accent flex items-center gap-1.5 w-fit cursor-pointer"
+              >
+                {expandedText.bi ? (
+                  <>
+                    <ChevronUp className="w-3.5 h-3.5" />
+                    {isPt ? 'Ocultar detalhes operacionais' : 'Hide technical details'}
+                  </>
+                ) : (
+                  <>
+                    <ChevronDown className="w-3.5 h-3.5" />
+                    {isPt ? 'Ver detalhes operacionais' : 'View technical details'}
+                  </>
+                )}
+              </button>
+
+              <div className={`overflow-hidden transition-all duration-300 ${expandedText.bi ? 'max-h-[350px] opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
+                <p className="text-xs sm:text-sm text-brand-ink-dim leading-relaxed bg-[#05070C]/50 p-4 rounded-xl border border-brand-border/40">
+                  {isPt ? (
+                    <>
+                      A reconciliação preditiva cruza dados independentes do inventário físico (ERP) com o histórico de velocidade de escoamento de vendas (POS). A IA calcula a taxa de expiração de cada artigo e alerta o gestor sobre potenciais perdas de stock antes de expirar a validade, sugerindo campanhas promocionais dinâmicas de venda cruzada baseadas em tendências.
+                      <span className="block mt-2 font-medium text-brand-ink">
+                        O mesmo motor que cruza suplementos ou refeições num restaurante cruza também medicamentos de venda livre em farmácia, consumíveis em clínicas ou pacotes de adesão em ginásios.
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      The predictive analytics hub merges physical inventory data (ERP) with sales run-rate history (POS). The AI calculates the expiration velocity of each item and warns the manager of potential losses before the shelf life expires, generating dynamic cross-selling promotion templates.
+                      <span className="block mt-2 font-medium text-brand-ink">
+                        The same engine that cross-references sports supplements can cross-reference over-the-counter medicine in pharmacies, clinic consumables, or gym membership packages.
+                      </span>
+                    </>
+                  )}
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-brand-border/30 mt-2">
+                <div className="flex flex-col gap-1.5 text-xs font-mono text-[#A0AEC0]">
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-brand-accent-soft" />
+                    <span>{isPt ? 'Cálculo de Velocidade de Vendas & Run-rate' : 'Sales Run-Rate Modeling'}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-brand-accent-soft" />
+                    <span>{isPt ? 'Geração de Promoções Dinâmicas Baseadas em Validades' : 'Automated Discount Prompts'}</span>
+                  </div>
+                </div>
+                <Link 
+                  href={isPt ? "/pt/engenharia-a-medida" : "/en/engenharia-a-medida"}
+                  className="text-xs font-mono text-brand-accent-soft hover:underline font-bold flex items-center gap-1.5 self-start sm:self-center"
+                >
+                  {isPt ? 'Ver caso de estudo de engenharia à medida em farmácia' : 'View custom pharmacy engineering case study'}
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          {/* Excel SEO Block */}
+          <div className={activeTab === 'excel' ? 'block animate-fade-in' : 'hidden'}>
+            <div className="flex flex-col gap-4">
+              <span className="text-[11px] sm:text-xs font-mono text-brand-accent-soft uppercase font-bold tracking-wider sm:tracking-widest">
+                {isPt ? 'Enquadramento Tecnológico · Modernização de Processos' : 'Technology Context · Process Modernization'}
+              </span>
+              <h3 className="text-lg sm:text-xl md:text-2xl font-bold font-display text-brand-ink leading-tight">
+                {isPt 
+                  ? 'Como converter planilhas manuais lentas em dashboards operacionais sincronizados?' 
+                  : 'How to convert slow manual spreadsheets into synchronized operational dashboards?'}
+              </h3>
+              
+              {/* Collapse/Expand details */}
+              <button
+                onClick={() => toggleText('excel')}
+                className="text-xs font-mono text-brand-accent-soft hover:text-brand-accent flex items-center gap-1.5 w-fit cursor-pointer"
+              >
+                {expandedText.excel ? (
+                  <>
+                    <ChevronUp className="w-3.5 h-3.5" />
+                    {isPt ? 'Ocultar detalhes operacionais' : 'Hide technical details'}
+                  </>
+                ) : (
+                  <>
+                    <ChevronDown className="w-3.5 h-3.5" />
+                    {isPt ? 'Ver detalhes operacionais' : 'View technical details'}
+                  </>
+                )}
+              </button>
+
+              <div className={`overflow-hidden transition-all duration-300 ${expandedText.excel ? 'max-h-[350px] opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
+                <p className="text-xs sm:text-sm text-brand-ink-dim leading-relaxed bg-[#05070C]/50 p-4 rounded-xl border border-brand-border/40">
+                  {isPt ? (
+                    <>
+                      A modernização converte o caos das planilhas de cálculo isoladas (como Excel) num dashboard operacional centralizado e colaborativo. A simulação demonstra a diferença de atualizar stocks de forma manual (conflitos de gravação multi-utilizador, erros de fórmula &apos;#VALOR!&apos; e falta de visibilidade de margens) contra a automação de dashboards (recalculo instantâneo de margens, alertas de stock mínimo e sugestão de novos PVPs).
+                      <span className="block mt-2 font-medium text-brand-ink">
+                        O mesmo motor de dashboard que consolida a faturação e stocks de restauração serve para clínicas de saúde, ginásios, escritórios de contabilidade ou retalhistas locais que queiram deixar folhas manuais.
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      Modernization converts the chaos of isolated spreadsheets (like Excel) into a centralized, collaborative operational dashboard. The simulation demonstrates the contrast between manual stock updates (multi-user write conflicts, '#VALUE!' formula errors, and lack of margin visibility) and dashboard automation (instant margin recalculations, low stock alerts, and automated price suggests).
+                      <span className="block mt-2 font-medium text-brand-ink">
+                        The same dashboard engine that consolidates restaurant billing and inventory works for clinics, corporate gyms, accounting offices, or local retailers aiming to eliminate manual sheets.
+                      </span>
+                    </>
+                  )}
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-brand-border/30 mt-2">
+                <div className="flex flex-col gap-1.5 text-xs font-mono text-[#A0AEC0]">
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-brand-accent-soft" />
+                    <span>{isPt ? 'Consolidação de Dados Multi-utilizador' : 'Multi-User Data Consolidation'}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-brand-accent-soft" />
+                    <span>{isPt ? 'Alertas e Métricas Operacionais em Tempo Real' : 'Real-Time Operational Alerts'}</span>
+                  </div>
+                </div>
+                <Link 
+                  href={isPt ? "/pt/simulador-vendas" : "/en/simulador-vendas"}
+                  className="text-xs font-mono text-brand-accent-soft hover:underline font-bold flex items-center gap-1.5 self-start sm:self-center"
+                >
+                  {isPt ? 'Experimente a nossa simulação de perdas de margem' : 'Try our interactive margin loss calculator'}
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          {/* API SEO Block */}
+          <div className={activeTab === 'api' ? 'block animate-fade-in' : 'hidden'}>
+            <div className="flex flex-col gap-4">
+              <span className="text-[11px] sm:text-xs font-mono text-brand-accent-soft uppercase font-bold tracking-wider sm:tracking-widest">
+                {isPt ? 'Enquadramento Tecnológico · Integração e APIs' : 'Technology Context · API & Integrations'}
+              </span>
+              <h3 className="text-lg sm:text-xl md:text-2xl font-bold font-display text-brand-ink leading-tight">
+                {isPt 
+                  ? 'Como sincronizar dados em tempo real entre softwares de faturação e portais digitais?' 
+                  : 'How to synchronize real-time data between billing systems and digital portals?'}
+              </h3>
+              
+              {/* Collapse/Expand details */}
+              <button
+                onClick={() => toggleText('api')}
+                className="text-xs font-mono text-brand-accent-soft hover:text-brand-accent flex items-center gap-1.5 w-fit cursor-pointer"
+              >
+                {expandedText.api ? (
+                  <>
+                    <ChevronUp className="w-3.5 h-3.5" />
+                    {isPt ? 'Ocultar detalhes operacionais' : 'Hide technical details'}
+                  </>
+                ) : (
+                  <>
+                    <ChevronDown className="w-3.5 h-3.5" />
+                    {isPt ? 'Ver detalhes operacionais' : 'View technical details'}
+                  </>
+                )}
+              </button>
+
+              <div className={`overflow-hidden transition-all duration-300 ${expandedText.api ? 'max-h-[350px] opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
+                <p className="text-xs sm:text-sm text-brand-ink-dim leading-relaxed bg-[#05070C]/50 p-4 rounded-xl border border-brand-border/40">
+                  {isPt ? (
+                    <>
+                      A consola de APIs e Webhooks simula fluxos de sincronização de dados em tempo real. Permite testar integrações de inventário (API REST do ERP), pagamentos online (Stripe), consultas em lote (GraphQL) e orquestração de Agentes Inteligentes (APIs Model Context Protocol - MCP e LLMs Gemini).
+                      <span className="block mt-2 font-medium text-brand-ink">
+                        A mesma arquitetura de conexões que liga um estado de faturação ao Slack ou à base de dados de um restaurante liga sistemas de hospitais, ginásios corporativos ou retalhistas globais de comércio eletrónico.
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      The API and Webhook console simulates real-time JSON data flows. It allows testing inventory integrations (ERP REST API), payment webhooks (Stripe), batch queries (GraphQL), and Agentic AI tool routing (Model Context Protocol - MCP and Gemini LLM APIs).
+                      <span className="block mt-2 font-medium text-brand-ink">
+                        The same API connectivity architecture that links invoice status to Slack or restaurant databases links hospital ERP systems, corporate gyms, or global e-commerce retailers.
+                      </span>
+                    </>
+                  )}
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-brand-border/30 mt-2">
+                <div className="flex flex-col gap-1.5 text-xs font-mono text-[#A0AEC0]">
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-brand-accent-soft" />
+                    <span>{isPt ? 'Integração de APIs REST, GraphQL e Webhooks' : 'REST, GraphQL, & Webhooks Sync'}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-brand-accent-soft" />
+                    <span>{isPt ? 'Orquestração de Agentes por Protocolo MCP' : 'MCP Protocol AI Orchestration'}</span>
+                  </div>
+                </div>
+                <Link 
+                  href={isPt ? "/pt/laboratorio" : "/en/laboratorio"}
+                  className="text-xs font-mono text-brand-accent-soft hover:underline font-bold flex items-center gap-1.5 self-start sm:self-center"
+                >
+                  {isPt ? 'Esta é a mesma arquitetura que alimenta o laboratório' : 'This is the same connectivity architecture that powers the laboratory'}
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            </div>
+          </div>
+
         </div>
 
-        {/* Card 3: Legacy Modernization */}
-        <div id="excel" className="bg-brand-card/60 border border-brand-border rounded-2xl p-6 hover:border-brand-accent/50 transition duration-300 glass flex flex-col justify-between relative group shadow-lg">
-          <div className="absolute top-4 right-4 bg-brand-accent/10 border border-brand-accent/20 px-2.5 py-0.5 rounded text-[8px] font-mono text-brand-accent-soft uppercase font-bold tracking-wider">
-            {isPt ? 'EFICIÊNCIA' : 'EXCEL'}
+        {/* 3. Interactive Workspace Pane (Positioned AFTER Explanatory Panel) */}
+        <div className="w-full relative transition-all duration-300">
+          
+          {/* Tab 1: OCR Sandbox */}
+          <div className={activeTab === 'ocr' ? 'block' : 'hidden'}>
+            <OcrSandbox pt={isPt} />
           </div>
-          <div>
-            <div className="w-10 h-10 rounded-xl bg-brand-accent/10 border border-brand-accent/20 flex items-center justify-center mb-4 text-brand-accent-soft">
-              <TrendingUp className="w-5 h-5" />
-            </div>
-            <span className="text-[9px] font-mono text-brand-accent-soft uppercase font-semibold block mb-1">
-              {isPt ? 'Planilha vs. Painel' : 'Spreadsheet vs. Dashboard'}
-            </span>
 
-            {/* Question-based title for SEO/GEO */}
-            <h3 className="text-sm font-bold font-display text-brand-ink mb-3 group-hover:text-brand-accent-soft transition duration-200">
-              {isPt 
-                ? 'Como converter planilhas manuais lentas em dashboards operacionais sincronizados?' 
-                : 'How to convert slow manual spreadsheets into synchronized operational dashboards?'}
-            </h3>
-
-            {/* Premium Mockup Visual representation */}
-            <div className="w-full bg-[#05070C] border border-brand-border/40 rounded-xl p-3.5 mb-4 flex items-center justify-between text-[9px] font-mono select-none h-24 relative overflow-hidden pointer-events-none">
-              <div className="flex flex-col gap-1 w-[45%] bg-red-950/10 border border-brand-risk/20 rounded p-1.5 opacity-80">
-                <span className="text-[6.5px] text-brand-risk uppercase font-bold">Excel Manual</span>
-                <div className="grid grid-cols-2 gap-0.5 text-[6.5px] text-brand-ink-dim">
-                  <span>Robalo:</span><span className="text-brand-risk font-semibold">#VALOR!</span>
-                  <span>Stock:</span><span>Erro_Soma</span>
-                </div>
-              </div>
-              <div className="flex flex-col items-center justify-center">
-                <div className="w-6 h-6 rounded-full bg-brand-accent/10 border border-brand-accent/30 flex items-center justify-center text-brand-accent-soft">
-                  &rarr;
-                </div>
-              </div>
-              <div className="flex flex-col gap-1 w-[45%] bg-brand-card/50 border border-brand-ok/20 rounded p-1.5 shadow-inner">
-                <span className="text-[6.5px] text-brand-ok uppercase font-bold">Painel Nuell</span>
-                <div className="flex flex-col gap-0.5 text-[6.5px]">
-                  <span className="text-brand-ink">Robalo: 12.50€</span>
-                  <span className="text-brand-ok font-bold">Reconciliado</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Accordion link to expand/collapse SEO paragraph */}
-            <button
-              onClick={() => toggleText('excel')}
-              className="text-[10px] font-mono text-brand-accent-soft hover:text-brand-accent flex items-center gap-1 mb-4"
-            >
-              {expandedText.excel ? (
-                <>
-                  <ChevronUp className="w-3.5 h-3.5" />
-                  {isPt ? 'Ocultar detalhes operacionais' : 'Hide technical details'}
-                </>
-              ) : (
-                <>
-                  <ChevronDown className="w-3.5 h-3.5" />
-                  {isPt ? 'Ver detalhes operacionais' : 'View technical details'}
-                </>
-              )}
-            </button>
-
-            {/* Detailed Static explanatory paragraph for crawlers */}
-            <div className={`overflow-hidden transition-all duration-300 ${expandedText.excel ? 'max-h-[300px] opacity-100 mb-4' : 'max-h-0 opacity-0 pointer-events-none'}`}>
-              <p className="text-[11px] text-brand-ink-dim leading-relaxed bg-[#05070C]/50 p-3 rounded-lg border border-brand-border/40">
-                {isPt ? (
-                  <>
-                    A modernização converte o caos das planilhas de cálculo isoladas (como Excel) num dashboard operacional centralizado e colaborativo. A simulação demonstra a diferença de atualizar stocks de forma manual (conflitos de gravação multi-utilizador, erros de fórmula &apos;#VALOR!&apos; e falta de visibilidade de margens) contra a automação de dashboards (recalculo instantâneo de margens, alertas de stock mínimo e sugestão de novos PVPs).
-                    <span className="block mt-2 font-medium text-brand-ink">
-                      O mesmo motor de dashboard que consolida a faturação e stocks de restauração serve para clínicas de saúde, ginásios, escritórios de contabilidade ou retalhistas locais.
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    Modernization converts the chaos of isolated spreadsheets (like Excel) into a collaborative, centralized dashboard. The simulation shows the difference between manual spreadsheet updates (multi-user locks, broken &apos;#VALUE!&apos; formulas, lack of margin visibility) against automated dashboards (real-time margin recalculation, critical reorder alerts, and suggested pricing).
-                    <span className="block mt-2 font-medium text-brand-ink">
-                      The same dashboard engine that consolidates restaurant stock and sales serves healthcare clinics, gyms, accounting firms, or local retailers.
-                    </span>
-                  </>
-                )}
-              </p>
-            </div>
-
-            {/* Product anchor links */}
-            <div className="mb-6">
-              <Link 
-                href={isPt ? "/pt/sobre" : "/en/sobre"}
-                className="text-[10px] font-mono text-brand-accent-soft hover:underline font-bold"
-              >
-                &rarr; {isPt ? 'Esta é a mesma disciplina de engenharia que moderniza processos legacy' : 'This is the same engineering discipline that modernizes legacy workflows'}
-              </Link>
-            </div>
-
-            {/* Features check list */}
-            <div className="flex flex-col gap-2 font-mono text-[9px] text-[#A0AEC0] mb-6 border-t border-brand-border/30 pt-3">
-              <div className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-brand-accent-soft" />
-                <span>{isPt ? 'Fim dos Conflitos de Ficheiros & Erros de Digitação' : 'Eradicates Manual Typing Leaks'}</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-brand-accent-soft" />
-                <span>{isPt ? 'Recalculo de PVPs Automático contra Inflação' : 'Real-Time Margin Safeguards'}</span>
-              </div>
-            </div>
+          {/* Tab 2: BI Reconciliation Sandbox */}
+          <div className={activeTab === 'bi' ? 'block' : 'hidden'}>
+            <BiReconciliation pt={isPt} />
           </div>
-          <button
-            onClick={() => setActiveModal('excel')}
-            className="w-full bg-[#090D1A] border border-brand-border hover:bg-brand-border/40 text-brand-ink font-bold py-3 rounded-xl text-xs transition duration-150 uppercase tracking-wide flex justify-center items-center gap-1.5 mt-auto pointer-events-auto"
-          >
-            {isPt ? 'Comparar Planilha' : 'Modernize Now'}
-            <ArrowRight className="w-3.5 h-3.5 text-brand-accent-soft" />
-          </button>
-        </div>
 
-        {/* Card 4: API Integration Hub */}
-        <div id="api" className="bg-brand-card/60 border border-brand-border rounded-2xl p-6 hover:border-brand-accent/50 transition duration-300 glass flex flex-col justify-between relative group shadow-lg">
-          <div className="absolute top-4 right-4 bg-brand-accent/10 border border-brand-accent/20 px-2.5 py-0.5 rounded text-[8px] font-mono text-brand-accent-soft uppercase font-bold tracking-wider">
-            {isPt ? 'INTEGRAÇÕES' : 'API SANDBOX'}
+          {/* Tab 3: Excel Modernization Slider */}
+          <div className={activeTab === 'excel' ? 'block' : 'hidden'}>
+            <BeforeAfterSlider pt={isPt} />
           </div>
-          <div>
-            <div className="w-10 h-10 rounded-xl bg-brand-accent/10 border border-brand-accent/20 flex items-center justify-center mb-4 text-brand-accent-soft">
-              <Code className="w-5 h-5" />
-            </div>
-            <span className="text-[9px] font-mono text-brand-accent-soft uppercase font-semibold block mb-1">
-              {isPt ? 'REST APIs & Webhooks' : 'REST APIs & Webhooks'}
-            </span>
 
-            {/* Question-based title for SEO/GEO */}
-            <h3 className="text-sm font-bold font-display text-brand-ink mb-3 group-hover:text-brand-accent-soft transition duration-200">
-              {isPt 
-                ? 'Como interligar sistemas ERP, bases de dados e serviços de IA usando APIs e Webhooks?' 
-                : 'How to connect ERP software, databases, and AI models using APIs & Webhooks?'}
-            </h3>
-
-            {/* Premium Mockup Visual representation */}
-            <div className="w-full bg-[#05070C] border border-brand-border/40 rounded-xl p-3.5 mb-4 flex items-center justify-between text-[8px] font-mono select-none h-24 relative overflow-hidden pointer-events-none">
-              <div className="flex items-center justify-around w-full relative z-10">
-                <div className="flex flex-col items-center p-1 border border-brand-border/60 rounded bg-brand-card">
-                  <span>Sage API</span>
-                  <span className="text-[6px] text-brand-ok">Active</span>
-                </div>
-                <div className="w-8 h-0.5 border-t border-dashed border-brand-accent/40 relative">
-                  <div className="w-1.5 h-1.5 rounded-full bg-brand-accent absolute -top-1 left-1/2 -translate-x-1/2 animate-ping" />
-                </div>
-                <div className="flex flex-col items-center p-1 border border-brand-accent/30 rounded bg-brand-card text-brand-accent-soft">
-                  <span>Nuell AI</span>
-                  <span className="text-[6px] text-brand-ok">MCP</span>
-                </div>
-                <div className="w-8 h-0.5 border-t border-dashed border-brand-accent/40 relative">
-                  <div className="w-1.5 h-1.5 rounded-full bg-brand-accent absolute -top-1 left-1/2 -translate-x-1/2 animate-ping" />
-                </div>
-                <div className="flex flex-col items-center p-1 border border-brand-border/60 rounded bg-brand-card">
-                  <span>Stripe</span>
-                  <span className="text-[6px] text-brand-ok">Webhook</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Accordion link to expand/collapse SEO paragraph */}
-            <button
-              onClick={() => toggleText('api')}
-              className="text-[10px] font-mono text-brand-accent-soft hover:text-brand-accent flex items-center gap-1 mb-4"
-            >
-              {expandedText.api ? (
-                <>
-                  <ChevronUp className="w-3.5 h-3.5" />
-                  {isPt ? 'Ocultar detalhes operacionais' : 'Hide technical details'}
-                </>
-              ) : (
-                <>
-                  <ChevronDown className="w-3.5 h-3.5" />
-                  {isPt ? 'Ver detalhes operacionais' : 'View technical details'}
-                </>
-              )}
-            </button>
-
-            {/* Detailed Static explanatory paragraph for crawlers */}
-            <div className={`overflow-hidden transition-all duration-300 ${expandedText.api ? 'max-h-[300px] opacity-100 mb-4' : 'max-h-0 opacity-0 pointer-events-none'}`}>
-              <p className="text-[11px] text-brand-ink-dim leading-relaxed bg-[#05070C]/50 p-3 rounded-lg border border-brand-border/40">
-                {isPt ? (
-                  <>
-                    A consola de APIs e Webhooks demonstra o fluxo e intercâmbio de dados estruturados JSON em tempo real. Permite simular a receção de dados de stocks (ERP REST API), processamento de pagamentos automáticos (Stripe Webhooks), consultas estruturadas de catálogos (GraphQL) e orquestração de servidores de IA para agentes de decisão (Model Context Protocol - MCP e Gemini LLM API).
-                    <span className="block mt-2 font-medium text-brand-ink">
-                      A mesma arquitetura de conectividade API que liga faturas a canais de Slack ou bases de dados de restauração liga também sistemas ERP hospitalares, ginásios corporativos ou retalhistas de e-commerce global.
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    The API and Webhook console simulates real-time JSON data flows. It allows testing inventory integrations (ERP REST API), payment webhooks (Stripe), batch queries (GraphQL), and Agentic AI tool routing (Model Context Protocol - MCP and Gemini LLM APIs).
-                    <span className="block mt-2 font-medium text-brand-ink">
-                      The same API connectivity architecture that links invoice status to Slack or restaurant databases links hospital ERP systems, corporate gyms, or global e-commerce retailers.
-                    </span>
-                  </>
-                )}
-              </p>
-            </div>
-
-            {/* Product anchor links */}
-            <div className="mb-6">
-              <Link 
-                href={isPt ? "/pt/laboratorio" : "/en/laboratorio"}
-                className="text-[10px] font-mono text-brand-accent-soft hover:underline font-bold"
-              >
-                &rarr; {isPt ? 'Esta é a mesma arquitetura de conectividade que alimenta o laboratório' : 'This is the same connectivity architecture that powers the laboratory'}
-              </Link>
-            </div>
-
-            {/* Features check list */}
-            <div className="flex flex-col gap-2 font-mono text-[9px] text-[#A0AEC0] mb-6 border-t border-brand-border/30 pt-3">
-              <div className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-brand-accent-soft" />
-                <span>{isPt ? 'Integração de APIs REST, GraphQL e Webhooks' : 'REST, GraphQL, & Webhooks Sync'}</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-brand-accent-soft" />
-                <span>{isPt ? 'Orquestração de Agentes por Protocolo MCP' : 'MCP Protocol AI Orchestration'}</span>
-              </div>
-            </div>
+          {/* Tab 4: API Console Sandbox */}
+          <div className={activeTab === 'api' ? 'block' : 'hidden'}>
+            <ApiSandbox pt={isPt} />
           </div>
-          <button
-            onClick={() => setActiveModal('api')}
-            className="w-full bg-[#090D1A] border border-brand-border hover:bg-brand-border/40 text-brand-ink font-bold py-3 rounded-xl text-xs transition duration-150 uppercase tracking-wide flex justify-center items-center gap-1.5 mt-auto pointer-events-auto"
-          >
-            {isPt ? 'Abrir Consola de API' : 'Launch API Sandbox'}
-            <ArrowRight className="w-3.5 h-3.5 text-brand-accent-soft" />
-          </button>
+
         </div>
 
       </div>
-
-      {/* Modals rendering */}
-      <OcrModal isOpen={activeModal === 'ocr'} onClose={() => setActiveModal(null)} pt={isPt} />
-      <BiModal isOpen={activeModal === 'bi'} onClose={() => setActiveModal(null)} pt={isPt} />
-      <ExcelModal isOpen={activeModal === 'excel'} onClose={() => setActiveModal(null)} pt={isPt} />
-      <ApiModal isOpen={activeModal === 'api'} onClose={() => setActiveModal(null)} pt={isPt} />
-    </>
+    </div>
   );
 }

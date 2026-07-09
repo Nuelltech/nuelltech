@@ -41,7 +41,7 @@ Este documento detalha o que o utilizador vê, faz e experimenta em cada uma das
 ## 4. Sandbox de API (Integração de Sistemas e ERPs)
 * **Identificador da Ação:** `[sandbox:api:Etiqueta]`
 * **O que o utilizador faz na Sandbox:** O utilizador vê uma consola de programador simulada e clica no botão "Enviar Pedido API".
-* **O que o utilizador vê acontecer:** A consola simula o envio de um payload JSON e mostra a resposta de sucesso em tempo real, sincronizando dados entre o Primavera ERP e um portal de cliente.
+* **O que o utilizador vê acontecer:** A consola simula o envio de um payload JSON e mostra a resposta de sucesso em tempo real, sincronizando dados entre o ERP de faturação/POS e o inventário digital central.
 * **Como ligar à necessidade do utilizador:**
   * **Sincronização automática:** Elimina a necessidade de passar dados manualmente de um software para o outro (ex: faturas do software de faturação para o software de contabilidade).
-  * **Ligação a ERPs:** Ligamos Primavera, SAGE, PHC e outros sistemas legados a portais web ou assistentes de IA de forma segura.
+  * **Ligação a ERPs:** Ligamos sistemas de faturação (ERPs), bases de dados e outros sistemas legados a portais web ou assistentes de IA de forma segura.

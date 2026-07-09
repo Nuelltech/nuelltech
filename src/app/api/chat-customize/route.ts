@@ -19,7 +19,7 @@ export async function POST(request: Request) {
         ocr: `OCR em ${sector}: Extração de faturas de fornecedores e aviso imediato de desvios.`,
         bi: `Com base em ${sector}: Cruzamos stock e histórico para evitar desperdício de inventário.`,
         excel: `Migre o seu Excel de ${sector} para base de dados. Poupe horas de digitação manual.`,
-        api: `Ligamos o seu ERP de ${sector} (Sage, Primavera) a Stripe ou modelos de IA via APIs.`,
+        api: `Ligamos o seu ERP e software de faturação de ${sector} a Stripe ou modelos de IA via APIs.`,
         rcm: `Otimize custos de receitas e proteja margens no seu negócio de ${sector} hoje.`,
         custom: `Precisa de uma ferramenta personalizada de dados para o setor de ${sector}?`,
         sobre: `Oracle Retail e sistemas complexos adaptados ao seu contexto de ${sector}.`,
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
         ocr: `OCR in ${sector}: Supplier invoice extraction and instant discrepancy alerts.`,
         bi: `For ${sector}: We cross stock and history to prevent inventory waste.`,
         excel: `Migrate your manual ${sector} Excel sheets to secure databases. Save hours of typing.`,
-        api: `We connect your ${sector} ERP (Sage, Primavera) to Stripe or AI APIs.`,
+        api: `We connect your ${sector} ERP and POS software to Stripe or AI APIs.`,
         rcm: `Optimize recipe costs and protect margins in your ${sector} business today.`,
         custom: `Need a custom data or AI tool tailored for ${sector}?`,
         sobre: `Oracle Retail systems and complex data tools customized for ${sector}.`,
@@ -54,7 +54,7 @@ export async function POST(request: Request) {
     - "ocr": How OCR/Invoice reading helps this sector (e.g. "We read gym supplier invoices to check if equipment costs went up.")
     - "bi": How database reconciliation/BI helps this sector (e.g. "Reconciling supplements inventory with sales to predict expired items.")
     - "excel": How replacing Excel helps this sector (e.g. "Manual sheets wasting hours? We build centralized dashboards for gyms.")
-    - "api": How APIs/webhooks connect their systems (e.g. "Connect Sage ERP with your gym booking software using APIs.")
+    - "api": How APIs/webhooks connect their systems (e.g. "Connect billing software with your gym booking software using APIs.")
     - "rcm": How RCM / margin management helps this sector (e.g. "Track margins and staff costs vs monthly memberships in your gym.")
     - "custom": Pitching bespoke tools for this sector (e.g. "Need custom logistics or stock prediction tools for your store?")
     - "sobre": Reassuring them of our pedigree applied to this sector (e.g. "Enterprise Oracle Retail discipline scaled down for your store.")

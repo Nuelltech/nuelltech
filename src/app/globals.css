@@ -31,9 +31,10 @@ body {
   overflow-x: hidden;
 }
 
-/* Custom Scrollbar */
+/* Custom Scrollbars */
 ::-webkit-scrollbar {
   width: 8px;
+  height: 8px; /* For horizontal scrollbars */
 }
 ::-webkit-scrollbar-track {
   background: #07090F;
@@ -43,6 +44,35 @@ body {
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
+  background: #3B82F6;
+}
+
+/* Scrollbar Utilities */
+.scrollbar-none {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+
+.scrollbar-thin {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #1C2333 #07090F; /* Firefox */
+}
+.scrollbar-thin::-webkit-scrollbar {
+  height: 4px; /* Very thin horizontal scrollbar */
+  width: 4px; /* Very thin vertical scrollbar */
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: #07090F;
+  border-radius: 99px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #1C2333;
+  border-radius: 99px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
   background: #3B82F6;
 }
 

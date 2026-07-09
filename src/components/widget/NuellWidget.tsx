@@ -20,7 +20,7 @@ const defaultMessages: Record<string, Record<string, string>> = {
     ocr: 'Viu como lemos uma fatura? Pergunte-me sobre o seu processo de faturação.',
     bi: 'Reconciliamos stock físico com vendas para prever perdas. Quer ver aplicado ao seu caso?',
     excel: 'Ainda usa planilhas Excel manuais? Posso estimar as horas de trabalho que pouparia.',
-    api: 'Integramos Primavera, Sage, Stripe e modelos de IA. Qual é o seu ecossistema atual?',
+    api: 'Ligamos o seu software de faturação, Stripe e modelos de IA. Qual é o seu ecossistema atual?',
     rcm: 'O RCM e o Auditor Pro protegem as margens da restauração. Quer ver as fichas técnicas?',
     custom: 'Quando o problema é específico, construímos à medida. Tem um desafio único de dados?',
     sobre: 'Trazemos a disciplina dos sistemas Oracle Retail para o seu negócio. Quer saber mais?',
@@ -32,7 +32,7 @@ const defaultMessages: Record<string, Record<string, string>> = {
     ocr: 'Saw how we read an invoice? Ask me about your billing process.',
     bi: 'We reconcile stock with sales to predict loss. Want to see it applied to your case?',
     excel: 'Still using manual Excel sheets? I can estimate the hours of labor you would save.',
-    api: 'We integrate Primavera, Sage, Stripe and AI models. What is your current tech stack?',
+    api: 'We integrate billing systems, Stripe and AI models. What is your current tech stack?',
     rcm: 'RCM and Auditor Pro protect restaurant margins. Want to see the recipe cost structures?',
     custom: 'When the problem is specific, we build custom solutions. Have a unique data challenge?',
     sobre: 'We bring the discipline of Oracle Retail enterprise systems to your business. Learn more?',
@@ -445,10 +445,10 @@ In which processes of "${sector}" would you like to introduce AI? Which routine 
         reply = pt
           ? `Migramos folhas manuais de Excel para bases de dados seguras e dinâmicas, eliminando erros de fórmulas. Veja a comparação: [sandbox:excel:💻 Ver Planilha vs Dashboard]\n\nPodemos fazer o mesmo pelas suas planilhas. Deixe o seu Nome e Contacto para falarmos.`
           : `We migrate manual Excel sheets to secure databases, eliminating formula errors. See the comparison: [sandbox:excel:💻 Sheet vs Dashboard]\n\nWe can do the same for your files. Leave your Name and Contact to discuss.`;
-      } else if (textLower.includes('api') || textLower.includes('erp') || textLower.includes('primavera') || textLower.includes('sage') || textLower.includes('phc') || textLower.includes('integr')) {
+      } else if (textLower.includes('api') || textLower.includes('erp') || textLower.includes('sistema') || textLower.includes('integr')) {
         reply = pt
-          ? `Ligamos o seu ERP (Primavera, Sage, PHC) a portais web ou modelos de IA via APIs seguras. Veja a nossa sandbox técnica: [sandbox:api:⚡ Ver Sandbox API]\n\nQual o seu Nome e Contacto para vermos a compatibilidade com os seus sistemas?`
-          : `We connect your ERP (Primavera, Sage, PHC) to web portals or AI models using secure APIs. Check our developer console: [sandbox:api:⚡ Try API Sandbox]\n\nWhat is your Name and Contact to check compatibility with your software?`;
+          ? `Ligamos o seu ERP, POS ou software de faturação a portais web ou modelos de IA via APIs seguras. Veja a nossa sandbox técnica: [sandbox:api:⚡ Ver Sandbox API]\n\nQual o seu Nome e Contacto para vermos a compatibilidade com os seus sistemas?`
+          : `We connect your ERP, POS, or billing software to web portals or AI models using secure APIs. Check our developer console: [sandbox:api:⚡ Try API Sandbox]\n\nWhat is your Name and Contact to check compatibility with your software?`;
       } else if (textLower.includes('custo') || textLower.includes('receita') || textLower.includes('margem') || textLower.includes('rcm') || textLower.includes('preço') || textLower.includes('recebimento') || textLower.includes('cliente')) {
         reply = pt
           ? `Gerimos e protegemos as margens de receitas comparando faturas com o PVP praticado em tempo real. Veja a secção dedicada a isto: [scroll:rcm:📈 Otimizar Custos]\n\nPara analisarmos a sua estrutura de custos de forma confidencial, indique o seu Nome e Contacto.`
@@ -464,12 +464,12 @@ In which processes of "${sector}" would you like to introduce AI? Which routine 
           ? `Perfeito! No setor de "${userText}", os problemas de margens e processos manuais são muito comuns. A Nuelltech automatiza estes fluxos.
 
 Como prefere avançar?
-👉 **Pergunte-me diretamente o que procura** (ex: *"Como posso ler faturas de fornecedores?"* ou *"Como ligam ao Primavera?"*). Eu respondo e posso guiar-lhe na página ou abrir a demonstração certa.
+👉 **Pergunte-me diretamente o que procura** (ex: *"Como posso ler faturas de fornecedores?"* ou *"Como ligam ao meu software de faturação?"*). Eu respondo e posso guiar-lhe na página ou abrir a demonstração certa.
 👉 **Ou navegue pela página à sua vontade.** O meu balão de fala adapta-se automaticamente explicando como cada secção se aplica ao setor de "${userText}"!`
           : `Perfect! In the "${userText}" sector, margin issues and manual processes are common. Nuelltech automates these leaks.
 
 How would you like to proceed?
-👉 **Ask me directly what you need** (e.g., *"How can I read supplier invoices?"* or *"How do you connect to Primavera?"*). I will explain and guide you directly to the right demo or section.
+👉 **Ask me directly what you need** (e.g., *"How can I read supplier invoices?"* or *"How do you connect to my billing systems?"*). I will explain and guide you directly to the right demo or section.
 👉 **Or simply scroll through the page.** My speech bubble will dynamically adapt to explain each section for the "${userText}" industry!`;
       } else if (currentTurn === 2) {
         // Lead details turn

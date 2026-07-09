@@ -11,6 +11,7 @@ import SectorSelector from '@/components/widget/SectorSelector';
 import { ArrowRight, Sparkles, HelpCircle, Briefcase, ChevronRight, TrendingUp, CheckCircle2, AlertTriangle, FileText } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import ScrollReveal from '@/components/ScrollReveal';
 
 export async function generateMetadata({
   params,
@@ -237,8 +238,8 @@ export default async function Page({
             />
           </div>
 
-          {/* Col 2: High-End Floating Graphic Dashboard */}
-          <div className="relative w-full max-w-md mx-auto aspect-square flex items-center justify-center lg:mt-0 mt-12 animate-float pointer-events-none select-none">
+          {/* Col 2: High-End Floating Graphic Dashboard - Hidden on Mobile */}
+          <div className="relative w-full max-w-md mx-auto aspect-square hidden lg:flex items-center justify-center lg:mt-0 mt-12 animate-float pointer-events-none select-none">
             {/* Background decorative glow */}
             <div className="absolute inset-0 bg-brand-accent/5 rounded-full blur-3xl pointer-events-none" />
 
@@ -339,7 +340,7 @@ export default async function Page({
         {/* Subtle red background glow for risk context */}
         <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[35%] h-[35%] bg-brand-risk/5 rounded-full blur-[100px] pointer-events-none" />
         
-        <div className="max-w-5xl mx-auto">
+        <ScrollReveal className="max-w-5xl mx-auto">
           {/* Section Header */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-10 border-b border-brand-border/20 pb-6 relative z-10">
             <div>
@@ -432,15 +433,15 @@ export default async function Page({
             </div>
 
           </div>
-        </div>
+        </ScrollReveal>
       </section>
 
       {/* 3. INTERACTIVE DEMOS SECTION (PROOF) */}
       <section id="demos" className="py-24 px-6 relative">
-        {/* Subtle backdrop glow */}
-        <div className="absolute top-[30%] right-[-10%] w-[40%] h-[40%] bg-brand-accent/5 rounded-full blur-[120px] pointer-events-none" />
+        {/* Large Indigo/Purple/Cyan Backdrop Glow (GitHub style) */}
+        <div className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[80%] h-[70%] bg-gradient-to-r from-brand-accent/12 via-[#818CF8]/8 to-purple-500/8 rounded-full blur-[160px] pointer-events-none" />
         
-        <div className="max-w-5xl mx-auto">
+        <ScrollReveal className="max-w-5xl mx-auto">
           {/* Section Header */}
           <div className="mb-16 border-b border-brand-border/40 pb-8">
             <div className="text-[10px] font-mono text-brand-accent-soft uppercase tracking-wider mb-3">
@@ -456,12 +457,12 @@ export default async function Page({
 
           {/* Sandbox Modular Hub (2x2 grid and modals) */}
           <SandboxHub dict={dict} isPt={isPt} />
-        </div>
+        </ScrollReveal>
       </section>
 
       {/* PATHWAY TO EFFICIENCY (IMPLEMENTATION METHOD) */}
       <section className="py-20 px-6 bg-[#04060C] border-y border-brand-border/40 relative">
-        <div className="max-w-5xl mx-auto">
+        <ScrollReveal className="max-w-5xl mx-auto">
           <div className="text-center mb-16 max-w-2xl mx-auto">
             <div className="text-[10px] font-mono text-brand-accent-soft uppercase tracking-wider mb-3">
               {isPt ? 'Metodologia de Sucesso' : 'Success Methodology'}
@@ -528,12 +529,12 @@ export default async function Page({
               </p>
             </div>
           </div>
-        </div>
+        </ScrollReveal>
       </section>
 
       {/* 4. SOLUÇÕES SECTION (SaaS PRODUCTS) */}
       <section id="rcm" className="py-24 px-6 relative">
-        <div className="max-w-5xl mx-auto">
+        <ScrollReveal className="max-w-5xl mx-auto">
           {/* Section Header */}
           <div className="mb-16">
             <div className="text-[10px] font-mono text-brand-accent-soft uppercase tracking-wider mb-2">
@@ -608,12 +609,12 @@ export default async function Page({
               </Link>
             </div>
           </div>
-        </div>
+        </ScrollReveal>
       </section>
 
       {/* 5. ENGENHARIA À MEDIDA SECTION */}
       <section id="custom" className="py-24 px-6 bg-[#04060C] border-y border-brand-border/40 relative">
-        <div className="max-w-5xl mx-auto">
+        <ScrollReveal className="max-w-5xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1.8fr] gap-12 items-start mb-12">
             {/* Left Column: Headline and intro */}
             <div>
@@ -676,7 +677,7 @@ export default async function Page({
               </div>
             </div>
           </div>
-        </div>
+        </ScrollReveal>
       </section>
 
       {/* PROVEN IN THE FIELD (STATS & TESTIMONIAL) */}
@@ -755,7 +756,7 @@ export default async function Page({
 
       {/* 6. TRAJETÓRIA / SOBRE (CONCENTRADO) SECTION */}
       <section id="sobre" className="py-24 px-6 border-t border-brand-border/40 relative">
-        <div className="max-w-5xl mx-auto">
+        <ScrollReveal className="max-w-5xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-12 items-start">
             {/* Left Column: Section Title */}
             <div>
@@ -763,7 +764,7 @@ export default async function Page({
                 {dict.about.title}
               </div>
               <h2 className="text-2xl sm:text-3.5xl font-extrabold font-display leading-tight text-brand-ink mb-4">
-                {isPt ? 'De Sistemas Oracle à Automação com IA' : 'From Oracle Systems to AI Automation'}
+                {isPt ? 'Do Marketing de Performance à Automação com IA' : 'From Performance Marketing to AI Automation'}
               </h2>
               <div className="w-max mt-6">
                 <Link href={`/${lang}/sobre`} className="text-xs font-mono font-semibold text-brand-accent-soft hover:underline">
@@ -807,13 +808,13 @@ export default async function Page({
               </div>
             </div>
           </div>
-        </div>
+        </ScrollReveal>
       </section>
 
       {/* 6.5 IA DOUBTS FAQ SECTION */}
       <section id="ia-doubts" className="py-24 px-6 relative border-t border-brand-border/40">
         <div className="absolute top-[20%] left-[-10%] w-[35%] h-[35%] bg-brand-accent/5 rounded-full blur-[100px] pointer-events-none" />
-        <div className="max-w-4xl mx-auto">
+        <ScrollReveal className="max-w-4xl mx-auto">
           <div className="text-center mb-16 max-w-2xl mx-auto">
             <div className="text-[10px] font-mono text-brand-accent-soft uppercase tracking-wider mb-3">
               {isPt ? 'Desmistificar a IA' : 'Demystifying AI'}
@@ -829,12 +830,12 @@ export default async function Page({
           </div>
 
           <IaFaqAccordion isPt={isPt} />
-        </div>
+        </ScrollReveal>
       </section>
 
       {/* 7. FAQ SECTION */}
       <section id="faq" className="py-24 px-6 bg-[#04060C] border-t border-brand-border/40 relative">
-        <div className="max-w-5xl mx-auto">
+        <ScrollReveal className="max-w-5xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-12 items-start">
             {/* Left Column: Heading and info */}
             <div>
@@ -895,14 +896,14 @@ export default async function Page({
               </div>
             </div>
           </div>
-        </div>
+        </ScrollReveal>
       </section>
 
       {/* 8. CTA FINAL SECTION */}
       <section className="py-20 px-6 relative overflow-hidden border-t border-brand-border/60">
         <div className="absolute top-[-30%] right-[-10%] w-[55%] h-[55%] bg-[#2054C7]/5 rounded-full blur-[100px] pointer-events-none" />
         
-        <div className="max-w-3xl mx-auto text-center relative z-10 flex flex-col items-center">
+        <ScrollReveal className="max-w-3xl mx-auto text-center relative z-10 flex flex-col items-center">
           <h2 className="text-2xl sm:text-4xl font-extrabold font-display text-brand-ink mb-4 text-glow">
             {dict.ctaFinal.title}
           </h2>
@@ -919,7 +920,7 @@ export default async function Page({
             {dict.ctaFinal.ctaButton}
             <ArrowRight className="w-4 h-4" />
           </a>
-        </div>
+        </ScrollReveal>
       </section>
 
       <Footer lang={lang as Locale} dict={dict} />

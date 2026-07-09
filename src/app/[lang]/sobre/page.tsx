@@ -52,8 +52,8 @@ export default async function AboutPage({
             </h1>
             <p className="text-sm text-brand-ink-dim leading-relaxed">
               {pt
-                ? 'Aplicamos disciplina de engenharia de software de grande escala à Inteligência Artificial e Automação de processos para PMEs, ajudando-as a proteger margens de lucro e a eliminar o trabalho manual repetitivo.'
-                : 'We apply large-scale software engineering discipline to Artificial Intelligence and process automation for SMEs, helping them protect profit margins and eliminate repetitive manual work.'}
+                ? 'A Nuelltech aplica disciplina de engenharia de software de grande escala à Inteligência Artificial e Automação de processos para PMEs, ajudando-as a proteger margens de lucro e a eliminar o trabalho manual repetitivo.'
+                : 'Nuelltech applies large-scale software engineering discipline to Artificial Intelligence and process automation for SMEs, helping them protect profit margins and eliminate repetitive manual work.'}
             </p>
           </div>
 
@@ -66,6 +66,11 @@ export default async function AboutPage({
             <div className="text-xs text-brand-ink-dim leading-relaxed flex flex-col gap-4">
               <p>
                 {dict.about.pedigree}
+              </p>
+              <p>
+                {pt
+                  ? 'A fundação da Nuelltech une o rigor da engenharia de software corporativo à agilidade do marketing digital de performance. As soluções desenvolvidas não servem apenas para otimizar custos no back-office (como faturas e stock), mas sim para impulsionar as vendas e otimizar a aquisição de clientes no front-office. Esta ligação direta entre a captação de leads e a eficiência operacional é o que diferencia a tecnologia da empresa.'
+                  : 'The foundation of Nuelltech merges the rigor of enterprise software engineering with the agility of performance digital marketing. The developed solutions do not only streamline back-office operations (such as invoices and stock) but also directly drive sales and optimize client acquisition in the front-office. This tight integration between lead generation and operational efficiency is what sets the company\'s technology apart.'}
               </p>
               <div className="bg-[#090D1A] border border-brand-border rounded-xl p-5 border-l-4 border-l-brand-accent">
                 <span className="block text-[8px] font-mono text-brand-ink-dim uppercase tracking-wider mb-2">
@@ -87,8 +92,8 @@ export default async function AboutPage({
               <h3 className="font-bold text-brand-ink text-sm mb-2">{pt ? 'A Nossa Metodologia' : 'Our Methodology'}</h3>
               <p>
                 {pt
-                  ? 'Acreditamos que a tecnologia deve ser um gerador de retorno claro. Iniciamos sempre com um diagnóstico completo gratuito da sua empresa, identificando as ineficiências de processos e quantificando o retorno financeiro que a automação trará antes de qualquer código ser escrito.'
-                  : 'We believe technology must generate a clear return on investment. We always begin with a free diagnostic audit of your business, identifying process inefficiencies and quantifying the financial yield that automation will bring before writing any code.'}
+                  ? 'A metodologia da Nuelltech baseia-se em gerar um retorno de investimento claro. A empresa inicia sempre o seu acompanhamento com um diagnóstico completo gratuito do negócio do cliente, identificando as ineficiências de processos e quantificando o retorno financeiro que a automação trará antes de qualquer linha de código ser escrita.'
+                  : 'Nuelltech\'s methodology is centered on delivering a clear return on investment. The company always starts with a free, comprehensive diagnostic audit of the client\'s business, identifying process inefficiencies and quantifying the financial returns automation will bring before writing any code.'}
               </p>
             </div>
 

@@ -106,10 +106,10 @@ export async function POST(request: Request) {
         reply = pt
           ? `Migramos folhas manuais de Excel para bases de dados seguras e dinâmicas, eliminando erros de fórmulas. Veja a comparação: [sandbox:excel:💻 Ver Planilha vs Dashboard]\n\nPodemos fazer o mesmo pelas suas planilhas. Deixe o seu Nome e Contacto para falarmos.`
           : `We migrate manual Excel sheets to secure databases, eliminating formula errors. See the comparison: [sandbox:excel:💻 Sheet vs Dashboard]\n\nWe can do the same for your files. Leave your Name and Contact to discuss.`;
-      } else if (textLower.includes('api') || textLower.includes('erp') || textLower.includes('primavera') || textLower.includes('sage') || textLower.includes('phc') || textLower.includes('integr')) {
+      } else if (textLower.includes('api') || textLower.includes('erp') || textLower.includes('sistema') || textLower.includes('integr')) {
         reply = pt
-          ? `Ligamos o seu ERP (Primavera, Sage, PHC) a portais web ou modelos de IA via APIs seguras. Veja a nossa sandbox técnica: [sandbox:api:⚡ Ver Sandbox API]\n\nQual o seu Nome e Contacto para vermos a compatibilidade com os seus sistemas?`
-          : `We connect your ERP (Primavera, Sage, PHC) to web portals or AI models using secure APIs. Check our developer console: [sandbox:api:⚡ Try API Sandbox]\n\nWhat is your Name and Contact to check compatibility with your software?`;
+          ? `Ligamos o seu ERP, POS ou software de faturação a portais web ou modelos de IA via APIs seguras. Veja a nossa sandbox técnica: [sandbox:api:⚡ Ver Sandbox API]\n\nQual o seu Nome e Contacto para vermos a compatibilidade com os seus sistemas?`
+          : `We connect your ERP, POS, or billing software to web portals or AI models using secure APIs. Check our developer console: [sandbox:api:⚡ Try API Sandbox]\n\nWhat is your Name and Contact to check compatibility with your software?`;
       } else if (textLower.includes('custo') || textLower.includes('receita') || textLower.includes('margem') || textLower.includes('rcm') || textLower.includes('preço') || textLower.includes('recebimento') || textLower.includes('cliente')) {
         reply = pt
           ? `Gerimos e protegemos as margens de receitas comparando faturas com o PVP praticado em tempo real. Veja a secção dedicada a isto: [scroll:rcm:📈 Otimizar Custos]\n\nPara analisarmos a sua estrutura de custos de forma confidencial, indique o seu Nome e Contacto.`
@@ -168,7 +168,7 @@ export async function POST(request: Request) {
     - OCR Sandbox: Allows testing automated supplier invoice reading. The user clicks "Analisar" and the engine extracts supplier name, items, VAT, and prices, and flags a pricing discrepancy (e.g. a supplier overcharging on contracted prices). Connect this to: automated data entry, invoice processing, or vendor price checking.
     - Predictive BI Sandbox: A simulated dashboard crossing current stock levels with sales rates. It has a slider to simulate sales growth, predicts the exact day stock will run out, alerts you when stock is below the safety threshold, and calculates optimal order quantities. Connect this to: stock management, preventing stockouts, medicine/item expiry, or automated order calculations.
     - Excel Sandbox: A before/after slider comparing a messy Excel sheet with a clean web dashboard. Connect this to: migrating manual Excel tracking into automated systems with KPI cards and real-time alerts.
-    - API Sandbox: A simulator showing how to connect an ERP (like Primavera, SAGE, PHC) with websites or databases to sync orders. Connect this to: automated database syncing or ERP integration.
+    - API Sandbox: A simulator showing how to connect an ERP or billing software with websites or databases to sync orders. Connect this to: automated database syncing or ERP integration.
 
     BRIDGING RULES:
     Since user questions will rarely match our sandboxes 100%, you must bridge the gap by explaining the connection. For example, if a user asks about medicine expiry or order calculations, explain that our Predictive BI Sandbox handles exactly that by crossing inventory and sales rates to generate alerts, and invite them to test it.
