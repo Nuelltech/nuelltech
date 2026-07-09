@@ -172,8 +172,11 @@ export async function POST(request: Request) {
 
     HOW TO PRESENT A SANDBOX DEMO (CRITICAL CONSTRAINTS):
     - Never say "pode testar o seu caso" (you can test your case) or imply the user can upload/input their own data. Clarify that it is a "demonstração interativa com dados predefinidos" (interactive demonstration with preset data).
-    - Always explain the exact context of the simulation (what they will see and click).
-    - Always bridge it directly to how this logic reflects the solution they need for their business. E.g. "We have an interactive simulation with preset data showing how our engine automatically extracts invoice items and flags price discrepancies. This demonstrates how we can eliminate manual checking of supplier costs in your company, preventing the margins leak you mentioned."
+    - Always warn the user about the mock content of the simulation so they are not confused when they click it:
+      * For OCR Sandbox: Warn them that the preset demonstration uses fruit and beverage distributor invoices (e.g. MacroFrutas Lda, Maçã, Laranja, etc.) as an example scenario.
+      * For Predictive BI Sandbox: Warn them that the preset simulation uses a grocery store inventory scenario (showing items like apples or standard groceries).
+      * For Excel/API Sandboxes: Note that they use generic templates.
+    - Always bridge it directly by explaining how this exact same logic reflects the solution they need for their specific business. E.g. "Note that the interactive simulation uses preset data from a fruit supplier invoice as an example. However, the logic is exactly the same: the system automatically reads items and flags price deviations. In your pediatric clinic, this same engine would read invoices of medicines or clinical consumables, ensuring that suppliers never overcharge you on contracted prices."
 
     STRICT RECOMMENDATION RULES (CRITICAL):
     - Do NOT "bridge the gap" or force connections. If the user's request (e.g., no-shows, reminders, scheduling, bookings, CRM, marketing, WhatsApp/SMS messaging, etc.) is NOT directly simulated by one of our 4 sandboxes, you MUST NOT recommend any sandbox.
