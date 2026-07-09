@@ -26,10 +26,20 @@ export async function generateStaticParams() {
   return locales.map((lang) => ({ lang }));
 }
 
-export const metadata: Metadata = {
-  title: 'Nuelltech — Automação e Inteligência Artificial',
-  description: 'Nuelltech transforma dados dispersos e processos manuais em decisões de gestão automatizadas.',
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  const isPt = lang === 'pt';
+  return {
+    title: isPt ? 'Nuelltech — Automação e Inteligência Artificial' : 'Nuelltech — Automation & Artificial Intelligence',
+    description: isPt
+      ? 'A Nuelltech transforma dados dispersos e processos manuais em decisões de gestão automatizadas com Inteligência Artificial.'
+      : 'Nuelltech transforms scattered data and manual processes into automated management decisions with Artificial Intelligence.',
+  };
+}
 
 export default async function RootLayout({
   children,

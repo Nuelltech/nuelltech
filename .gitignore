@@ -47,6 +47,7 @@ extracted_files/
 *.txt
 *.png
 !public/logo.png
+!src/app/icon.png
 !public/llms.txt
 !public/robots.txt
 !public/sitemap.xml
