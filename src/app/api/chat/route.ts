@@ -96,20 +96,20 @@ export async function POST(request: Request) {
       // Check if user is asking a free-form question by detecting keywords
       if (textLower.includes('fatura') || textLower.includes('ocr') || textLower.includes('leitura') || textLower.includes('invoice') || textLower.includes('documento')) {
         reply = pt
-          ? `O nosso leitor de OCR extrai automaticamente todos os dados de faturas em segundos, identificando discrepâncias de preço. Pode testar o motor agora: [sandbox:ocr:🔍 Abrir Demo OCR]\n\nSe quiser ver isto ligado ao seu ERP, qual é o seu Nome e Contacto para falarmos sem compromisso?`
-          : `Our OCR reader automatically extracts invoice data in seconds, detecting price deviations. Test the engine now: [sandbox:ocr:🔍 Try OCR Reader]\n\nTo see this connected to your ERP, what is your Name and Contact so we can chat?`;
+          ? `O nosso leitor de OCR extrai automaticamente todos os dados de faturas em segundos, identificando discrepâncias de preço. Pode ver uma demonstração interativa com dados de exemplo aqui: [sandbox:ocr:🔍 Ver Demo OCR]\n\nSe quiser ver isto ligado ao seu ERP, qual é o seu Nome e Contacto para falarmos sem compromisso?`
+          : `Our OCR reader automatically extracts invoice data in seconds, detecting price deviations. View an interactive demonstration with preset sample data here: [sandbox:ocr:🔍 View OCR Demo]\n\nTo see this connected to your ERP, what is your Name and Contact so we can chat?`;
       } else if (textLower.includes('stock') || textLower.includes('inventario') || textLower.includes('validade') || textLower.includes('bi') || textLower.includes('perda') || textLower.includes('quebra')) {
         reply = pt
-          ? `O nosso reconciliador preditivo cruza o stock com a velocidade de venda para alertar sobre perdas e sugerir campanhas de escoamento. Experimente aqui: [sandbox:bi:📊 Abrir Demo BI]\n\nQual o seu melhor Contacto para agendarmos uma demonstração detalhada?`
-          : `Our predictive reconciler crosses stock with sales speed to alert you about waste and suggest discount campaigns. Try it here: [sandbox:bi:📊 Predict Stock]\n\nWhat is your best Contact so we can schedule a custom demo?`;
+          ? `O nosso reconciliador preditivo cruza o stock com a velocidade de venda para alertar sobre perdas e sugerir campanhas de escoamento. Veja uma simulação interativa com dados predefinidos aqui: [sandbox:bi:📊 Ver Demo Stock]\n\nQual o seu melhor Contacto para agendarmos uma demonstração detalhada?`
+          : `Our predictive reconciler crosses stock with sales speed to alert you about waste and suggest discount campaigns. View an interactive simulation with preset data here: [sandbox:bi:📊 View Stock Demo]\n\nWhat is your best Contact so we can schedule a custom demo?`;
       } else if (textLower.includes('excel') || textLower.includes('planilha') || textLower.includes('manual') || textLower.includes('folha')) {
         reply = pt
-          ? `Migramos folhas manuais de Excel para bases de dados seguras e dinâmicas, eliminando erros de fórmulas. Veja a comparação: [sandbox:excel:💻 Ver Planilha vs Dashboard]\n\nPodemos fazer o mesmo pelas suas planilhas. Deixe o seu Nome e Contacto para falarmos.`
-          : `We migrate manual Excel sheets to secure databases, eliminating formula errors. See the comparison: [sandbox:excel:💻 Sheet vs Dashboard]\n\nWe can do the same for your files. Leave your Name and Contact to discuss.`;
+          ? `Migramos folhas manuais de Excel para bases de dados seguras e dinâmicas, eliminando erros de fórmulas. Veja uma comparação visual com dados predefinidos: [sandbox:excel:💻 Ver Comparação Excel]\n\nPodemos fazer o mesmo pelas suas planilhas. Deixe o seu Nome e Contacto para falarmos.`
+          : `We migrate manual Excel sheets to secure databases, eliminating formula errors. See an interactive before/after comparison with preset data here: [sandbox:excel:💻 View Excel Demo]\n\nWe can do the same for your files. Leave your Name and Contact to discuss.`;
       } else if (textLower.includes('api') || textLower.includes('erp') || textLower.includes('sistema') || textLower.includes('integr')) {
         reply = pt
-          ? `Ligamos o seu ERP, POS ou software de faturação a portais web ou modelos de IA via APIs seguras. Veja a nossa sandbox técnica: [sandbox:api:⚡ Ver Sandbox API]\n\nQual o seu Nome e Contacto para vermos a compatibilidade com os seus sistemas?`
-          : `We connect your ERP, POS, or billing software to web portals or AI models using secure APIs. Check our developer console: [sandbox:api:⚡ Try API Sandbox]\n\nWhat is your Name and Contact to check compatibility with your software?`;
+          ? `Ligamos o seu ERP, POS ou software de faturação a portais web ou modelos de IA via APIs seguras. Veja uma simulação técnica com dados de exemplo aqui: [sandbox:api:⚡ Ver Simulação API]\n\nQual o seu Nome e Contacto para vermos a compatibilidade com os seus sistemas?`
+          : `We connect your ERP, POS, or billing software to web portals or AI models using secure APIs. Check out our technical simulation with sample webhook data: [sandbox:api:⚡ View API Demo]\n\nWhat is your Name and Contact to check compatibility with your software?`;
       } else if (textLower.includes('custo') || textLower.includes('receita') || textLower.includes('margem') || textLower.includes('rcm') || textLower.includes('preço') || textLower.includes('recebimento') || textLower.includes('cliente')) {
         reply = pt
           ? `Gerimos e protegemos as margens de receitas comparando faturas com o PVP praticado em tempo real. Veja a secção dedicada a isto: [scroll:rcm:📈 Otimizar Custos]\n\nPara analisarmos a sua estrutura de custos de forma confidencial, indique o seu Nome e Contacto.`
@@ -156,19 +156,24 @@ export async function POST(request: Request) {
 
     INTERACTIVE ACTIONS:
     You have special interactive buttons you can insert into your replies to navigate the user or open sandboxes:
-    - [sandbox:ocr:Label] -> Opens the OCR Invoice reading sandbox (e.g. "[sandbox:ocr:🔍 Testar OCR]")
-    - [sandbox:bi:Label] -> Opens the Predictive Stock BI sandbox (e.g. "[sandbox:bi:📊 Prever Stock]")
-    - [sandbox:excel:Label] -> Opens the Excel sheet modernization slider (e.g. "[sandbox:excel:💻 Ver Planilha vs Dashboard]")
-    - [sandbox:api:Label] -> Opens the API Integration developer console (e.g. "[sandbox:api:⚡ Ver Sandbox API]")
+    - [sandbox:ocr:Label] -> Opens the OCR Invoice reading sandbox (e.g. "[sandbox:ocr:🔍 Ver Demo OCR]")
+    - [sandbox:bi:Label] -> Opens the Predictive Stock BI sandbox (e.g. "[sandbox:bi:📊 Ver Demo Stock]")
+    - [sandbox:excel:Label] -> Opens the Excel sheet modernization slider (e.g. "[sandbox:excel:💻 Ver Comparação Excel]")
+    - [sandbox:api:Label] -> Opens the API Integration developer console (e.g. "[sandbox:api:⚡ Ver Simulação API]")
     - [scroll:rcm:Label] -> Scrolls to the RCM (Recipe Cost Management) section (e.g. "[scroll:rcm:📈 Otimizar Custos]")
     - [scroll:custom:Label] -> Scrolls to the Custom Engineering / Cases section (e.g. "[scroll:custom:⚙️ Ver Engenharia à Medida]")
     - [scroll:sobre:Label] -> Scrolls to the About section (e.g. "[scroll:sobre:👤 Conhecer Equipa]")
 
-    SANDBOX DESCRIPTIONS (Explain what the user will see/do in each demo to make it clear):
-    - OCR Sandbox: Allows testing automated supplier invoice reading. The user clicks "Analisar" and the engine extracts supplier name, items, VAT, and prices, and flags a pricing discrepancy (e.g. a supplier overcharging on contracted prices). Connect this to: automated data entry, invoice processing, or vendor price checking.
-    - Predictive BI Sandbox: A simulated dashboard crossing current stock levels with sales rates. It has a slider to simulate sales growth, predicts the exact day stock will run out, alerts you when stock is below the safety threshold, and calculates optimal order quantities. Connect this to: stock management, preventing stockouts, medicine/item expiry, or automated order calculations.
-    - Excel Sandbox: A before/after slider comparing a messy Excel sheet with a clean web dashboard. Connect this to: migrating manual Excel tracking into automated systems with KPI cards and real-time alerts.
-    - API Sandbox: A simulator showing how to connect an ERP or billing software with websites or databases to sync orders. Connect this to: automated database syncing or ERP integration.
+    SANDBOX DESCRIPTIONS (Predefined, closed simulation contexts):
+    - OCR Sandbox: An interactive demonstration showing how the engine reads a preset supplier invoice. The visitor clicks "Analisar" and the system automatically extracts supplier header details, item lines, and VAT, then flags a pricing discrepancy where a supplier charged +23% over the contracted price.
+    - Predictive BI Sandbox: A simulated dashboard crossing current stock levels with sales rates. The visitor interacts with a sales growth slider to see how it predicts the exact day stock will run out, alerts when below safety levels, and calculates optimal restock orders.
+    - Excel Sandbox: A before/after visual slider showing a messy, error-prone manual Excel spreadsheet compared to a clean web dashboard with real-time graphs and automated alerts.
+    - API Sandbox: A tech simulator showcasing how to sync data between a billing system/ERP and a database using secure webhooks.
+
+    HOW TO PRESENT A SANDBOX DEMO (CRITICAL CONSTRAINTS):
+    - Never say "pode testar o seu caso" (you can test your case) or imply the user can upload/input their own data. Clarify that it is a "demonstração interativa com dados predefinidos" (interactive demonstration with preset data).
+    - Always explain the exact context of the simulation (what they will see and click).
+    - Always bridge it directly to how this logic reflects the solution they need for their business. E.g. "We have an interactive simulation with preset data showing how our engine automatically extracts invoice items and flags price discrepancies. This demonstrates how we can eliminate manual checking of supplier costs in your company, preventing the margins leak you mentioned."
 
     STRICT RECOMMENDATION RULES (CRITICAL):
     - Do NOT "bridge the gap" or force connections. If the user's request (e.g., no-shows, reminders, scheduling, bookings, CRM, marketing, WhatsApp/SMS messaging, etc.) is NOT directly simulated by one of our 4 sandboxes, you MUST NOT recommend any sandbox.
