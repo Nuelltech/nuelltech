@@ -273,6 +273,7 @@ export default function ApiSandbox({ pt = true }: { pt?: boolean }) {
       {/* Tab switcher */}
       <div className="flex bg-[#090D1A] border-b border-brand-border px-4 py-2 gap-2 flex-shrink-0 overflow-x-auto scrollbar-none">
         <button
+          data-analytics-id="sandbox_api_tab_erp"
           onClick={() => handleTabChange('erp')}
           className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition border ${
             activeApi === 'erp'
@@ -285,6 +286,7 @@ export default function ApiSandbox({ pt = true }: { pt?: boolean }) {
         </button>
 
         <button
+          data-analytics-id="sandbox_api_tab_graphql"
           onClick={() => handleTabChange('graphql')}
           className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition border ${
             activeApi === 'graphql'
@@ -297,6 +299,7 @@ export default function ApiSandbox({ pt = true }: { pt?: boolean }) {
         </button>
 
         <button
+          data-analytics-id="sandbox_api_tab_stripe"
           onClick={() => handleTabChange('stripe')}
           className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition border ${
             activeApi === 'stripe'
@@ -309,6 +312,7 @@ export default function ApiSandbox({ pt = true }: { pt?: boolean }) {
         </button>
 
         <button
+          data-analytics-id="sandbox_api_tab_mcp"
           onClick={() => handleTabChange('mcp')}
           className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition border ${
             activeApi === 'mcp'
@@ -321,6 +325,7 @@ export default function ApiSandbox({ pt = true }: { pt?: boolean }) {
         </button>
 
         <button
+          data-analytics-id="sandbox_api_tab_ai"
           onClick={() => handleTabChange('ai')}
           className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition border ${
             activeApi === 'ai'
@@ -400,6 +405,7 @@ export default function ApiSandbox({ pt = true }: { pt?: boolean }) {
             {/* Submit Action */}
             <div className="mt-4 pt-3 border-t border-brand-border/30">
               <button
+                data-analytics-id="sandbox_api_trigger"
                 onClick={handleTriggerApi}
                 disabled={isCalling}
                 className="w-full bg-brand-accent hover:bg-brand-accent-dark text-white font-bold py-3 px-6 rounded-xl text-xs transition duration-150 shadow-md shadow-brand-accent/20 flex items-center justify-center gap-2 uppercase tracking-wide disabled:opacity-50 cursor-pointer"

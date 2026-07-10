@@ -78,6 +78,7 @@ export default function SandboxHub({ isPt }: SandboxHubProps) {
           <div className="flex flex-nowrap md:flex-wrap bg-[#05070C]/85 border border-[#172033] rounded-xl p-1.5 gap-1.5 overflow-x-auto scrollbar-none pr-8 md:pr-1.5">
             
             <button
+              data-analytics-id="sandbox_tab_ocr"
               onClick={() => setActiveTab('ocr')}
               className={`flex-1 min-w-[140px] flex items-center justify-center gap-2.5 px-4 py-3.5 rounded-lg text-xs sm:text-sm font-mono font-bold transition duration-300 border cursor-pointer ${
                 activeTab === 'ocr'
@@ -90,6 +91,7 @@ export default function SandboxHub({ isPt }: SandboxHubProps) {
             </button>
 
             <button
+              data-analytics-id="sandbox_tab_bi"
               onClick={() => setActiveTab('bi')}
               className={`flex-1 min-w-[140px] flex items-center justify-center gap-2.5 px-4 py-3.5 rounded-lg text-xs sm:text-sm font-mono font-bold transition duration-300 border cursor-pointer ${
                 activeTab === 'bi'
@@ -102,6 +104,7 @@ export default function SandboxHub({ isPt }: SandboxHubProps) {
             </button>
 
             <button
+              data-analytics-id="sandbox_tab_excel"
               onClick={() => setActiveTab('excel')}
               className={`flex-1 min-w-[140px] flex items-center justify-center gap-2.5 px-4 py-3.5 rounded-lg text-xs sm:text-sm font-mono font-bold transition duration-300 border cursor-pointer ${
                 activeTab === 'excel'
@@ -114,6 +117,7 @@ export default function SandboxHub({ isPt }: SandboxHubProps) {
             </button>
 
             <button
+              data-analytics-id="sandbox_tab_api"
               onClick={() => setActiveTab('api')}
               className={`flex-1 min-w-[140px] flex items-center justify-center gap-2.5 px-4 py-3.5 rounded-lg text-xs sm:text-sm font-mono font-bold transition duration-300 border cursor-pointer ${
                 activeTab === 'api'

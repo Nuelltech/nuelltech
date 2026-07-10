@@ -180,6 +180,7 @@ export default function OcrSandbox({ pt = true }: { pt?: boolean }) {
           {scenarios.map((scen) => (
             <button
               key={scen.id}
+              data-analytics-id={`sandbox_ocr_scenario_${scen.id}`}
               onClick={() => {
                 setActiveScenario(scen);
                 setScanStatus('idle');

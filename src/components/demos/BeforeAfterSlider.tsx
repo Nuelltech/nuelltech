@@ -140,6 +140,7 @@ export default function BeforeAfterSlider({ pt = true }: BeforeAfterSliderProps)
           <div className="flex flex-wrap gap-2.5">
             {/* Action: Add Stock with pricing changes */}
             <button
+              data-analytics-id="sandbox_excel_simulate_in"
               onClick={handleAddStock}
               disabled={isProcessing}
               className="bg-gradient-to-r from-brand-card to-[#1C2333] hover:from-[#1C2333] hover:to-[#2A344A] border border-brand-border/80 text-brand-ink px-4 py-2.5 rounded-xl text-[10px] font-bold transition-all duration-350 shadow-md shadow-black/30 flex items-center justify-center gap-2 hover:scale-[1.03] active:scale-[0.97] cursor-pointer"
@@ -149,6 +150,7 @@ export default function BeforeAfterSlider({ pt = true }: BeforeAfterSliderProps)
 
             {/* Action: Sell Stock */}
             <button
+              data-analytics-id="sandbox_excel_simulate_out"
               onClick={handleSellStock}
               disabled={isProcessing}
               className="bg-gradient-to-r from-brand-card to-[#1C2333] hover:from-[#1C2333] hover:to-[#2A344A] border border-brand-border/80 text-brand-ink px-4 py-2.5 rounded-xl text-[10px] font-bold transition-all duration-350 shadow-md shadow-black/30 flex items-center justify-center gap-2 hover:scale-[1.03] active:scale-[0.97] cursor-pointer"
@@ -158,6 +160,7 @@ export default function BeforeAfterSlider({ pt = true }: BeforeAfterSliderProps)
 
             {/* Reset button */}
             <button
+              data-analytics-id="sandbox_excel_reset"
               onClick={resetSimulation}
               disabled={isProcessing}
               className="border border-brand-border/80 text-brand-ink-dim hover:text-brand-ink p-2.5 rounded-xl text-[10px] transition-all duration-350 shadow-md hover:scale-105 active:scale-95 cursor-pointer"
@@ -199,6 +202,7 @@ export default function BeforeAfterSlider({ pt = true }: BeforeAfterSliderProps)
       {/* Workstations Segmented Control (Mobile only) */}
       <div className="md:hidden flex bg-[#05070C]/85 border border-[#172033] rounded-xl p-1.5 gap-1.5 w-full mt-2">
         <button
+          data-analytics-id="sandbox_excel_tab_excel"
           onClick={() => setViewTab('excel')}
           className={`flex-1 text-center py-2.5 rounded-lg text-xs font-mono font-bold transition cursor-pointer ${
             viewTab === 'excel'
@@ -209,6 +213,7 @@ export default function BeforeAfterSlider({ pt = true }: BeforeAfterSliderProps)
           ❌ {pt ? 'Excel Antigo' : 'Legacy Excel'}
         </button>
         <button
+          data-analytics-id="sandbox_excel_tab_dashboard"
           onClick={() => setViewTab('dashboard')}
           className={`flex-1 text-center py-2.5 rounded-lg text-xs font-mono font-bold transition cursor-pointer ${
             viewTab === 'dashboard'
@@ -399,6 +404,7 @@ export default function BeforeAfterSlider({ pt = true }: BeforeAfterSliderProps)
                   </div>
                   {isBarStockLow && (
                     <button 
+                      data-analytics-id="sandbox_excel_confirm_reorder"
                       onClick={confirmReorder}
                       className="bg-brand-risk hover:bg-brand-risk/80 text-white font-bold px-1.5 py-0.5 rounded text-[7px] uppercase transition mt-2 w-full cursor-pointer shadow"
                     >
@@ -427,6 +433,7 @@ export default function BeforeAfterSlider({ pt = true }: BeforeAfterSliderProps)
                   
                   {suggestedPvp && (
                     <button 
+                      data-analytics-id="sandbox_excel_adjust_pvp"
                       onClick={adjustPvp}
                       className="bg-brand-accent hover:bg-brand-accent-dark text-[#04060C] font-bold px-1.5 py-0.5 rounded text-[7px] uppercase transition mt-2 w-full shadow cursor-pointer"
                     >

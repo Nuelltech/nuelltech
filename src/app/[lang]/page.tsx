@@ -197,6 +197,7 @@ export default async function Page({
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center w-full sm:w-auto">
               <a
                 href="#demos"
+                data-analytics-id="hero_cta_explore_sandboxes"
                 className="w-full sm:w-auto bg-brand-accent hover:bg-brand-accent-dark text-[#04060C] font-bold py-3.5 px-8 rounded-xl text-xs transition duration-150 shadow-lg shadow-brand-accent/20 flex items-center justify-center gap-2"
               >
                 {isPt ? 'Explorar Sandboxes' : 'Explore Sandboxes'}
@@ -204,6 +205,7 @@ export default async function Page({
               </a>
               <a
                 href="https://calendly.com/nuelltech/30min"
+                data-analytics-id="hero_cta_book_demo"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full sm:w-auto border border-brand-accent/60 hover:border-brand-accent hover:bg-brand-accent/5 text-brand-accent-soft font-bold py-3.5 px-8 rounded-xl text-xs transition duration-150 flex items-center justify-center"
@@ -630,6 +632,7 @@ export default async function Page({
               <div className="w-max">
                 <a
                   href="https://calendly.com/nuelltech/30min"
+                  data-analytics-id="middle_cta_book_demo"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="bg-brand-accent hover:bg-brand-accent-dark text-white font-bold py-3 px-8 rounded-xl text-xs transition flex items-center gap-2 shadow-md shadow-brand-accent/15"
@@ -913,6 +916,7 @@ export default async function Page({
 
           <a
             href="https://calendly.com/nuelltech/30min"
+            data-analytics-id="bottom_cta_book_demo"
             target="_blank"
             rel="noopener noreferrer"
             className="bg-brand-accent hover:bg-brand-accent-dark text-white font-bold py-3.5 px-10 rounded-xl text-xs transition duration-150 shadow-lg shadow-brand-accent/20 flex items-center gap-2 uppercase tracking-wide"

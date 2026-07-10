@@ -180,6 +180,7 @@ export default function BiReconciliation({ pt = true }: { pt?: boolean }) {
       {/* Upper Grid Segmented Control (Mobile only) */}
       <div className="md:hidden flex bg-[#05070C]/85 border border-[#172033] rounded-xl p-1 gap-1 w-full mb-2">
         <button
+          data-analytics-id="sandbox_bi_table_stock"
           onClick={() => setTableTab('stock')}
           className={`flex-1 text-center py-2 rounded-lg text-[10px] font-mono font-bold transition cursor-pointer ${
             tableTab === 'stock'
@@ -190,6 +191,7 @@ export default function BiReconciliation({ pt = true }: { pt?: boolean }) {
           📦 {pt ? 'Stock Físico' : 'Physical Stock'}
         </button>
         <button
+          data-analytics-id="sandbox_bi_table_sales"
           onClick={() => setTableTab('sales')}
           className={`flex-1 text-center py-2 rounded-lg text-[10px] font-mono font-bold transition cursor-pointer ${
             tableTab === 'sales'
@@ -284,6 +286,7 @@ export default function BiReconciliation({ pt = true }: { pt?: boolean }) {
       {/* Lower Grid Segmented Control (Mobile only) */}
       <div className="lg:hidden flex bg-[#05070C]/85 border border-[#172033] rounded-xl p-1 gap-1 w-full mt-4">
         <button
+          data-analytics-id="sandbox_bi_tool_reconciler"
           onClick={() => setToolTab('reconciler')}
           className={`flex-1 text-center py-2.5 rounded-lg text-xs font-mono font-bold transition cursor-pointer ${
             toolTab === 'reconciler'
@@ -294,6 +297,7 @@ export default function BiReconciliation({ pt = true }: { pt?: boolean }) {
           🔄 {pt ? 'Reconciliador' : 'Reconciler'}
         </button>
         <button
+          data-analytics-id="sandbox_bi_tool_chat"
           onClick={() => setToolTab('chat')}
           className={`flex-1 text-center py-2.5 rounded-lg text-xs font-mono font-bold transition cursor-pointer ${
             toolTab === 'chat'
@@ -324,6 +328,7 @@ export default function BiReconciliation({ pt = true }: { pt?: boolean }) {
                     : 'Start automated reconciliation to cross-check stock expiry against sales speed and detect margin losses.'}
                 </p>
                 <button
+                  data-analytics-id="sandbox_bi_start_reconciliation"
                   onClick={startReconciliation}
                   className="flex items-center gap-2 bg-brand-accent hover:bg-brand-accent-dark text-white font-bold py-3 px-6 rounded-xl text-xs transition duration-200 shadow-md shadow-brand-accent/20 uppercase tracking-wide"
                 >
@@ -357,6 +362,7 @@ export default function BiReconciliation({ pt = true }: { pt?: boolean }) {
                       {pt ? 'ALERTAS PREDITIVOS GERADOS' : 'PREDICTIVE ALERTS GENERATED'}
                     </h5>
                     <button
+                      data-analytics-id="sandbox_bi_recalculate"
                       onClick={startReconciliation}
                       className="flex items-center gap-1.5 text-[9px] font-mono text-brand-accent-soft hover:underline font-bold"
                     >
@@ -463,18 +469,21 @@ export default function BiReconciliation({ pt = true }: { pt?: boolean }) {
             </span>
             <div className="flex flex-col gap-1.5">
               <button 
+                data-analytics-id="sandbox_bi_prompt_risk"
                 onClick={() => handleSendPrompt(pt ? 'Qual o maior risco financeiro?' : 'What is the highest financial risk?')}
                 className="w-full text-left bg-brand-card hover:bg-brand-border/30 border border-brand-border/40 text-brand-ink rounded px-2.5 py-1.5 text-[9px] transition font-medium"
               >
                 💬 {pt ? 'Qual o maior risco financeiro no stock?' : 'What is the highest financial risk in stock?'}
               </button>
               <button 
+                data-analytics-id="sandbox_bi_prompt_campaign"
                 onClick={() => handleSendPrompt(pt ? 'Sugerir campanha para L-Carnitina' : 'Suggest campaign for L-Carnitine')}
                 className="w-full text-left bg-brand-card hover:bg-brand-border/30 border border-brand-border/40 text-brand-ink rounded px-2.5 py-1.5 text-[9px] transition font-medium"
               >
                 💬 {pt ? 'Sugerir campanha para a L-Carnitina' : 'Suggest campaign for L-Carnitine'}
               </button>
               <button 
+                data-analytics-id="sandbox_bi_prompt_revenue"
                 onClick={() => handleSendPrompt(pt ? 'Qual a faturação em risco total?' : 'What is the total revenue at risk?')}
                 className="w-full text-left bg-brand-card hover:bg-brand-border/30 border border-brand-border/40 text-brand-ink rounded px-2.5 py-1.5 text-[9px] transition font-medium"
               >
