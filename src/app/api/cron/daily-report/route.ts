@@ -182,8 +182,8 @@ ${reportData}
       const maxAttempts = 3;
       let delayMs = 1500;
       
-      // Fallback model list: if Flash is overloaded, try the smarter Pro model
-      const modelsToTry = ['gemini-flash-latest', 'gemini-pro-latest'];
+      // Fallback model list: only Flash models (Pro has a quota limit of 0 on the Google free tier)
+      const modelsToTry = ['gemini-flash-latest', 'gemini-3.5-flash'];
       let modelIndex = 0;
 
       while (modelIndex < modelsToTry.length && attempts < maxAttempts) {
