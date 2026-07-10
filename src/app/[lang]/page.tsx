@@ -461,7 +461,7 @@ export default async function Page({
       </section>
 
       {/* PATHWAY TO EFFICIENCY (IMPLEMENTATION METHOD) */}
-      <section className="py-20 px-6 bg-[#04060C] border-y border-brand-border/40 relative">
+      <section id="pathway" className="py-20 px-6 bg-[#04060C] border-y border-brand-border/40 relative">
         <ScrollReveal className="max-w-5xl mx-auto">
           <div className="text-center mb-16 max-w-2xl mx-auto">
             <div className="text-[10px] font-mono text-brand-accent-soft uppercase tracking-wider mb-3">

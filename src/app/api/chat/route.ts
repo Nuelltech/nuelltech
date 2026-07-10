@@ -48,14 +48,37 @@ function getRelevantKnowledgeFiles(message: string): string[] {
   return files;
 }
 
+import { supabase } from '../../../lib/supabase';
+
+async function saveChatLog(sessionId: string | undefined, role: 'user' | 'nuell', text: string) {
+  if (!sessionId) return;
+  if (!supabase) {
+    console.log(`[Store Chat Log Simulation] Session: ${sessionId} | Role: ${role} | Message: ${text}`);
+    return;
+  }
+  try {
+    await supabase.from('chat_logs').insert({
+      session_id: sessionId,
+      role,
+      message_text: text,
+    });
+  } catch (err) {
+    console.error('Failed to log chat message to Supabase:', err);
+  }
+}
+
 export async function POST(request: Request) {
   try {
-    const { message, turn, lang, leadInfo } = await (request.json() as Promise<{
+    const { message, turn, lang, leadInfo, sessionId } = await (request.json() as Promise<{
       message: string;
       turn: number;
       lang: 'pt' | 'en';
       leadInfo: { sector: string; challenge: string; name: string; contact: string };
+      sessionId?: string;
     }>);
+
+    // Log user query to database
+    await saveChatLog(sessionId, 'user', message);
 
     const apiKey = process.env.ANTHROPIC_API_KEY;
     const pt = lang === 'pt';
@@ -132,6 +155,7 @@ export async function POST(request: Request) {
           : `You can access our calendar to book your Free Diagnosis here:\n\n🔗 [Calendly Nuelltech - Free Diagnosis](https://calendly.com/nuelltech/30min)`;
       }
 
+      await saveChatLog(sessionId, 'nuell', reply);
       return NextResponse.json({ reply, leadInfo: updatedInfo });
     }
 
@@ -274,6 +298,7 @@ export async function POST(request: Request) {
       }
     }
 
+    await saveChatLog(sessionId, 'nuell', reply);
     return NextResponse.json({ reply, leadInfo: updatedInfo });
   } catch (error: unknown) {
     console.error('Error in chat API:', error);

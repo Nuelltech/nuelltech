@@ -41,6 +41,8 @@ export async function generateMetadata({
   };
 }
 
+import StoreTracker from '../../components/analytics/StoreTracker';
+
 export default async function RootLayout({
   children,
   params,
@@ -70,6 +72,7 @@ export default async function RootLayout({
         />
       </head>
       <body className="bg-brand-bg text-brand-ink min-h-screen flex flex-col font-sans antialiased" suppressHydrationWarning>
+        <StoreTracker />
         <noscript>
           <iframe
             src="https://www.googletagmanager.com/ns.html?id=GTM-KWTW9LGP"

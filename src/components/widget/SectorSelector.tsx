@@ -57,6 +57,21 @@ export default function SectorSelector({ isPt }: SectorSelectorProps) {
     const name = sectorName.trim();
     setIsCustomizing(true);
 
+    // Track the selected sector in the database session
+    try {
+      const sessionId = localStorage.getItem('nuell_session_id');
+      if (sessionId) {
+        fetch('/api/analytics', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sessionId, type: 'sector', sector: name }),
+          keepalive: true,
+        }).catch(() => {});
+      }
+    } catch (err) {
+      console.warn('Analytics sector tracking failed:', err);
+    }
+
     try {
       const response = await fetch('/api/chat-customize', {
         method: 'POST',

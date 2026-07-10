@@ -394,6 +394,7 @@ In which processes of ${sector} would you like to introduce AI? Which routine ta
           turn: currentTurn,
           lang,
           leadInfo: currentLeadInfo,
+          sessionId: localStorage.getItem('nuell_session_id') || '',
         }),
       });
 

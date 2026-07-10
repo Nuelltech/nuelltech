@@ -201,6 +201,7 @@ export default function OcrSandbox({ pt = true }: { pt?: boolean }) {
           <button
             onClick={startScan}
             disabled={scanStatus === 'scanning'}
+            data-analytics-id="sandbox_ocr_scan"
             className="mt-6 flex items-center justify-center gap-2 bg-brand-accent hover:bg-brand-accent-dark text-white font-semibold py-2.5 px-4 rounded-lg text-xs transition duration-200 shadow-lg disabled:opacity-50"
           >
             {scanStatus === 'scanning' ? (
