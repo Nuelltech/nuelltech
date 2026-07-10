@@ -183,7 +183,7 @@ ${reportData}
       let delayMs = 1500;
       
       // Fallback model list: if Flash is overloaded, try the smarter Pro model
-      const modelsToTry = ['gemini-flash-latest', 'gemini-1.5-pro'];
+      const modelsToTry = ['gemini-flash-latest', 'gemini-pro-latest'];
       let modelIndex = 0;
 
       while (modelIndex < modelsToTry.length && attempts < maxAttempts) {
