@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '../../../../lib/supabase';
 import { Resend } from 'resend';
+import Anthropic from '@anthropic-ai/sdk';
 
 interface SessionRow {
   session_id: string;
@@ -238,36 +239,28 @@ ${reportData}
     if (!aiSuccess && anthropicApiKey) {
       console.log('Gemini failed or was not configured. Trying Anthropic Claude fallback...');
       try {
-        const response = await fetch('https://api.anthropic.com/v1/messages', {
-          method: 'POST',
-          headers: {
-            'x-api-key': anthropicApiKey,
-            'anthropic-version': '2023-06-01',
-            'content-type': 'application/json',
-          },
-          body: JSON.stringify({
-            model: 'claude-3-5-haiku-latest',
-            max_tokens: 1500,
-            messages: [
-              {
-                role: 'user',
-                content: reportPrompt
-              }
-            ]
-          })
+        const anthropic = new Anthropic({ apiKey: anthropicApiKey });
+        const response = await anthropic.messages.create({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 1500,
+          messages: [
+            {
+              role: 'user',
+              content: reportPrompt
+            }
+          ]
         });
 
-        if (response.ok) {
-          const resJson = await response.json();
-          finalNarrative = resJson.content?.[0]?.text || 'Falha ao compilar narrativa do Claude.';
+        const textReply = response.content[0].type === 'text' ? response.content[0].text : '';
+        if (textReply) {
+          finalNarrative = textReply;
           aiSuccess = true;
         } else {
-          const errText = await response.text();
-          console.error('Anthropic API failed:', errText);
-          finalNarrative = `Falha ao conectar com o Claude: ${errText}`;
+          console.error('Anthropic API returned empty content');
+          finalNarrative = 'Falha ao obter texto da resposta do Claude.';
         }
       } catch (err) {
-        console.error('Anthropic fetch error:', err);
+        console.error('Anthropic SDK client error:', err);
         finalNarrative = `Erro de ligação ao Claude: ${(err as Error).message}`;
       }
     }
