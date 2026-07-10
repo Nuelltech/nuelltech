@@ -222,6 +222,7 @@ export default function ApiSandbox({ pt = true }: { pt?: boolean }) {
   const [isCalling, setIsCalling] = useState(false);
   const [showResponse, setShowResponse] = useState(false);
   const [logs, setLogs] = useState<string[]>([]);
+  const [apiMobileTab, setApiMobileTab] = useState<'request' | 'response'>('request');
   const [editablePayload, setEditablePayload] = useState<string>(() =>
     JSON.stringify(apiScenarios.erp.requestPayload, null, 2)
   );
@@ -242,6 +243,7 @@ export default function ApiSandbox({ pt = true }: { pt?: boolean }) {
     setIsCalling(true);
     setShowResponse(false);
     setLogs([]);
+    setApiMobileTab('response');
 
     const timeline = pt ? apiScenarios[activeApi].ptTimeline : apiScenarios[activeApi].enTimeline;
     let logIndex = 0;
@@ -332,7 +334,7 @@ export default function ApiSandbox({ pt = true }: { pt?: boolean }) {
       </div>
 
       {/* Workspace Body */}
-      <div className="p-6 flex flex-col gap-6 bg-[#04060C] text-left">
+      <div className="p-4 md:p-6 flex flex-col gap-4 md:gap-6 bg-[#04060C] text-left">
         {/* Top Desc */}
         <div className="border-b border-brand-border/40 pb-4">
           <p className="text-xs text-brand-ink leading-relaxed">
@@ -341,10 +343,35 @@ export default function ApiSandbox({ pt = true }: { pt?: boolean }) {
           </p>
         </div>
 
+        {/* Mobile Segmented Control */}
+        <div className="lg:hidden flex bg-[#05070C]/85 border border-[#172033] rounded-xl p-1 gap-1 w-full mb-2">
+          <button
+            onClick={() => setApiMobileTab('request')}
+            className={`flex-1 text-center py-2.5 rounded-lg text-xs font-mono font-bold transition cursor-pointer ${
+              apiMobileTab === 'request'
+                ? 'bg-brand-accent/15 border border-brand-accent/40 text-brand-accent-soft'
+                : 'bg-transparent border-transparent text-brand-ink-dim hover:text-brand-ink'
+            }`}
+          >
+            📥 Request
+          </button>
+          <button
+            onClick={() => setApiMobileTab('response')}
+            className={`flex-1 text-center py-2.5 rounded-lg text-xs font-mono font-bold transition cursor-pointer ${
+              apiMobileTab === 'response'
+                ? 'bg-brand-accent/15 border border-brand-accent/40 text-brand-accent-soft'
+                : 'bg-transparent border-transparent text-brand-ink-dim hover:text-brand-ink'
+            }`}
+          >
+            💻 Response
+          </button>
+        </div>
+
         {/* Interactive Split Workstation */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 items-stretch">
+          
           {/* Left Column: Request Builder */}
-          <div className="bg-[#05070D] border border-brand-border/60 rounded-xl p-4 flex flex-col justify-between overflow-hidden shadow-inner">
+          <div className={`bg-[#05070D] border border-brand-border/60 rounded-xl p-4 flex flex-col justify-between overflow-hidden shadow-inner ${apiMobileTab === 'request' ? 'flex' : 'hidden lg:flex'}`}>
             <div className="flex flex-col gap-3 flex-1">
               <div className="flex justify-between items-center text-[10px] font-mono font-bold text-brand-ink-dim uppercase">
                 <span>{pt ? 'CONSTRUIR PEDIDO HTTP' : 'CONSTRUCT HTTP REQUEST'}</span>
@@ -365,7 +392,7 @@ export default function ApiSandbox({ pt = true }: { pt?: boolean }) {
                 <textarea
                   value={editablePayload}
                   onChange={e => setEditablePayload(e.target.value)}
-                  className="flex-1 w-full bg-[#0A0D1A] border border-brand-border rounded-lg p-3 text-[10.5px] font-mono text-brand-ink focus:outline-none focus:border-brand-accent focus:ring-1 focus:ring-brand-accent resize-none overflow-y-auto"
+                  className="flex-1 w-full bg-[#0A0D1A] border border-brand-border rounded-lg p-3 text-[10px] sm:text-[10.5px] font-mono text-brand-ink focus:outline-none focus:border-brand-accent focus:ring-1 focus:ring-brand-accent resize-none overflow-y-auto"
                 />
               </div>
             </div>
@@ -393,7 +420,7 @@ export default function ApiSandbox({ pt = true }: { pt?: boolean }) {
           </div>
 
           {/* Right Column: Console & Response Inspector */}
-          <div className="bg-[#05070D] border border-brand-border/60 rounded-xl p-4 flex flex-col justify-between overflow-hidden shadow-inner">
+          <div className={`bg-[#05070D] border border-brand-border/60 rounded-xl p-4 flex flex-col justify-between overflow-hidden shadow-inner ${apiMobileTab === 'response' ? 'flex' : 'hidden lg:flex'}`}>
             <div className="flex flex-col gap-4 h-full">
               <div className="flex justify-between items-center text-[10px] font-mono font-bold text-brand-ink-dim uppercase border-b border-brand-border/30 pb-2 flex-shrink-0">
                 <div className="flex items-center gap-1.5">
@@ -445,7 +472,7 @@ export default function ApiSandbox({ pt = true }: { pt?: boolean }) {
                 <label className="text-[9px] font-mono text-brand-ink-dim uppercase block mb-1.5 font-bold">
                   {pt ? 'Response Body (JSON Recebido):' : 'Response Body (JSON Output):'}
                 </label>
-                <div className="flex-1 bg-[#0A0D1A] border border-brand-border rounded-lg p-3 overflow-y-auto text-[10.5px] font-mono text-brand-ink select-all whitespace-pre">
+                <div className="flex-1 bg-[#0A0D1A] border border-brand-border rounded-lg p-3 overflow-auto text-[9.5px] sm:text-[10px] font-mono text-brand-ink select-all whitespace-pre scrollbar-thin">
                   {showResponse ? (
                     JSON.stringify(currentScenario.responsePayload, null, 2)
                   ) : (

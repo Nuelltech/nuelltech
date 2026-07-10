@@ -18,12 +18,13 @@ import ApiSandbox from './ApiSandbox';
 
 interface SandboxHubProps {
   isPt: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   dict: any;
 }
 
 type TabType = 'ocr' | 'bi' | 'excel' | 'api';
 
-export default function SandboxHub({ isPt, dict }: SandboxHubProps) {
+export default function SandboxHub({ isPt }: SandboxHubProps) {
   const [activeTab, setActiveTab] = useState<TabType>('ocr');
   
   // Custom states for each tab's detailed texts collapse
@@ -57,64 +58,76 @@ export default function SandboxHub({ isPt, dict }: SandboxHubProps) {
   }, []);
 
   return (
-    <div id="demos-container" className="relative w-full bg-[#080B14]/95 border border-[#1E293B] rounded-[2rem] p-6 md:p-8 shadow-[0_0_60px_rgba(99,102,241,0.12)] glass text-left overflow-hidden">
+    <div id="demos-container" className="relative w-full bg-[#080B14]/95 border border-[#1E293B] rounded-2xl md:rounded-[2rem] p-4 md:p-8 shadow-[0_0_60px_rgba(99,102,241,0.12)] glass text-left overflow-hidden">
       {/* Glowing backdrop halos inside the frame */}
       <div className="absolute -top-48 -right-48 w-[400px] h-[400px] bg-brand-accent/15 rounded-full blur-[130px] pointer-events-none" />
       <div className="absolute -bottom-48 -left-48 w-[400px] h-[400px] bg-purple-500/10 rounded-full blur-[130px] pointer-events-none" />
       
-      <div className="relative z-10 flex flex-col gap-8">
+      <div className="relative z-10 flex flex-col gap-6 md:gap-8">
         
-        {/* 1. Tab Selector Bar - Premium GitHub style */}
-        <div className="flex flex-wrap bg-[#05070C]/85 border border-[#172033] rounded-xl p-1.5 gap-1.5 relative z-20 overflow-x-auto scrollbar-none">
-          
-          <button
-            onClick={() => setActiveTab('ocr')}
-            className={`flex-1 min-w-[140px] flex items-center justify-center gap-2.5 px-4 py-3.5 rounded-lg text-xs sm:text-sm font-mono font-bold transition duration-300 border cursor-pointer ${
-              activeTab === 'ocr'
-                ? 'bg-brand-accent/15 border-brand-accent text-brand-accent-soft shadow-[0_0_12px_rgba(59,130,246,0.15)]'
-                : 'bg-transparent border-transparent text-brand-ink-dim hover:text-brand-ink hover:bg-brand-border/20'
-            }`}
-          >
-            <FileText className="w-4 h-4 flex-shrink-0" />
-            <span>{isPt ? 'OCR & Auditoria' : 'OCR & Audit'}</span>
-          </button>
+        {/* Mobile swipe helper (Option C) */}
+        <div className="md:hidden flex items-center justify-between text-[9px] font-mono text-brand-ink-dim uppercase tracking-wider mb-0.5 px-1 select-none">
+          <span>{isPt ? 'Demonstrações Disponíveis' : 'Available Demos'}</span>
+          <span className="flex items-center gap-1 text-brand-accent-soft animate-pulse">
+            {isPt ? 'Deslizar' : 'Swipe'} ➔
+          </span>
+        </div>
 
-          <button
-            onClick={() => setActiveTab('bi')}
-            className={`flex-1 min-w-[140px] flex items-center justify-center gap-2.5 px-4 py-3.5 rounded-lg text-xs sm:text-sm font-mono font-bold transition duration-300 border cursor-pointer ${
-              activeTab === 'bi'
-                ? 'bg-brand-accent/15 border-brand-accent text-brand-accent-soft shadow-[0_0_12px_rgba(59,130,246,0.15)]'
-                : 'bg-transparent border-transparent text-brand-ink-dim hover:text-brand-ink hover:bg-brand-border/20'
-            }`}
-          >
-            <Database className="w-4 h-4 flex-shrink-0" />
-            <span>{isPt ? 'Stock Preditivo' : 'Predictive Stock'}</span>
-          </button>
+        {/* 1. Tab Selector Bar - Premium GitHub style with right fade mask on mobile */}
+        <div className="relative w-full z-20">
+          <div className="flex flex-nowrap md:flex-wrap bg-[#05070C]/85 border border-[#172033] rounded-xl p-1.5 gap-1.5 overflow-x-auto scrollbar-none pr-8 md:pr-1.5">
+            
+            <button
+              onClick={() => setActiveTab('ocr')}
+              className={`flex-1 min-w-[140px] flex items-center justify-center gap-2.5 px-4 py-3.5 rounded-lg text-xs sm:text-sm font-mono font-bold transition duration-300 border cursor-pointer ${
+                activeTab === 'ocr'
+                  ? 'bg-brand-accent/15 border-brand-accent text-brand-accent-soft shadow-[0_0_12px_rgba(59,130,246,0.15)]'
+                  : 'bg-transparent border-transparent text-brand-ink-dim hover:text-brand-ink hover:bg-brand-border/20'
+              }`}
+            >
+              <FileText className="w-4 h-4 flex-shrink-0" />
+              <span>{isPt ? 'OCR & Auditoria' : 'OCR & Audit'}</span>
+            </button>
 
-          <button
-            onClick={() => setActiveTab('excel')}
-            className={`flex-1 min-w-[140px] flex items-center justify-center gap-2.5 px-4 py-3.5 rounded-lg text-xs sm:text-sm font-mono font-bold transition duration-300 border cursor-pointer ${
-              activeTab === 'excel'
-                ? 'bg-brand-accent/15 border-brand-accent text-brand-accent-soft shadow-[0_0_12px_rgba(59,130,246,0.15)]'
-                : 'bg-transparent border-transparent text-brand-ink-dim hover:text-brand-ink hover:bg-brand-border/20'
-            }`}
-          >
-            <FileSpreadsheet className="w-4 h-4 flex-shrink-0" />
-            <span>{isPt ? 'Modernizar Excel' : 'Modernize Excel'}</span>
-          </button>
+            <button
+              onClick={() => setActiveTab('bi')}
+              className={`flex-1 min-w-[140px] flex items-center justify-center gap-2.5 px-4 py-3.5 rounded-lg text-xs sm:text-sm font-mono font-bold transition duration-300 border cursor-pointer ${
+                activeTab === 'bi'
+                  ? 'bg-brand-accent/15 border-brand-accent text-brand-accent-soft shadow-[0_0_12px_rgba(59,130,246,0.15)]'
+                  : 'bg-transparent border-transparent text-brand-ink-dim hover:text-brand-ink hover:bg-brand-border/20'
+              }`}
+            >
+              <Database className="w-4 h-4 flex-shrink-0" />
+              <span>{isPt ? 'Stock Preditivo' : 'Predictive Stock'}</span>
+            </button>
 
-          <button
-            onClick={() => setActiveTab('api')}
-            className={`flex-1 min-w-[140px] flex items-center justify-center gap-2.5 px-4 py-3.5 rounded-lg text-xs sm:text-sm font-mono font-bold transition duration-300 border cursor-pointer ${
-              activeTab === 'api'
-                ? 'bg-brand-accent/15 border-brand-accent text-brand-accent-soft shadow-[0_0_12px_rgba(59,130,246,0.15)]'
-                : 'bg-transparent border-transparent text-brand-ink-dim hover:text-brand-ink hover:bg-brand-border/20'
-            }`}
-          >
-            <Code className="w-4 h-4 flex-shrink-0" />
-            <span>{isPt ? 'Integração API' : 'API Integration'}</span>
-          </button>
+            <button
+              onClick={() => setActiveTab('excel')}
+              className={`flex-1 min-w-[140px] flex items-center justify-center gap-2.5 px-4 py-3.5 rounded-lg text-xs sm:text-sm font-mono font-bold transition duration-300 border cursor-pointer ${
+                activeTab === 'excel'
+                  ? 'bg-brand-accent/15 border-brand-accent text-brand-accent-soft shadow-[0_0_12px_rgba(59,130,246,0.15)]'
+                  : 'bg-transparent border-transparent text-brand-ink-dim hover:text-brand-ink hover:bg-brand-border/20'
+              }`}
+            >
+              <FileSpreadsheet className="w-4 h-4 flex-shrink-0" />
+              <span>{isPt ? 'Modernizar Excel' : 'Modernize Excel'}</span>
+            </button>
 
+            <button
+              onClick={() => setActiveTab('api')}
+              className={`flex-1 min-w-[140px] flex items-center justify-center gap-2.5 px-4 py-3.5 rounded-lg text-xs sm:text-sm font-mono font-bold transition duration-300 border cursor-pointer ${
+                activeTab === 'api'
+                  ? 'bg-brand-accent/15 border-brand-accent text-brand-accent-soft shadow-[0_0_12px_rgba(59,130,246,0.15)]'
+                  : 'bg-transparent border-transparent text-brand-ink-dim hover:text-brand-ink hover:bg-brand-border/20'
+              }`}
+            >
+              <Code className="w-4 h-4 flex-shrink-0" />
+              <span>{isPt ? 'Integração API' : 'API Integration'}</span>
+            </button>
+
+          </div>
+          {/* Fade Overlay mask (Option A) */}
+          <div className="md:hidden absolute top-0 right-0 h-full w-10 bg-gradient-to-l from-[#080B14] via-[#080B14]/80 to-transparent pointer-events-none z-30 rounded-r-xl" />
         </div>
 
         {/* 2. SEO/GEO Hybrid Explanatory Panel (Positioned BEFORE Sandbox) */}
@@ -306,7 +319,7 @@ export default function SandboxHub({ isPt, dict }: SandboxHubProps) {
                     </>
                   ) : (
                     <>
-                      Modernization converts the chaos of isolated spreadsheets (like Excel) into a centralized, collaborative operational dashboard. The simulation demonstrates the contrast between manual stock updates (multi-user write conflicts, '#VALUE!' formula errors, and lack of margin visibility) and dashboard automation (instant margin recalculations, low stock alerts, and automated price suggests).
+                      Modernization converts the chaos of isolated spreadsheets (like Excel) into a centralized, collaborative operational dashboard. The simulation demonstrates the contrast between manual stock updates (multi-user write conflicts, &apos;#VALUE!&apos; formula errors, and lack of margin visibility) and dashboard automation (instant margin recalculations, low stock alerts, and automated price suggests).
                       <span className="block mt-2 font-medium text-brand-ink">
                         The same dashboard engine that consolidates restaurant billing and inventory works for clinics, corporate gyms, accounting offices, or local retailers aiming to eliminate manual sheets.
                       </span>

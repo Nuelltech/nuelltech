@@ -15,7 +15,7 @@ interface Message {
 // Default section messages moved outside component to avoid dependency changes
 const defaultMessages: Record<string, Record<string, string>> = {
   pt: {
-    hero: 'Tem uma dúvida sobre o seu negócio? Pergunte agora.',
+    hero: 'Como é que a Inteligência Artificial pode impulsionar o seu negócio?',
     problem: 'Identifica-se com estas perdas de margem e stock? Posso ajudar a quantificar o seu caso.',
     ocr: 'Viu como lemos uma fatura? Pergunte-me sobre o seu processo de faturação.',
     bi: 'Reconciliamos stock físico com vendas para prever perdas. Quer ver aplicado ao seu caso?',
@@ -27,7 +27,7 @@ const defaultMessages: Record<string, Record<string, string>> = {
     faq: 'Ainda com dúvidas sobre custos, prazos ou o ChatGPT? Pergunte-me diretamente!',
   },
   en: {
-    hero: 'Have a question about your business? Ask now.',
+    hero: 'How can Artificial Intelligence boost your business?',
     problem: 'Do you recognize these margin and stock leaks? I can help quantify your case.',
     ocr: 'Saw how we read an invoice? Ask me about your billing process.',
     bi: 'We reconcile stock with sales to predict loss. Want to see it applied to your case?',
@@ -376,7 +376,7 @@ In which processes of ${sector} would you like to introduce AI? Which routine ta
 
     // Extract contact details locally to avoid lag or state mismatch
     const contactInfo = extractContact(userText);
-    let currentLeadInfo = { ...leadInfo };
+    const currentLeadInfo = { ...leadInfo };
     if (contactInfo) {
       currentLeadInfo.name = contactInfo.name;
       currentLeadInfo.contact = contactInfo.contact;
@@ -499,38 +499,38 @@ How would you like to proceed?
       {!isOpen && bubbleText && (
         <div
           onClick={openChat}
-          className={`bg-brand-card/90 border border-brand-border/70 rounded-2xl px-4 py-3 shadow-2xl backdrop-blur-md cursor-pointer max-w-[240px] text-xs leading-relaxed transition-all duration-350 transform hover:scale-[1.02] ${
+          className={`bg-white/80 border border-white/20 rounded-2xl px-4 py-3 shadow-2xl backdrop-blur-md cursor-pointer max-w-[240px] text-xs leading-relaxed transition-all duration-350 transform hover:scale-[1.02] ${
             isFading ? 'opacity-0 scale-95' : 'opacity-100 scale-100'
           }`}
         >
-          <span className="block text-[8px] font-mono text-brand-accent-soft uppercase tracking-wider mb-1 font-semibold">
+          <span className="block text-[8px] font-mono text-blue-600 uppercase tracking-wider mb-1 font-bold">
             NUELL · assistant
           </span>
-          <p className="text-brand-ink font-medium">{bubbleText}</p>
+          <p className="text-gray-700 font-medium">{bubbleText}</p>
         </div>
       )}
 
       {/* 2. CHAT PANEL (Expandable UI) */}
       {isOpen ? (
-        <div className="w-full sm:w-[380px] h-[500px] max-h-[calc(100vh-6rem)] bg-brand-card/90 border border-brand-border/70 rounded-3xl shadow-[0_25px_60px_rgba(0,0,0,0.85)] overflow-hidden flex flex-col justify-between glass animate-fade-in">
+        <div className="w-full sm:w-[380px] h-[500px] max-h-[calc(100vh-6rem)] bg-white/80 border border-white/20 rounded-3xl shadow-[0_25px_60px_rgba(0,0,0,0.35)] overflow-hidden flex flex-col justify-between backdrop-blur-md animate-fade-in text-gray-800">
           {/* Header */}
-          <div className="bg-brand-card/75 border-b border-brand-border/40 p-4 flex justify-between items-center rounded-t-3xl">
+          <div className="bg-gray-50/80 border-b border-gray-200/60 p-4 flex justify-between items-center rounded-t-3xl">
             <div className="flex items-center gap-3">
               {/* Thumbnail Orbe */}
               <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-[#2054C7] to-[#3B82F6] flex items-center justify-center font-bold text-white shadow-lg shadow-brand-accent/20 relative">
                 N
-                <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-brand-ok border-2 border-brand-card" />
+                <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-brand-ok border-2 border-white" />
               </div>
               <div className="text-left">
-                <h4 className="text-xs font-bold text-brand-ink font-display">NUELL</h4>
-                <span className="text-[9px] font-mono text-brand-ok-soft">
+                <h4 className="text-xs font-bold text-gray-900 font-display">NUELL</h4>
+                <span className="text-[9px] font-mono text-emerald-600 font-bold">
                   {pt ? 'Automação Ativa' : 'Automation Active'}
                 </span>
               </div>
             </div>
             <button
               onClick={() => setIsOpen(false)}
-              className="text-brand-ink-dim hover:text-brand-ink p-1.5 rounded-xl hover:bg-brand-border/40 transition duration-150"
+              className="text-gray-500 hover:text-gray-800 p-1.5 rounded-xl hover:bg-gray-200/55 transition duration-150 cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
@@ -545,14 +545,14 @@ How would you like to proceed?
                   msg.sender === 'user' ? 'self-end items-end' : 'self-start items-start'
                 }`}
               >
-                <span className="text-[8px] font-mono text-brand-ink-dim uppercase mb-0.5 px-1">
+                <span className="text-[8px] font-mono text-gray-500 uppercase mb-0.5 px-1">
                   {msg.sender === 'user' ? (pt ? 'Você' : 'You') : 'NUELL'}
                 </span>
                 <div
                   className={`rounded-2xl px-3.5 py-2.5 text-xs leading-relaxed ${
                     msg.sender === 'user'
                       ? 'bg-gradient-to-r from-[#3B82F6] to-[#2054C7] text-white rounded-tr-none shadow-md shadow-brand-accent/10 font-medium'
-                      : 'bg-[#0D1220]/90 border border-brand-border/60 text-brand-ink rounded-tl-none'
+                      : 'bg-gray-100 border border-gray-200/80 text-gray-800 rounded-tl-none shadow-sm'
                   }`}
                 >
                   {(() => {
@@ -567,7 +567,7 @@ How would you like to proceed?
                         if (matchIdx > lastIdx) {
                           boldParts.push(chunk.substring(lastIdx, matchIdx));
                         }
-                        boldParts.push(<strong key={`bold-${matchIdx}`} className="font-extrabold text-brand-ink">{boldMatch[1]}</strong>);
+                        boldParts.push(<strong key={`bold-${matchIdx}`} className="font-extrabold text-gray-900">{boldMatch[1]}</strong>);
                         lastIdx = boldRegex.lastIndex;
                       }
                       
@@ -611,7 +611,7 @@ How would you like to proceed?
                                   el.scrollIntoView({ behavior: 'smooth' });
                                 }
                               }}
-                              className="mt-2 inline-flex items-center gap-1 bg-brand-accent/25 hover:bg-brand-accent/35 text-brand-accent-soft font-bold py-1 px-2.5 rounded-lg text-[9px] transition duration-150 uppercase border border-brand-accent/35 cursor-pointer mr-2 select-none hover:scale-[1.03] active:scale-95"
+                              className="mt-2 inline-flex items-center gap-1 bg-blue-50 hover:bg-blue-100 text-blue-700 font-extrabold py-1 px-2.5 rounded-lg text-[9px] transition duration-150 uppercase border border-blue-200/60 cursor-pointer mr-2 select-none active:scale-95"
                             >
                               {label}
                             </button>
@@ -629,7 +629,7 @@ How would you like to proceed?
                                   el.scrollIntoView({ behavior: 'smooth' });
                                 }
                               }}
-                              className="mt-2 inline-flex items-center gap-1 bg-[#10B981]/15 hover:bg-[#10B981]/25 text-[#10B981] font-bold py-1 px-2.5 rounded-lg text-[9px] transition duration-150 uppercase border border-[#10B981]/30 cursor-pointer mr-2 select-none hover:scale-[1.03] active:scale-95"
+                              className="mt-2 inline-flex items-center gap-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-extrabold py-1 px-2.5 rounded-lg text-[9px] transition duration-150 uppercase border border-emerald-200/60 cursor-pointer mr-2 select-none active:scale-95"
                             >
                               {label}
                             </button>
@@ -643,7 +643,7 @@ How would you like to proceed?
                                 sessionStorage.removeItem('nuell_custom_messages');
                                 window.dispatchEvent(new CustomEvent('nuell-sector-reset'));
                               }}
-                              className="text-brand-accent-soft hover:underline font-bold bg-transparent border-none p-0 cursor-pointer ml-1 select-none inline hover:scale-105 transform duration-75 active:scale-95"
+                              className="text-blue-600 hover:text-blue-800 hover:underline font-bold bg-transparent border-none p-0 cursor-pointer ml-1 select-none inline active:scale-95"
                             >
                               {label}
                             </button>
@@ -674,7 +674,7 @@ How would you like to proceed?
                               href="https://calendly.com/nuelltech/30min"
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="mt-2 inline-flex items-center gap-1.5 bg-brand-ok hover:bg-brand-ok-soft text-brand-bg font-bold py-1.5 px-3 rounded-lg text-[9px] transition duration-150 uppercase shadow-md shadow-brand-ok/10 select-none hover:scale-[1.03] active:scale-95 cursor-pointer"
+                              className="mt-2 inline-flex items-center gap-1.5 bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold py-1.5 px-3 rounded-lg text-[9px] transition duration-150 uppercase shadow-md shadow-emerald-500/10 cursor-pointer hover:scale-[1.03] active:scale-95 select-none"
                             >
                               <Calendar className="w-3.5 h-3.5" />
                               {pt ? 'Agendar Diagnóstico' : 'Schedule Diagnosis'}
@@ -694,8 +694,8 @@ How would you like to proceed?
 
             {isTyping && (
               <div className="self-start flex flex-col items-start max-w-[85%] animate-pulse">
-                <span className="text-[8px] font-mono text-brand-ink-dim uppercase mb-0.5 px-1">NUELL</span>
-                <div className="bg-[#0D1220]/90 border border-brand-border/60 rounded-2xl rounded-tl-none px-4 py-2.5 flex gap-1 items-center">
+                <span className="text-[8px] font-mono text-gray-500 uppercase mb-0.5 px-1">NUELL</span>
+                <div className="bg-gray-100 border border-gray-200/80 rounded-2xl rounded-tl-none px-4 py-2.5 flex gap-1 items-center">
                   <span className="w-1.5 h-1.5 rounded-full bg-brand-accent animate-bounce" style={{ animationDelay: '0ms' }} />
                   <span className="w-1.5 h-1.5 rounded-full bg-brand-accent animate-bounce" style={{ animationDelay: '150ms' }} />
                   <span className="w-1.5 h-1.5 rounded-full bg-brand-accent animate-bounce" style={{ animationDelay: '300ms' }} />
@@ -708,7 +708,7 @@ How would you like to proceed?
           {/* Form / Input */}
           <form
             onSubmit={handleSendMessage}
-            className="p-3 border-t border-brand-border/30 bg-brand-card/85 flex gap-2 items-center rounded-b-3xl"
+            className="p-3 border-t border-gray-200/60 bg-gray-50/80 flex gap-2 items-center rounded-b-3xl"
           >
             <input
               type="text"
@@ -727,12 +727,12 @@ How would you like to proceed?
                   ? 'Escreva a sua mensagem...'
                   : 'Type your message...'
               }
-              className="flex-1 bg-[#05070D]/85 border border-brand-border/80 rounded-xl px-4 py-2.5 text-xs text-brand-ink placeholder-brand-ink-dim focus:outline-none focus:border-brand-accent-soft"
+              className="flex-1 bg-white border border-gray-300 rounded-xl px-4 py-2.5 text-xs text-gray-800 placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
             />
             <button
               type="submit"
               disabled={!userInput.trim() || isTyping}
-              className="bg-brand-accent hover:bg-brand-accent-dark text-white p-2.5 rounded-xl transition duration-150 disabled:opacity-40 shadow-md shadow-brand-accent/10"
+              className="bg-brand-accent hover:bg-brand-accent-dark text-white p-2.5 rounded-xl transition duration-150 disabled:opacity-40 shadow-md shadow-brand-accent/10 cursor-pointer"
             >
               <Send className="w-4 h-4 fill-current" />
             </button>

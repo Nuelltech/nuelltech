@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Brain, Zap, Info, Loader2, X } from 'lucide-react';
+import { Brain, Zap, Loader2, X } from 'lucide-react';
 
 interface SectorSelectorProps {
   isPt: boolean;
@@ -16,6 +16,7 @@ export default function SectorSelector({ isPt }: SectorSelectorProps) {
 
   // Hydrate sector from sessionStorage on mount and ensure hydration safety
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMounted(true);
     if (typeof window !== 'undefined') {
       const savedSector = sessionStorage.getItem('nuell_selected_sector');
@@ -125,78 +126,66 @@ export default function SectorSelector({ isPt }: SectorSelectorProps) {
   if (!isMounted || selectedSector || isDismissed) return null;
 
   return (
-    <div className="w-full max-w-5xl mx-auto px-6 mb-12 relative z-30">
-      {/* Deep Violet AI theme container to differentiate from dark blue homepage background */}
-      <div className="bg-[#0A071E]/90 border border-[#7C3AED]/40 rounded-2xl p-6 shadow-[0_0_40px_rgba(124,58,237,0.15)] backdrop-blur-md flex flex-col md:flex-row items-center gap-6">
+    <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 mb-12 relative z-30">
+      {/* Deep Violet AI theme container */}
+      <div className="bg-[#0A071E]/95 border-2 border-[#7C3AED]/50 rounded-3xl p-6 md:p-8 shadow-[0_0_50px_rgba(124,58,237,0.25)] backdrop-blur-md relative flex flex-col gap-6">
         
-        {/* Nuell Avatar Orb (Brain Icon with Green indicator) */}
-        <div className="relative w-11 h-11 rounded-full border border-[#7C3AED]/35 bg-[#080516] flex items-center justify-center flex-shrink-0 shadow-lg">
-          <Brain className="w-5 h-5 text-[#A78BFA] animate-pulse" />
-          <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-[#10B981] border-2 border-[#0A071E]" />
-        </div>
-
-        {/* Action Prompt */}
-        <div className="text-left flex-1 min-w-[200px]">
-          <span className="text-[8px] font-mono text-[#A78BFA] uppercase font-bold tracking-wider block mb-1">
-            {isPt ? 'LIGAR AO CÉREBRO DO NUELL ✨' : 'CONNECT TO NUELL AI BRAIN ✨'}
-          </span>
-          <p className="text-[10px] text-brand-ink leading-relaxed font-semibold">
-            {isPt 
-              ? 'O Nuell explica como estes conceitos se aplicam à realidade do seu negócio:' 
-              : 'Nuell explains how these concepts apply to your business:'}
-          </p>
-          <p className="text-[8px] text-brand-ink-dim flex items-center gap-1 mt-1 font-mono">
-            <Info className="w-2.5 h-2.5 text-[#A78BFA] flex-shrink-0" />
-            <span>
-              {isPt 
-                ? 'O Nuell irá adaptar a conversa especificamente para o seu negócio.' 
-                : 'Nuell will adapt the conversation specifically for your business.'}
-            </span>
-          </p>
-        </div>
-
-        {/* Input Form & Submit */}
-        <form onSubmit={handleFormSubmit} className="flex flex-col sm:flex-row items-stretch sm:items-end gap-2 w-full sm:w-auto flex-1 sm:flex-initial">
-          <div className="flex flex-col gap-1 flex-1 sm:flex-initial">
-            <span className="text-[8px] font-mono text-brand-ink-dim uppercase font-bold tracking-wider">
-              {isPt ? 'EM QUE ÁREA DE NEGÓCIO ATUA?' : 'WHAT IS YOUR INDUSTRY?'}
-            </span>
-            <input
-              type="text"
-              required
-              disabled={isCustomizing}
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              placeholder={isPt 
-                ? 'Área de negócio (ex: Imobiliária...)' 
-                : 'Industry (e.g. Real Estate...)'}
-              className="w-full sm:w-60 bg-[#060413] border border-[#7C3AED]/30 rounded-xl px-3 py-2 text-xs text-brand-ink placeholder-brand-ink-dim focus:outline-none focus:border-[#A78BFA] disabled:opacity-50 min-h-[38px]"
-            />
-          </div>
-          
-          {/* Submit button: mint colored with Zap icon to match mockup */}
-          <button
-            type="submit"
-            disabled={isCustomizing}
-            className="bg-[#3CDDA7] hover:bg-[#2BCFA1] disabled:opacity-50 text-[#07090F] font-bold px-4 py-2 rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow-md shadow-[#3CDDA7]/20 whitespace-nowrap min-h-[38px] cursor-pointer"
-          >
-            {isCustomizing ? (
-              <Loader2 className="w-3.5 h-3.5 animate-spin" />
-            ) : (
-              <Zap className="w-3.5 h-3.5 fill-current" />
-            )}
-            {isPt ? 'Conectar' : 'Connect'}
-          </button>
-        </form>
-
-        {/* Dismiss Button */}
+        {/* Close Button - Positioned absolutely so it doesn't disrupt the flow */}
         <button
           onClick={() => setIsDismissed(true)}
-          className="text-[#8B92A5] hover:text-[#E7E9EE] transition p-1.5 hover:bg-white/10 rounded-lg flex-shrink-0"
+          className="absolute top-4 right-4 text-[#8B92A5] hover:text-[#E7E9EE] transition p-1.5 hover:bg-white/10 rounded-full cursor-pointer"
           title={isPt ? 'Fechar' : 'Dismiss'}
         >
           <X className="w-4 h-4" />
         </button>
+
+        {/* Main Content Row: Mascot + Hook Text */}
+        <div className="flex items-start sm:items-center gap-4 text-left pr-6">
+          {/* Stylized Nuell Mascot Orb */}
+          <div className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-2xl border-2 border-[#7C3AED] bg-[#0E0B25] flex items-center justify-center flex-shrink-0 shadow-lg shadow-[#7C3AED]/20 animate-pulse">
+            <Brain className="w-6 h-6 sm:w-7 sm:h-7 text-[#A78BFA]" />
+            <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-[#10B981] border-2 border-[#0A071E]" />
+          </div>
+
+          <div>
+            <h3 className="text-lg sm:text-2xl font-black text-brand-ink leading-tight tracking-tight">
+              {isPt ? 'Qual é a sua área de negócio?' : 'What is your business area?'}
+            </h3>
+            <p className="text-xs sm:text-sm text-brand-ink-dim mt-1.5 leading-relaxed max-w-2xl font-medium">
+              {isPt 
+                ? 'Veja como aplicar Inteligência Artificial e automatizar processos na sua realidade.' 
+                : 'See how to apply Artificial Intelligence and automate processes in your reality.'}
+            </p>
+          </div>
+        </div>
+
+        {/* Input Form & Submit */}
+        <form onSubmit={handleFormSubmit} className="flex flex-col sm:flex-row items-stretch gap-3 w-full border-t border-[#7C3AED]/20 pt-5">
+          <input
+            type="text"
+            required
+            disabled={isCustomizing}
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            placeholder={isPt 
+              ? 'Área de negócio (ex: Imobiliária, Clínica, Restauração...)' 
+              : 'Industry (e.g. Real Estate, Clinic, Restaurant...)'}
+            className="flex-1 bg-[#060413] border border-[#7C3AED]/40 rounded-xl px-4 py-3 text-sm text-brand-ink placeholder-brand-ink-dim/80 focus:outline-none focus:border-[#A78BFA] focus:ring-1 focus:ring-[#A78BFA] disabled:opacity-50 min-h-[46px]"
+          />
+          
+          <button
+            type="submit"
+            disabled={isCustomizing}
+            className="bg-[#3CDDA7] hover:bg-[#2BCFA1] disabled:opacity-50 text-[#07090F] font-extrabold px-6 py-3 rounded-xl text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-[#3CDDA7]/20 whitespace-nowrap min-h-[46px] cursor-pointer"
+          >
+            {isCustomizing ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Zap className="w-4 h-4 fill-current" />
+            )}
+            {isPt ? 'Conectar' : 'Connect'}
+          </button>
+        </form>
 
       </div>
     </div>

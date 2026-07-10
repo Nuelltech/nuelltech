@@ -74,6 +74,8 @@ export default function BiReconciliation({ pt = true }: { pt?: boolean }) {
   const [reconciling, setReconciling] = useState(false);
   const [step, setStep] = useState(0);
   const [showResults, setShowResults] = useState(false);
+  const [tableTab, setTableTab] = useState<'stock' | 'sales'>('stock');
+  const [toolTab, setToolTab] = useState<'reconciler' | 'chat'>('reconciler');
 
   // Q&A Chat States
   const [messages, setMessages] = useState<ChatMessage[]>(() => [
@@ -101,6 +103,7 @@ export default function BiReconciliation({ pt = true }: { pt?: boolean }) {
     setReconciling(true);
     setStep(1);
     setShowResults(false);
+    setToolTab('reconciler');
   };
 
   useEffect(() => {
@@ -174,11 +177,35 @@ export default function BiReconciliation({ pt = true }: { pt?: boolean }) {
   return (
     <div className="w-full max-w-5xl mx-auto bg-brand-card rounded-2xl border border-brand-border p-6 box-glow glass flex flex-col gap-6">
       
+      {/* Upper Grid Segmented Control (Mobile only) */}
+      <div className="md:hidden flex bg-[#05070C]/85 border border-[#172033] rounded-xl p-1 gap-1 w-full mb-2">
+        <button
+          onClick={() => setTableTab('stock')}
+          className={`flex-1 text-center py-2 rounded-lg text-[10px] font-mono font-bold transition cursor-pointer ${
+            tableTab === 'stock'
+              ? 'bg-brand-accent/15 border border-brand-accent/40 text-brand-accent-soft'
+              : 'bg-transparent border-transparent text-brand-ink-dim hover:text-brand-ink'
+          }`}
+        >
+          📦 {pt ? 'Stock Físico' : 'Physical Stock'}
+        </button>
+        <button
+          onClick={() => setTableTab('sales')}
+          className={`flex-1 text-center py-2 rounded-lg text-[10px] font-mono font-bold transition cursor-pointer ${
+            tableTab === 'sales'
+              ? 'bg-brand-accent/15 border border-brand-accent/40 text-brand-accent-soft'
+              : 'bg-transparent border-transparent text-brand-ink-dim hover:text-brand-ink'
+          }`}
+        >
+          📊 {pt ? 'Histórico Vendas' : 'Sales History'}
+        </button>
+      </div>
+
       {/* Upper Grid: Source Tables */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
         
         {/* Table A: Physical Stock */}
-        <div className="bg-[#05070D] rounded-xl border border-brand-border p-4 shadow-inner">
+        <div className={`bg-[#05070D] rounded-xl border border-brand-border p-4 shadow-inner ${tableTab === 'stock' ? 'block' : 'hidden md:block'}`}>
           <div className="flex items-center gap-2 mb-3 border-b border-brand-border/60 pb-2">
             <Database className="w-4 h-4 text-brand-accent-soft" />
             <h4 className="text-xs font-semibold font-display text-brand-ink uppercase tracking-wide">
@@ -192,7 +219,7 @@ export default function BiReconciliation({ pt = true }: { pt?: boolean }) {
                   <th className="pb-2">ID</th>
                   <th className="pb-2">{pt ? 'Produto' : 'Product'}</th>
                   <th className="pb-2 text-right">{pt ? 'Qtd Stock' : 'Stock Qty'}</th>
-                  <th className="pb-2 text-right">{pt ? 'Validade (Dias)' : 'Expiry (Days)'}</th>
+                  <th className="pb-2 text-right">{pt ? 'Validade' : 'Expiry'}</th>
                 </tr>
               </thead>
               <tbody>
@@ -212,7 +239,7 @@ export default function BiReconciliation({ pt = true }: { pt?: boolean }) {
         </div>
 
         {/* Table B: Sales History */}
-        <div className="bg-[#05070D] rounded-xl border border-brand-border p-4 shadow-inner">
+        <div className={`bg-[#05070D] rounded-xl border border-brand-border p-4 shadow-inner ${tableTab === 'sales' ? 'block' : 'hidden md:block'}`}>
           <div className="flex items-center gap-2 mb-3 border-b border-brand-border/60 pb-2">
             <BarChart2 className="w-4 h-4 text-brand-accent-soft" />
             <h4 className="text-xs font-semibold font-display text-brand-ink uppercase tracking-wide">
@@ -254,11 +281,35 @@ export default function BiReconciliation({ pt = true }: { pt?: boolean }) {
         </div>
       </div>
 
+      {/* Lower Grid Segmented Control (Mobile only) */}
+      <div className="lg:hidden flex bg-[#05070C]/85 border border-[#172033] rounded-xl p-1 gap-1 w-full mt-4">
+        <button
+          onClick={() => setToolTab('reconciler')}
+          className={`flex-1 text-center py-2.5 rounded-lg text-xs font-mono font-bold transition cursor-pointer ${
+            toolTab === 'reconciler'
+              ? 'bg-brand-accent/15 border border-brand-accent/40 text-brand-accent-soft'
+              : 'bg-transparent border-transparent text-brand-ink-dim hover:text-brand-ink'
+          }`}
+        >
+          🔄 {pt ? 'Reconciliador' : 'Reconciler'}
+        </button>
+        <button
+          onClick={() => setToolTab('chat')}
+          className={`flex-1 text-center py-2.5 rounded-lg text-xs font-mono font-bold transition cursor-pointer ${
+            toolTab === 'chat'
+              ? 'bg-brand-accent/15 border border-brand-accent/40 text-brand-accent-soft'
+              : 'bg-transparent border-transparent text-brand-ink-dim hover:text-brand-ink'
+          }`}
+        >
+          💬 {pt ? 'Analista IA' : 'AI Analyst'}
+        </button>
+      </div>
+
       {/* Lower Row Split: Reconciler Left, Conversational AI Assistant Right */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-6 border-t border-brand-border/40 pt-6">
+      <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-4 md:gap-6 border-t border-brand-border/40 pt-6">
         
         {/* Left Side: Campaign Reconciler */}
-        <div className="bg-[#05070D]/40 border border-brand-border/55 rounded-xl p-5 flex flex-col justify-between min-h-[340px]">
+        <div className={`bg-[#05070D]/40 border border-brand-border/55 rounded-xl p-5 flex flex-col justify-between min-h-[340px] ${toolTab === 'reconciler' ? 'flex' : 'hidden lg:flex'}`}>
           <div>
             <span className="text-[9px] font-mono text-brand-accent-soft uppercase tracking-wider block mb-2 font-semibold">
               {pt ? 'Módulo 1: Reconciliador de Stock & Campanhas' : 'Module 1: Stock Sync & Campaign Manager'}
@@ -360,7 +411,7 @@ export default function BiReconciliation({ pt = true }: { pt?: boolean }) {
         </div>
 
         {/* Right Side: Conversational AI Database Analyst */}
-        <div className="bg-[#05070D]/40 border border-brand-border/55 rounded-xl p-5 flex flex-col justify-between min-h-[340px] relative">
+        <div className={`bg-[#05070D]/40 border border-brand-border/55 rounded-xl p-5 flex flex-col justify-between min-h-[340px] relative ${toolTab === 'chat' ? 'flex' : 'hidden lg:flex'}`}>
           
           {/* Chat Header */}
           <div className="flex justify-between items-center border-b border-brand-border/30 pb-2.5 mb-3">

@@ -16,6 +16,7 @@ interface ProductState {
 export default function BeforeAfterSlider({ pt = true }: BeforeAfterSliderProps) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [viewTab, setViewTab] = useState<'excel' | 'dashboard'>('excel');
   
   // Simulation states
   const [stockState, setStockState] = useState<Record<string, ProductState>>({
@@ -195,11 +196,35 @@ export default function BeforeAfterSlider({ pt = true }: BeforeAfterSliderProps)
         </div>
       )}
 
+      {/* Workstations Segmented Control (Mobile only) */}
+      <div className="md:hidden flex bg-[#05070C]/85 border border-[#172033] rounded-xl p-1.5 gap-1.5 w-full mt-2">
+        <button
+          onClick={() => setViewTab('excel')}
+          className={`flex-1 text-center py-2.5 rounded-lg text-xs font-mono font-bold transition cursor-pointer ${
+            viewTab === 'excel'
+              ? 'bg-brand-risk/15 border border-brand-risk/30 text-red-400 shadow-[0_0_8px_rgba(239,68,68,0.15)]'
+              : 'bg-transparent border-transparent text-brand-ink-dim hover:text-brand-ink hover:bg-brand-border/20'
+          }`}
+        >
+          ❌ {pt ? 'Excel Antigo' : 'Legacy Excel'}
+        </button>
+        <button
+          onClick={() => setViewTab('dashboard')}
+          className={`flex-1 text-center py-2.5 rounded-lg text-xs font-mono font-bold transition cursor-pointer ${
+            viewTab === 'dashboard'
+              ? 'bg-brand-ok/15 border border-brand-ok/30 text-brand-ok shadow-[0_0_8px_rgba(34,197,94,0.15)]'
+              : 'bg-transparent border-transparent text-brand-ink-dim hover:text-brand-ink hover:bg-brand-border/20'
+          }`}
+        >
+          ❇️ {pt ? 'Dashboard Nuell' : 'Nuell Dashboard'}
+        </button>
+      </div>
+
       {/* Stacked Workstations: Excel (Top) then Dashboard (Bottom) for sequential comparison */}
       <div className="flex flex-col gap-8 w-full text-left">
         
         {/* 1. Legacy Excel Section (Before) */}
-        <div className="flex flex-col gap-3">
+        <div className={`flex flex-col gap-3 ${viewTab === 'excel' ? 'block' : 'hidden md:block'}`}>
           <div className="flex items-center gap-2 px-1 text-[10px] font-mono text-brand-risk uppercase font-bold">
             <FileSpreadsheet className="w-3.5 h-3.5" />
             {pt ? 'Antes: Versão Excel (Erros & Fricção)' : 'Before: Excel Version (Errors & Friction)'}
@@ -227,76 +252,76 @@ export default function BeforeAfterSlider({ pt = true }: BeforeAfterSliderProps)
               </div>
 
               {/* Excel Grid Header */}
-              <div className="grid grid-cols-[20px_160px_70px_70px_80px_1fr] bg-gray-800 text-gray-400 font-mono text-[9px] border-b border-gray-700">
+              <div className="grid grid-cols-[20px_1fr_65px_65px] sm:grid-cols-[20px_160px_70px_70px_80px_1fr] bg-gray-800 text-gray-400 font-mono text-[9px] border-b border-gray-700">
                 <div className="p-1 border-r border-gray-700 text-center"></div>
                 <div className="p-1 border-r border-gray-700 pl-1">A (Artigo)</div>
-                <div className="p-1 border-r border-gray-700 pl-1">B (Custo)</div>
+                <div className="p-1 border-r border-gray-700 pl-1 hidden sm:block">B (Custo)</div>
                 <div className="p-1 border-r border-gray-700 pl-1">C (Stock)</div>
-                <div className="p-1 border-r border-gray-700 pl-1">D (PVP)</div>
+                <div className="p-1 border-r border-gray-700 pl-1 hidden sm:block">D (PVP)</div>
                 <div className="p-1 pl-1">E (Margem)</div>
               </div>
 
               {/* Excel Rows */}
               <div className="flex flex-col font-mono text-[9px] sm:text-[9.5px]">
                 {/* Row 1 */}
-                <div className="grid grid-cols-[20px_160px_70px_70px_80px_1fr] border-b border-gray-800 bg-[#1D212A] text-gray-300">
+                <div className="grid grid-cols-[20px_1fr_65px_65px] sm:grid-cols-[20px_160px_70px_70px_80px_1fr] border-b border-gray-800 bg-[#1D212A] text-gray-300">
                   <div className="p-1 border-r border-gray-800 text-center bg-gray-800/40">1</div>
                   <div className="p-1 border-r border-gray-800 pl-1 truncate">Whey Protein 1KG</div>
-                  <div className="p-1 border-r border-gray-800 pl-1">20,00 €</div>
+                  <div className="p-1 border-r border-gray-800 pl-1 hidden sm:block">20,00 €</div>
                   <div className="p-1 border-r border-gray-800 pl-1">85 UNI</div>
-                  <div className="p-1 border-r border-gray-800 pl-1">35,00 €</div>
+                  <div className="p-1 border-r border-gray-800 pl-1 hidden sm:block">35,00 €</div>
                   <div className="p-1 pl-1">42.8%</div>
                 </div>
 
                 {/* Row 2 (Interactive row) */}
-                <div className={`grid grid-cols-[20px_160px_70px_70px_80px_1fr] border-b border-gray-800 text-gray-300 transition-colors ${excelFormulaBroken ? 'bg-red-950/20 text-red-300' : 'bg-[#1D212A]'}`}>
+                <div className={`grid grid-cols-[20px_1fr_65px_65px] sm:grid-cols-[20px_160px_70px_70px_80px_1fr] border-b border-gray-800 text-gray-300 transition-colors ${excelFormulaBroken ? 'bg-red-950/20 text-red-300' : 'bg-[#1D212A]'}`}>
                   <div className="p-1 border-r border-gray-800 text-center bg-gray-800/40">2</div>
                   <div className="p-1 border-r border-gray-800 pl-1 font-bold truncate">Barra Coco x12</div>
-                  <div className="p-1 border-r border-gray-800 pl-1">1,50 €</div> {/* Cost stays static/outdated in manual Excel */}
+                  <div className="p-1 border-r border-gray-800 pl-1 hidden sm:block">1,50 €</div> {/* Cost stays static/outdated in manual Excel */}
                   <div className="p-1 border-r border-gray-800 pl-1 font-bold">{stockState.bar.stock} UNI</div>
-                  <div className="p-1 border-r border-gray-800 pl-1">2,50 €</div>
+                  <div className="p-1 border-r border-gray-800 pl-1 hidden sm:block">2,50 €</div>
                   <div className="p-1 pl-1 font-semibold text-brand-risk">
                     {excelFormulaBroken ? '#VALOR!' : '40.0%'}
                   </div>
                 </div>
 
                 {/* Row 3 */}
-                <div className="grid grid-cols-[20px_160px_70px_70px_80px_1fr] border-b border-gray-800 bg-[#1D212A] text-gray-300">
+                <div className="grid grid-cols-[20px_1fr_65px_65px] sm:grid-cols-[20px_160px_70px_70px_80px_1fr] border-b border-gray-800 bg-[#1D212A] text-gray-300">
                   <div className="p-1 border-r border-gray-800 text-center bg-gray-800/40">3</div>
                   <div className="p-1 border-r border-gray-800 pl-1 truncate">L-Carnitina Shot</div>
-                  <div className="p-1 border-r border-gray-800 pl-1">4,00 €</div>
+                  <div className="p-1 border-r border-gray-800 pl-1 hidden sm:block">4,00 €</div>
                   <div className="p-1 border-r border-gray-800 pl-1">240 UNI</div>
-                  <div className="p-1 border-r border-gray-800 pl-1">6,50 €</div>
+                  <div className="p-1 border-r border-gray-800 pl-1 hidden sm:block">6,50 €</div>
                   <div className="p-1 pl-1">38.4%</div>
                 </div>
 
                 {/* Row 4 */}
-                <div className="grid grid-cols-[20px_160px_70px_70px_80px_1fr] border-b border-gray-800 bg-[#1D212A] text-gray-300">
+                <div className="grid grid-cols-[20px_1fr_65px_65px] sm:grid-cols-[20px_160px_70px_70px_80px_1fr] border-b border-gray-800 bg-[#1D212A] text-gray-300">
                   <div className="p-1 border-r border-gray-800 text-center bg-gray-800/40">4</div>
                   <div className="p-1 border-r border-gray-800 pl-1 truncate">Shaker Misturador</div>
-                  <div className="p-1 border-r border-gray-800 pl-1">2,10 €</div>
+                  <div className="p-1 border-r border-gray-800 pl-1 hidden sm:block">2,10 €</div>
                   <div className="p-1 border-r border-gray-800 pl-1">15 UNI</div>
-                  <div className="p-1 border-r border-gray-800 pl-1">4,50 €</div>
+                  <div className="p-1 border-r border-gray-800 pl-1 hidden sm:block">4,50 €</div>
                   <div className="p-1 pl-1">53.3%</div>
                 </div>
 
                 {/* Row 5 (Out of stock with no warnings) */}
-                <div className="grid grid-cols-[20px_160px_70px_70px_80px_1fr] border-b border-gray-800 bg-[#1D212A] text-gray-300">
+                <div className="grid grid-cols-[20px_1fr_65px_65px] sm:grid-cols-[20px_160px_70px_70px_80px_1fr] border-b border-gray-800 bg-[#1D212A] text-gray-300">
                   <div className="p-1 border-r border-gray-800 text-center bg-gray-800/40">5</div>
                   <div className="p-1 border-r border-gray-800 pl-1 truncate">Creatina Mono 300g</div>
-                  <div className="p-1 border-r border-gray-800 pl-1">14,20 €</div>
+                  <div className="p-1 border-r border-gray-800 pl-1 hidden sm:block">14,20 €</div>
                   <div className="p-1 border-r border-gray-800 pl-1 text-red-400 font-bold">0 UNI</div> {/* Out of stock but no alerts */}
-                  <div className="p-1 border-r border-gray-800 pl-1">24,99 €</div>
+                  <div className="p-1 border-r border-gray-800 pl-1 hidden sm:block">24,99 €</div>
                   <div className="p-1 pl-1">43.1%</div>
                 </div>
 
                 {/* Row 6 (Broken Reference Cell) */}
-                <div className="grid grid-cols-[20px_160px_70px_70px_80px_1fr] border-b border-gray-800 bg-[#1D212A] text-gray-300">
+                <div className="grid grid-cols-[20px_1fr_65px_65px] sm:grid-cols-[20px_160px_70px_70px_80px_1fr] border-b border-gray-800 bg-[#1D212A] text-gray-300">
                   <div className="p-1 border-r border-gray-800 text-center bg-gray-800/40">6</div>
                   <div className="p-1 border-r border-gray-800 pl-1 truncate">Glutamina 250g</div>
-                  <div className="p-1 border-r border-gray-800 pl-1">9,80 €</div>
+                  <div className="p-1 border-r border-gray-800 pl-1 hidden sm:block">9,80 €</div>
                   <div className="p-1 border-r border-gray-800 pl-1">40 UNI</div>
-                  <div className="p-1 border-r border-gray-800 pl-1">16,50 €</div>
+                  <div className="p-1 border-r border-gray-800 pl-1 hidden sm:block">16,50 €</div>
                   <div className="p-1 pl-1 text-red-400 font-bold">#REF!</div>
                 </div>
               </div>
@@ -312,7 +337,7 @@ export default function BeforeAfterSlider({ pt = true }: BeforeAfterSliderProps)
         </div>
 
         {/* 2. Modern Dashboard Section (After) */}
-        <div className="flex flex-col gap-3">
+        <div className={`flex flex-col gap-3 ${viewTab === 'dashboard' ? 'block' : 'hidden md:block'}`}>
           <div className="flex items-center gap-2 px-1 text-[10px] font-mono text-brand-ok uppercase font-bold">
             <LayoutDashboard className="w-3.5 h-3.5" />
             {pt ? 'Depois: Versão Dashboard (Gestão Inteligente Nuell)' : 'After: Dashboard Version (Nuell Intelligent Hub)'}

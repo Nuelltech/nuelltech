@@ -353,7 +353,7 @@ export default async function Page({
               <h2 className="text-2xl sm:text-3.5xl font-extrabold font-display leading-tight text-brand-ink">
                 {dict.problem.title}
               </h2>
-              <p className="text-xs sm:text-sm text-brand-ink-dim max-w-xl leading-relaxed mt-2 text-left">
+              <p className="text-[13.5px] sm:text-base text-brand-ink-dim leading-relaxed mt-2 text-left">
                 {isPt 
                   ? 'Substitua tarefas mecânicas e processos cegos por fluxos integrados que trabalham por si 24/7.'
                   : 'Replace mechanical tasks and blind processes with integrated workflows that work for you 24/7.'}
@@ -369,65 +369,65 @@ export default async function Page({
           <div className="flex overflow-x-auto gap-6 pb-8 pt-2 scrollbar-thin snap-x snap-mandatory -mx-6 px-6 lg:mx-0 lg:px-0 relative z-10">
             
             {/* Card 1: Processos Manuais */}
-            <div className="flex-shrink-0 w-[295px] sm:w-[350px] snap-start bg-brand-card/60 border border-brand-border rounded-xl p-6 glass hover:border-brand-risk/40 transition duration-300 flex flex-col justify-between min-h-[220px]">
+            <div className="flex-shrink-0 w-[295px] sm:w-[350px] snap-start bg-brand-card/60 border border-brand-border rounded-xl p-6 glass hover:border-brand-risk/40 transition duration-300 flex flex-col justify-between min-h-[245px] sm:min-h-[230px]">
               <div>
-                <span className="text-[8px] font-mono text-brand-risk uppercase tracking-wider font-semibold block mb-3 bg-brand-risk/10 border border-brand-risk/20 px-2 py-0.5 rounded-md w-fit">
+                <span className="text-[10px] font-mono text-brand-risk uppercase tracking-wider font-bold block mb-3 bg-brand-risk/10 border border-brand-risk/20 px-2.5 py-1 rounded-md w-fit">
                   {isPt ? 'Fuga 01 · Processos Manuais' : 'Leak 01 · Manual Processes'}
                 </span>
-                <p className="text-xs text-brand-ink leading-relaxed font-sans">
+                <p className="text-[13.5px] sm:text-sm text-brand-ink leading-relaxed font-sans">
                   {dict.problem.p1}
                 </p>
               </div>
-              <span className="text-[8px] font-mono text-brand-ink-dim uppercase mt-4 block border-t border-brand-border/30 pt-3">
+              <span className="text-[10px] font-mono text-brand-accent-soft font-bold uppercase tracking-wider mt-4 block border-t border-brand-border/30 pt-3">
                 {isPt ? 'Impacto: Margem & Tempo' : 'Impact: Margin & Time'}
               </span>
             </div>
 
             {/* Card 2: Falta de Reconciliação */}
-            <div className="flex-shrink-0 w-[295px] sm:w-[350px] snap-start bg-brand-card/60 border border-brand-border rounded-xl p-6 glass hover:border-brand-risk/40 transition duration-300 flex flex-col justify-between min-h-[220px]">
+            <div className="flex-shrink-0 w-[295px] sm:w-[350px] snap-start bg-brand-card/60 border border-brand-border rounded-xl p-6 glass hover:border-brand-risk/40 transition duration-300 flex flex-col justify-between min-h-[245px] sm:min-h-[230px]">
               <div>
-                <span className="text-[8px] font-mono text-brand-risk uppercase tracking-wider font-semibold block mb-3 bg-brand-risk/10 border border-brand-risk/20 px-2 py-0.5 rounded-md w-fit">
+                <span className="text-[10px] font-mono text-brand-risk uppercase tracking-wider font-bold block mb-3 bg-brand-risk/10 border border-brand-risk/20 px-2.5 py-1 rounded-md w-fit">
                   {isPt ? 'Fuga 02 · Falta de Reconciliação' : 'Leak 02 · No Reconciliation'}
                 </span>
-                <p className="text-xs text-brand-ink leading-relaxed font-sans">
+                <p className="text-[13.5px] sm:text-sm text-brand-ink leading-relaxed font-sans">
                   {dict.problem.p2}
                 </p>
               </div>
-              <span className="text-[8px] font-mono text-brand-ink-dim uppercase mt-4 block border-t border-brand-border/30 pt-3">
+              <span className="text-[10px] font-mono text-brand-accent-soft font-bold uppercase tracking-wider mt-4 block border-t border-brand-border/30 pt-3">
                 {isPt ? 'Impacto: Decisão Cega' : 'Impact: Blind Decision'}
               </span>
             </div>
 
             {/* Card 3: Desperdício de Trabalho Repetitivo */}
-            <div className="flex-shrink-0 w-[295px] sm:w-[350px] snap-start bg-brand-card/60 border border-brand-border rounded-xl p-6 glass hover:border-brand-risk/40 transition duration-300 flex flex-col justify-between min-h-[220px]">
+            <div className="flex-shrink-0 w-[295px] sm:w-[350px] snap-start bg-brand-card/60 border border-brand-border rounded-xl p-6 glass hover:border-brand-risk/40 transition duration-300 flex flex-col justify-between min-h-[245px] sm:min-h-[230px]">
               <div>
-                <span className="text-[8px] font-mono text-brand-risk uppercase tracking-wider font-semibold block mb-3 bg-brand-risk/10 border border-brand-risk/20 px-2 py-0.5 rounded-md w-fit">
+                <span className="text-[10px] font-mono text-brand-risk uppercase tracking-wider font-bold block mb-3 bg-brand-risk/10 border border-brand-risk/20 px-2.5 py-1 rounded-md w-fit">
                   {isPt ? 'Fuga 03 · Trabalho de Robô' : 'Leak 03 · Repetitive Labor'}
                 </span>
-                <p className="text-xs text-brand-ink leading-relaxed font-sans">
+                <p className="text-[13.5px] sm:text-sm text-brand-ink leading-relaxed font-sans">
                   {isPt 
                     ? 'Profissionais qualificados gastam horas diárias em tarefas mecânicas de "copiar e colar" (copy-paste) dados entre e-mails, folhas de cálculo Excel e sistemas ERP legados.'
                     : 'Qualified professionals spend hours daily on mechanical "copy-paste" tasks transferring data between emails, Excel spreadsheets, and legacy ERP systems.'}
                 </p>
               </div>
-              <span className="text-[8px] font-mono text-brand-ink-dim uppercase mt-4 block border-t border-brand-border/30 pt-3">
+              <span className="text-[10px] font-mono text-brand-accent-soft font-bold uppercase tracking-wider mt-4 block border-t border-brand-border/30 pt-3">
                 {isPt ? 'Impacto: Produtividade' : 'Impact: Productivity'}
               </span>
             </div>
 
             {/* Card 4: Gestão de Stock às Cegas */}
-            <div className="flex-shrink-0 w-[295px] sm:w-[350px] snap-start bg-brand-card/60 border border-brand-border rounded-xl p-6 glass hover:border-brand-risk/40 transition duration-300 flex flex-col justify-between min-h-[220px]">
+            <div className="flex-shrink-0 w-[295px] sm:w-[350px] snap-start bg-brand-card/60 border border-brand-border rounded-xl p-6 glass hover:border-brand-risk/40 transition duration-300 flex flex-col justify-between min-h-[245px] sm:min-h-[230px]">
               <div>
-                <span className="text-[8px] font-mono text-brand-risk uppercase tracking-wider font-semibold block mb-3 bg-brand-risk/10 border border-brand-risk/20 px-2 py-0.5 rounded-md w-fit">
+                <span className="text-[10px] font-mono text-brand-risk uppercase tracking-wider font-bold block mb-3 bg-brand-risk/10 border border-brand-risk/20 px-2.5 py-1 rounded-md w-fit">
                   {isPt ? 'Fuga 04 · Inventário Cego' : 'Leak 04 · Blind Inventory'}
                 </span>
-                <p className="text-xs text-brand-ink leading-relaxed font-sans">
+                <p className="text-[13.5px] sm:text-sm text-brand-ink leading-relaxed font-sans">
                   {isPt
                     ? 'Falta de alertas preditivos para gerir o inventário em tempo real, resultando em capital de caixa imobilizado em excesso de stock ou ruturas de fornecimento de produtos populares.'
                     : 'Lack of predictive alerts to manage inventory in real-time, resulting in cash capital tied up in excess inventory or supply stockouts of popular items.'}
                 </p>
               </div>
-              <span className="text-[8px] font-mono text-brand-ink-dim uppercase mt-4 block border-t border-brand-border/30 pt-3">
+              <span className="text-[10px] font-mono text-brand-accent-soft font-bold uppercase tracking-wider mt-4 block border-t border-brand-border/30 pt-3">
                 {isPt ? 'Impacto: Capital Preso' : 'Impact: Tied Capital'}
               </span>
             </div>
@@ -450,7 +450,7 @@ export default async function Page({
             <h2 className="text-2xl sm:text-3.5xl font-extrabold font-display leading-tight text-brand-ink mb-4">
               {dict.demos.header}
             </h2>
-            <p className="text-xs sm:text-sm text-brand-ink-dim leading-relaxed max-w-3xl">
+            <p className="text-[13.5px] sm:text-base text-brand-ink-dim/95 leading-relaxed max-w-3xl">
               {dict.demos.generalization}
             </p>
           </div>
@@ -470,7 +470,7 @@ export default async function Page({
             <h2 className="text-xl sm:text-3xl font-extrabold font-display text-brand-ink mb-3 text-glow">
               {isPt ? 'O Caminho para a Eficiência' : 'The Pathway to Efficiency'}
             </h2>
-            <p className="text-xs text-brand-ink-dim leading-relaxed">
+            <p className="text-[13.5px] sm:text-base text-brand-ink-dim leading-relaxed max-w-2xl mx-auto">
               {isPt 
                 ? 'Uma jornada simplificada desde o diagnóstico inicial de gargalos operacionais até à automação total do seu negócio.'
                 : 'A streamlined journey from conceptual diagnosis of bottlenecks to full-scale automated operation.'}
