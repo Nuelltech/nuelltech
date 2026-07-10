@@ -177,21 +177,54 @@ Dados do dia:
 ${reportData}
       `;
 
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${geminiApiKey}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{ text: geminiPrompt }]
-          }]
-        })
-      });
+      let response: Response | null = null;
+      let attempts = 0;
+      const maxAttempts = 3;
+      let delayMs = 1500; // Start with 1.5 seconds delay
 
-      if (response.ok) {
+      while (attempts < maxAttempts) {
+        attempts++;
+        try {
+          response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${geminiApiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{
+                parts: [{ text: geminiPrompt }]
+              }]
+            })
+          });
+
+          if (response.ok) {
+            break; // Success, exit retry loop
+          }
+
+          // Retry on temporary overloads (503) or rate limits (429)
+          if (response.status === 503 || response.status === 429) {
+            if (attempts < maxAttempts) {
+              console.warn(`Gemini API returned ${response.status}. Retrying in ${delayMs}ms (Attempt ${attempts} of ${maxAttempts})...`);
+              await new Promise((resolve) => setTimeout(resolve, delayMs));
+              delayMs *= 2; // Double the wait time
+              continue;
+            }
+          }
+          break; // Stop retrying on client errors (400, 404, etc.)
+        } catch (err) {
+          if (attempts < maxAttempts) {
+            console.warn(`Gemini fetch error. Retrying in ${delayMs}ms...`, err);
+            await new Promise((resolve) => setTimeout(resolve, delayMs));
+            delayMs *= 2;
+            continue;
+          }
+          throw err;
+        }
+      }
+
+      if (response && response.ok) {
         const resJson = await response.json();
         finalNarrative = resJson.candidates?.[0]?.content?.parts?.[0]?.text || 'Falha ao compilar narrativa do Gemini.';
       } else {
-        const errorText = await response.text();
+        const errorText = response ? await response.text() : 'No response from Gemini API';
         console.error('Gemini API failed:', errorText);
         finalNarrative = `Falha ao conectar com o Gemini: ${errorText}\n\nDados brutos:\n${reportData}`;
       }
