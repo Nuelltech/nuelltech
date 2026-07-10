@@ -35,10 +35,16 @@ interface BookingRow {
 
 export async function GET(req: NextRequest) {
   try {
-    // 1. Authorize CRON request in production
+    // 1. Authorize CRON request in production (supports header or ?secret= query parameter)
     if (process.env.NODE_ENV === 'production') {
       const authHeader = req.headers.get('authorization');
-      if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+      const { searchParams } = new URL(req.url);
+      const querySecret = searchParams.get('secret');
+
+      const isHeaderValid = authHeader === `Bearer ${process.env.CRON_SECRET}`;
+      const isQueryValid = querySecret && querySecret === process.env.CRON_SECRET;
+
+      if (!isHeaderValid && !isQueryValid) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
       }
     }
