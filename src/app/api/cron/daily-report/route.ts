@@ -180,12 +180,18 @@ ${reportData}
       let response: Response | null = null;
       let attempts = 0;
       const maxAttempts = 3;
-      let delayMs = 1500; // Start with 1.5 seconds delay
+      let delayMs = 1500;
+      
+      // Fallback model list: if Flash is overloaded, try the smarter Pro model
+      const modelsToTry = ['gemini-flash-latest', 'gemini-1.5-pro'];
+      let modelIndex = 0;
 
-      while (attempts < maxAttempts) {
+      while (modelIndex < modelsToTry.length && attempts < maxAttempts) {
         attempts++;
+        const currentModel = modelsToTry[modelIndex];
+        
         try {
-          response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${geminiApiKey}`, {
+          response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${currentModel}:generateContent?key=${geminiApiKey}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -196,19 +202,24 @@ ${reportData}
           });
 
           if (response.ok) {
-            break; // Success, exit retry loop
+            break; // Success, exit loop
           }
 
-          // Retry on temporary overloads (503) or rate limits (429)
+          // If current model is overloaded (503) or rate-limited (429)
           if (response.status === 503 || response.status === 429) {
-            if (attempts < maxAttempts) {
-              console.warn(`Gemini API returned ${response.status}. Retrying in ${delayMs}ms (Attempt ${attempts} of ${maxAttempts})...`);
+            if (modelIndex < modelsToTry.length - 1) {
+              console.warn(`Gemini model ${currentModel} returned ${response.status}. Swapping to fallback model ${modelsToTry[modelIndex + 1]}...`);
+              modelIndex++; // Move to gemini-1.5-pro
+              attempts = 0; // Reset attempts for the new model
+              continue;
+            } else if (attempts < maxAttempts) {
+              console.warn(`All Gemini models busy. Retrying in ${delayMs}ms (Attempt ${attempts} of ${maxAttempts})...`);
               await new Promise((resolve) => setTimeout(resolve, delayMs));
-              delayMs *= 2; // Double the wait time
+              delayMs *= 2;
               continue;
             }
           }
-          break; // Stop retrying on client errors (400, 404, etc.)
+          break; // Stop on client errors (400, 404, etc.)
         } catch (err) {
           if (attempts < maxAttempts) {
             console.warn(`Gemini fetch error. Retrying in ${delayMs}ms...`, err);
