@@ -146,20 +146,13 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    // 3. Request AI Summary using Gemini API
+    // 3. Request AI Summary using Gemini API or Anthropic Claude fallback
     const geminiApiKey = process.env.GEMINI_API_KEY;
+    const anthropicApiKey = process.env.ANTHROPIC_API_KEY;
     let finalNarrative = '';
+    let aiSuccess = false;
 
-    if (!geminiApiKey) {
-      finalNarrative = `
-Relatório Diário Nuelltech (Simulação sem Chave Gemini)
-------------------------------------------------------
-Aqui estaria a análise narrada pelo Gerente IA.
-Dados recolhidos:
-${reportData}
-      `;
-    } else {
-      const geminiPrompt = `
+    const reportPrompt = `
 Tu és o "Gerente de Loja" da Nuelltech, uma empresa de automação de processos e engenharia de Inteligência Artificial.
 Abaixo encontras os dados brutos de atividade da nossa "loja" (página web) no dia de hoje.
 Analisa os dados de visitas, tempo nas secções, cliques nas sandboxes e conversas com o assistente Nuell.
@@ -175,14 +168,15 @@ Escreve em Português de Portugal e sê assertivo e direto ao ponto.
 
 Dados do dia:
 ${reportData}
-      `;
+    `;
 
+    // Try Gemini First
+    if (geminiApiKey) {
       let response: Response | null = null;
       let attempts = 0;
       const maxAttempts = 3;
       let delayMs = 1500;
       
-      // Fallback model list: only Flash models (Pro has a quota limit of 0 on the Google free tier)
       const modelsToTry = ['gemini-flash-latest', 'gemini-3.5-flash'];
       let modelIndex = 0;
 
@@ -196,7 +190,7 @@ ${reportData}
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               contents: [{
-                parts: [{ text: geminiPrompt }]
+                parts: [{ text: reportPrompt }]
               }]
             })
           });
@@ -205,12 +199,11 @@ ${reportData}
             break; // Success, exit loop
           }
 
-          // If current model is overloaded (503) or rate-limited (429)
           if (response.status === 503 || response.status === 429) {
             if (modelIndex < modelsToTry.length - 1) {
               console.warn(`Gemini model ${currentModel} returned ${response.status}. Swapping to fallback model ${modelsToTry[modelIndex + 1]}...`);
-              modelIndex++; // Move to gemini-1.5-pro
-              attempts = 0; // Reset attempts for the new model
+              modelIndex++;
+              attempts = 0;
               continue;
             } else if (attempts < maxAttempts) {
               console.warn(`All Gemini models busy. Retrying in ${delayMs}ms (Attempt ${attempts} of ${maxAttempts})...`);
@@ -219,7 +212,7 @@ ${reportData}
               continue;
             }
           }
-          break; // Stop on client errors (400, 404, etc.)
+          break; // Stop on client errors
         } catch (err) {
           if (attempts < maxAttempts) {
             console.warn(`Gemini fetch error. Retrying in ${delayMs}ms...`, err);
@@ -234,11 +227,56 @@ ${reportData}
       if (response && response.ok) {
         const resJson = await response.json();
         finalNarrative = resJson.candidates?.[0]?.content?.parts?.[0]?.text || 'Falha ao compilar narrativa do Gemini.';
+        aiSuccess = true;
       } else {
         const errorText = response ? await response.text() : 'No response from Gemini API';
-        console.error('Gemini API failed:', errorText);
-        finalNarrative = `Falha ao conectar com o Gemini: ${errorText}\n\nDados brutos:\n${reportData}`;
+        console.warn('Gemini API failed to respond successfully:', errorText);
       }
+    }
+
+    // Try Anthropic Claude Fallback if Gemini failed or wasn't configured
+    if (!aiSuccess && anthropicApiKey) {
+      console.log('Gemini failed or was not configured. Trying Anthropic Claude fallback...');
+      try {
+        const response = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'x-api-key': anthropicApiKey,
+            'anthropic-version': '2023-06-01',
+            'content-type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'claude-3-5-haiku-20241022',
+            max_tokens: 1500,
+            messages: [
+              {
+                role: 'user',
+                content: reportPrompt
+              }
+            ]
+          })
+        });
+
+        if (response.ok) {
+          const resJson = await response.json();
+          finalNarrative = resJson.content?.[0]?.text || 'Falha ao compilar narrativa do Claude.';
+          aiSuccess = true;
+        } else {
+          const errText = await response.text();
+          console.error('Anthropic API failed:', errText);
+        }
+      } catch (err) {
+        console.error('Anthropic fetch error:', err);
+      }
+    }
+
+    // Ultimate fallback if both AI providers fail or are missing keys
+    if (!aiSuccess) {
+      finalNarrative = `
+[SIMULAÇÃO LOCAL - DADOS FICTÍCIOS DE EXEMPLO]
+Abaixo estão os dados reais do dia (a IA não pôde processá-los devido a limites de quota):
+${reportData}
+      `;
     }
 
     // 4. Send Email via Resend
