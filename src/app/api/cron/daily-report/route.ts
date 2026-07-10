@@ -246,7 +246,7 @@ ${reportData}
             'content-type': 'application/json',
           },
           body: JSON.stringify({
-            model: 'claude-3-5-haiku-20241022',
+            model: 'claude-3-5-haiku-latest',
             max_tokens: 1500,
             messages: [
               {
