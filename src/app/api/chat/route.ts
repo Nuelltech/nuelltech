@@ -57,13 +57,17 @@ async function saveChatLog(sessionId: string | undefined, role: 'user' | 'nuell'
     return;
   }
   try {
-    await supabase.from('chat_logs').insert({
+    const { error } = await supabase.from('chat_logs').insert({
       session_id: sessionId,
       role,
       message_text: text,
     });
+    
+    if (error) {
+      console.error('Supabase Chat Log Insert Error:', error.message, error.details, error.hint);
+    }
   } catch (err) {
-    console.error('Failed to log chat message to Supabase:', err);
+    console.error('Failed to log chat message to Supabase (unexpected error):', err);
   }
 }
 
