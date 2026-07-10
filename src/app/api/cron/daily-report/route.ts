@@ -264,9 +264,11 @@ ${reportData}
         } else {
           const errText = await response.text();
           console.error('Anthropic API failed:', errText);
+          finalNarrative = `Falha ao conectar com o Claude: ${errText}`;
         }
       } catch (err) {
         console.error('Anthropic fetch error:', err);
+        finalNarrative = `Erro de ligação ao Claude: ${(err as Error).message}`;
       }
     }
 
@@ -274,7 +276,12 @@ ${reportData}
     if (!aiSuccess) {
       finalNarrative = `
 [SIMULAÇÃO LOCAL - DADOS FICTÍCIOS DE EXEMPLO]
-Abaixo estão os dados reais do dia (a IA não pôde processá-los devido a limites de quota):
+Abaixo estão os dados reais do dia (a IA não pôde processá-los devido a limites de quota ou erros nos fornecedores).
+
+Detalhes do erro do sistema:
+${finalNarrative || 'Sem detalhes de erro adicionais.'}
+
+Dados brutos recolhidos:
 ${reportData}
       `;
     }
