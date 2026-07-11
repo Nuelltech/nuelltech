@@ -8,6 +8,7 @@ interface SessionRow {
   sector_selected: string | null;
   referrer: string;
   user_agent: string;
+  created_at?: string;
 }
 
 interface SectionViewRow {
@@ -75,33 +76,70 @@ export async function GET(req: NextRequest) {
       todayStart.setUTCHours(0, 0, 0, 0);
       const todayIso = todayStart.toISOString();
 
-      // Query database
+      // Query database for all events created today
       const [
-        { data: sessionsRaw },
         { data: sectionViewsRaw },
         { data: clicksRaw },
         { data: chatLogsRaw },
         { data: bookingsRaw },
       ] = await Promise.all([
-        supabase.from('sessions').select('*').gte('created_at', todayIso),
         supabase.from('section_views').select('*').gte('created_at', todayIso),
         supabase.from('clicks').select('*').gte('created_at', todayIso),
         supabase.from('chat_logs').select('*').gte('created_at', todayIso).order('created_at', { ascending: true }),
         supabase.from('bookings').select('*').gte('created_at', todayIso),
       ]);
 
-      const sessions = (sessionsRaw || []) as SessionRow[];
       const sectionViews = (sectionViewsRaw || []) as SectionViewRow[];
       const clicks = (clicksRaw || []) as ClickRow[];
       const chatLogs = (chatLogsRaw || []) as ChatLogRow[];
       const bookings = (bookingsRaw || []) as BookingRow[];
 
+      // Collect all session IDs that had activity today
+      const activeSessionIds = new Set<string>();
+      sectionViews.forEach((sv) => activeSessionIds.add(sv.session_id));
+      clicks.forEach((c) => activeSessionIds.add(c.session_id));
+      chatLogs.forEach((cl) => activeSessionIds.add(cl.session_id));
+      bookings.forEach((b) => activeSessionIds.add(b.session_id));
+
+      // Also get all sessions created today (in case a session has no active events yet)
+      const { data: createdTodayRaw } = await supabase.from('sessions').select('*').gte('created_at', todayIso);
+      const createdToday = (createdTodayRaw || []) as SessionRow[];
+      createdToday.forEach((s) => activeSessionIds.add(s.session_id));
+
+      // Fetch the full details of all active sessions
+      let sessions: SessionRow[] = [];
+      if (activeSessionIds.size > 0) {
+        const { data: sessionsRaw } = await supabase
+          .from('sessions')
+          .select('*')
+          .in('session_id', Array.from(activeSessionIds));
+        sessions = (sessionsRaw || []) as SessionRow[];
+      }
+
+      // Group sessions into New (created today) vs Returning (created before today)
+      const newSessions: SessionRow[] = [];
+      const returningSessions: SessionRow[] = [];
+      sessions.forEach((s) => {
+        const sessionCreatedAt = new Date(s.created_at || '');
+        if (sessionCreatedAt.getTime() < todayStart.getTime()) {
+          returningSessions.push(s);
+        } else {
+          newSessions.push(s);
+        }
+      });
+
       // Compile raw data into text format for the AI prompt
       reportData += `RELATÓRIO DE ATIVIDADE EM BRUTO (${new Date().toLocaleDateString('pt-PT')})\n`;
       reportData += `==========================================\n\n`;
-      reportData += `1. TOTAL SESSÕES: ${sessions.length}\n`;
-      sessions.forEach((s) => {
-        reportData += `   - Sessão ${s.session_id.substring(0, 8)} | Setor: ${s.sector_selected || 'Não indicado'} | Ref: ${s.referrer} | Dispositivo: ${s.user_agent.substring(0, 50)}...\n`;
+      reportData += `1. TOTAL SESSÕES ATIVAS HOJE: ${sessions.length}\n`;
+      reportData += `   - NOVAS SESSÕES (CRIADAS HOJE): ${newSessions.length}\n`;
+      newSessions.forEach((s) => {
+        reportData += `     * Sessão ${s.session_id.substring(0, 8)} | Setor: ${s.sector_selected || 'Não indicado'} | Ref: ${s.referrer} | Dispositivo: ${s.user_agent.substring(0, 50)}...\n`;
+      });
+      reportData += `   - SESSÕES RECORRENTES (VISITANTES QUE REGRESSARAM): ${returningSessions.length}\n`;
+      returningSessions.forEach((s) => {
+        const dateStr = s.created_at ? new Date(s.created_at).toLocaleDateString('pt-PT') : 'Desconhecida';
+        reportData += `     * Sessão ${s.session_id.substring(0, 8)} | Setor: ${s.sector_selected || 'Não indicado'} | Primeira Visita em: ${dateStr} | Ref original: ${s.referrer} | Dispositivo: ${s.user_agent.substring(0, 50)}...\n`;
       });
 
       reportData += `\n2. VISUALIZAÇÕES DE MONTRAS (SECÇÕES):\n`;
