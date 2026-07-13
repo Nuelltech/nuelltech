@@ -51,13 +51,21 @@ export default function BetaRequestForm({ lang }: BetaRequestFormProps) {
         }
       };
 
-      const res = await fetch('/api/log-conversation', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+      let resOk = true;
+      const isExcluded = typeof window !== 'undefined' && localStorage.getItem('nuell_exclude_analytics') === 'true';
 
-      if (res.ok) {
+      if (!isExcluded) {
+        const res = await fetch('/api/log-conversation', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        resOk = res.ok;
+      } else {
+        console.log('[Nuelltech Analytics] Simulação de envio da candidatura à Beta Fechada concluída (envio real omitido pelo filtro de exclusão).');
+      }
+
+      if (resOk) {
         setStatus('success');
       } else {
         setStatus('error');

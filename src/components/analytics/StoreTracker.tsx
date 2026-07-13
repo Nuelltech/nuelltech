@@ -10,6 +10,10 @@ export default function StoreTracker() {
   const sectionStartTimeRef = useRef<number>(0);
 
   const sendEvent = (payload: Record<string, unknown>) => {
+    if (typeof window !== 'undefined' && localStorage.getItem('nuell_exclude_analytics') === 'true') {
+      return;
+    }
+
     // Retrieve session ID from local storage, or generate if missing
     let sessionId = localStorage.getItem('nuell_session_id');
     if (!sessionId) {
@@ -34,11 +38,26 @@ export default function StoreTracker() {
   };
 
   useEffect(() => {
+    // Check for query parameters to exclude/include own visits
+    const urlParams = new URLSearchParams(window.location.search);
+    const excludeParam = urlParams.get('exclude');
+    if (excludeParam === 'true') {
+      localStorage.setItem('nuell_exclude_analytics', 'true');
+      console.log('[Nuelltech Analytics] Este dispositivo foi excluído do rastreio de visitas (nuell_exclude_analytics = true)');
+    } else if (excludeParam === 'false') {
+      localStorage.removeItem('nuell_exclude_analytics');
+      console.log('[Nuelltech Analytics] Rastreio de visitas reativado neste dispositivo.');
+    }
+
+    if (localStorage.getItem('nuell_exclude_analytics') === 'true') {
+      console.log('[Nuelltech Analytics] Rastreio desativado para este dispositivo.');
+      return;
+    }
+
     // Set initial start time here to maintain react hook purity
     sectionStartTimeRef.current = Date.now();
 
     // 1. Initialize Session & campaign query parameters
-    const urlParams = new URLSearchParams(window.location.search);
     const utmSource = urlParams.get('utm_source') || '';
     const utmMedium = urlParams.get('utm_medium') || '';
     const utmCampaign = urlParams.get('utm_campaign') || '';

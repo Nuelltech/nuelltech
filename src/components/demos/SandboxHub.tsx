@@ -344,7 +344,7 @@ export default function SandboxHub({ isPt }: SandboxHubProps) {
                   </div>
                 </div>
                 <Link 
-                  href={isPt ? "/pt/simulador-vendas" : "/en/simulador-vendas"}
+                  href={isPt ? "/pt/auditor-pro" : "/en/auditor-pro"}
                   className="text-xs font-mono text-brand-accent-soft hover:underline font-bold flex items-center gap-1.5 self-start sm:self-center"
                 >
                   {isPt ? 'Experimente a nossa simulação de perdas de margem' : 'Try our interactive margin loss calculator'}

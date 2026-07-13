@@ -6,6 +6,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
 import NuellWidget from '@/components/widget/NuellWidget';
+import BiReconciliation from '@/components/demos/BiReconciliation';
 import { ArrowRight, BarChart3, Database, Calendar, Award } from 'lucide-react';
 
 export async function generateMetadata({
@@ -123,6 +124,14 @@ export default async function BiPharmaPage({
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* Simulador Interativo */}
+          <div className="my-12">
+            <h3 className="text-base font-bold font-display text-brand-ink mb-6 text-center">
+              {pt ? 'Simulador Interativo BI-Pharma' : 'BI-Pharma Interactive Simulator'}
+            </h3>
+            <BiReconciliation pt={pt} />
           </div>
 
           {/* CTA Custom */}

@@ -60,7 +60,8 @@ export default function SectorSelector({ isPt }: SectorSelectorProps) {
     // Track the selected sector in the database session
     try {
       const sessionId = localStorage.getItem('nuell_session_id');
-      if (sessionId) {
+      const isExcluded = typeof window !== 'undefined' && localStorage.getItem('nuell_exclude_analytics') === 'true';
+      if (sessionId && !isExcluded) {
         fetch('/api/analytics', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

@@ -320,6 +320,9 @@ In which processes of ${sector} would you like to introduce AI? Which routine ta
   // 3.5. LOG CONVERSATION IN REAL-TIME TO BACKEND / GOOGLE SHEETS
   useEffect(() => {
     if (messages.length > 0) {
+      if (typeof window !== 'undefined' && localStorage.getItem('nuell_exclude_analytics') === 'true') {
+        return;
+      }
       const sessionId = sessionStorage.getItem('nuell_chat_session_id') || (() => {
         const newId = 'session_' + Math.random().toString(36).substring(2, 11) + '_' + Date.now();
         sessionStorage.setItem('nuell_chat_session_id', newId);
@@ -385,6 +388,7 @@ In which processes of ${sector} would you like to introduce AI? Which routine ta
 
     // Call API or Mock locally
     try {
+      const isExcluded = typeof window !== 'undefined' && localStorage.getItem('nuell_exclude_analytics') === 'true';
       // Build conversation payload for the API
       const response = await fetch('/api/chat', {
         method: 'POST',
@@ -394,7 +398,7 @@ In which processes of ${sector} would you like to introduce AI? Which routine ta
           turn: currentTurn,
           lang,
           leadInfo: currentLeadInfo,
-          sessionId: localStorage.getItem('nuell_session_id') || '',
+          sessionId: isExcluded ? '' : (localStorage.getItem('nuell_session_id') || ''),
         }),
       });
 
