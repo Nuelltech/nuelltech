@@ -18,9 +18,11 @@ jobs:
           python-version: '3.9'
 
       - name: Instalar dependências
-        run: pip install tavily-python
+        run: pip install tavily-python notion-client
 
       - name: Correr o Agente Vigilante
         env:
           TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
-        run: python scripts/vigilante.py # O teu script deve estar nesta pasta
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+        run: python scripts/vigilante.py
