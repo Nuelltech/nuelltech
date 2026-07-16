@@ -4,7 +4,7 @@ import sys
 from tavily import TavilyClient
 from notion_client import Client
 
-# Inicialização
+# Inicialização com verificação de segurança
 try:
     tavily = TavilyClient(api_key=os.environ["TAVILY_API_KEY"])
     notion = Client(auth=os.environ["NOTION_TOKEN"])
@@ -15,7 +15,8 @@ except KeyError as e:
 
 def carregar_alvos():
     try:
-        with open('scripts/alvos.json', 'r', encoding='utf-8') as f:
+        # Lê o ficheiro alvos.json na raiz do repositório
+        with open('alvos.json', 'r', encoding='utf-8') as f:
             return json.load(f)['setores']
     except Exception as e:
         print(f"Erro ao ler alvos.json: {e}")
@@ -26,22 +27,28 @@ def procurar_dores():
     for setor in alvos:
         print(f"Processando setor: {setor}")
         query = f"dificuldades gestão processos {setor} PME Portugal"
+        # O tavily.search() devolve um dicionário
         response = tavily.search(query=query, search_depth="advanced", max_results=2)
         
-        for result in response.results:
+        # Acedemos à chave 'results' do dicionário retornado
+        for result in response.get('results', []):
             try:
                 notion.pages.create(
                     parent={"database_id": DATABASE_ID},
                     properties={
-                        "Nome": {"title": [{"text": {"content": result['title'][:200]}}]},
+                        "Nome": {"title": [{"text": {"content": result.get('title', 'Sem Título')[:200]}}]},
                         "Setor": {"select": {"name": setor}},
-                        "Fonte": {"url": result['url']},
+                        "Fonte": {"url": result.get('url', '')},
                         "Status": {"status": {"name": "Novo"}}
                     }
                 )
-                print(f"Sucesso: {result['title']}")
+                print(f"Sucesso: {result.get('title')}")
             except Exception as e:
-                print(f"Erro ao escrever no Notion: {e}")
+                print(f"Erro ao escrever no Notion para o item {result.get('title')}: {e}")
 
 if __name__ == "__main__":
-    procurar_dores()
+    try:
+        procurar_dores()
+    except Exception as e:
+        print(f"ERRO FATAL DETETADO: {str(e)}")
+        sys.exit(1)
