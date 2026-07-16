@@ -3,6 +3,7 @@ import json
 import sys
 from tavily import TavilyClient
 from notion_client import Client
+# Importação corrigida para funcionar dentro da pasta scripts/
 from analista import processar_noticia
 
 # Inicialização dos serviços
