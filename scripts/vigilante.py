@@ -1,27 +1,21 @@
 import os
 import json
-import sys
 from tavily import TavilyClient
 from notion_client import Client
-# Importação corrigida para funcionar dentro da pasta scripts/
 from analista import processar_noticia
 
-# Inicialização dos serviços
+# Inicialização
 tavily = TavilyClient(api_key=os.environ["TAVILY_API_KEY"])
 notion = Client(auth=os.environ["NOTION_TOKEN"])
 DATABASE_ID = os.environ["NOTION_DATABASE_ID"]
 
-# Em scripts/vigilante.py, substitui a função por:
 def artigo_ja_existe(nome_artigo):
     try:
-        # A sintaxe oficial da biblioteca é exatamente esta:
-        response = notion.databases.query(
-            database_id=DATABASE_ID,
-            filter={
-                "property": "Nome",
-                "title": {"equals": nome_artigo}
-            }
-        )
+        # Sintaxe robusta para o notion-client
+        response = notion.databases.query(**{
+            "database_id": DATABASE_ID,
+            "filter": {"property": "Nome", "title": {"equals": nome_artigo}}
+        })
         return len(response['results']) > 0
     except Exception as e:
         print(f"Erro na verificação do Notion: {e}")
@@ -40,14 +34,11 @@ def procurar_dores():
             titulo = result.get('title', 'Sem Título')[:200]
             
             if artigo_ja_existe(titulo):
-                print(f"Skipping: {titulo} (já existe)")
                 continue
             
-            # Chama o Analista (Claude)
             try:
                 analise = processar_noticia(titulo, result.get('content', ''))
                 
-                # Insere no Notion
                 notion.pages.create(
                     parent={"database_id": DATABASE_ID},
                     properties={
@@ -55,13 +46,13 @@ def procurar_dores():
                         "Dor/Problema": {"rich_text": [{"text": {"content": analise['Dor']}}]},
                         "Fonte": {"url": result.get('url', '')},
                         "Setor": {"select": {"name": setor}},
-                        "Intensidade": {"select": {"name": analise['Intensidade']}},
+                        "Intensidade": {"number": int(analise['Intensidade'])},
                         "Status": {"select": {"name": "Novo"}}
                     }
                 )
-                print(f"Sucesso: {titulo} | Intensidade: {analise['Intensidade']}")
+                print(f"Sucesso: {titulo}")
             except Exception as e:
-                print(f"Erro ao processar/escrever {titulo}: {e}")
+                print(f"Erro ao processar {titulo}: {e}")
 
 if __name__ == "__main__":
     procurar_dores()
