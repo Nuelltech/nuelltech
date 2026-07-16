@@ -1,34 +1,28 @@
-import os
-import json
-from tavily import TavilyClient
-from notion_client import Client
+name: Agente Vigilante - Monitorização
 
-# Configurações
-tavily = TavilyClient(api_key=os.environ["TAVILY_API_KEY"])
-notion = Client(auth=os.environ["NOTION_TOKEN"])
-DATABASE_ID = os.environ["NOTION_DATABASE_ID"]
+on:
+  schedule:
+    - cron: '0 8 * * *'
+  workflow_dispatch:
 
-def carregar_alvos():
-    with open('scripts/alvos.json', 'r', encoding='utf-8') as f:
-        return json.load(f)['setores']
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
 
-def procurar_dores():
-    alvos = carregar_alvos()
-    for setor in alvos:
-        query = f"dificuldades gestão processos {setor} PME Portugal"
-        response = tavily.search(query=query, search_depth="advanced", max_results=2)
-        
-        for result in response.results:
-            # Enviar para o Notion
-            notion.pages.create(
-                parent={"database_id": DATABASE_ID},
-                properties={
-                    "Nome": {"title": [{"text": {"content": result['title']}}]},
-                    "Setor": {"select": {"name": setor}},
-                    "Fonte": {"url": result['url']},
-                    "Status": {"status": {"name": "Novo"}}
-                }
-            )
+      - name: Instalar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
 
-if __name__ == "__main__":
-    procurar_dores()
+      - name: Instalar dependências
+        run: pip install tavily-python notion-client
+
+      - name: Correr o Agente Vigilante
+        env:
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+        run: python scripts/vigilante.py
