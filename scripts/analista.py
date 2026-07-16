@@ -8,12 +8,12 @@ def processar_noticia(titulo, conteudo):
     prompt = f"""
     Analisa este conteúdo de mercado: "{titulo} - {conteudo}"
     Age como Diretor de Estratégia da Nuelltech.
-    Retorna APENAS um JSON: 
+    Retorna APENAS um objeto JSON válido (sem texto adicional, sem blocos de pensamento): 
     {{
-        "Dor": "Resumo curto",
+        "Dor": "Resumo da dor principal",
         "Sentimento": "Positivo, Neutro ou Negativo",
-        "Oportunidade": "Como a Nuelltech ajuda",
-        "Intensidade": 8  // Retorna um número de 1 a 10
+        "Oportunidade": "Como a Nuelltech ajuda com IA",
+        "Intensidade": 8
     }}
     """
     
@@ -23,7 +23,11 @@ def processar_noticia(titulo, conteudo):
         messages=[{"role": "user", "content": prompt}]
     )
     
-    # Extrai e limpa
-    texto = response.content[0].text
-    json_str = texto.replace("```json", "").replace("```", "").strip()
+    # Processa para garantir que apenas o JSON é retornado
+    full_text = response.content[0].text
+    # Procura a posição do '{' e '}' para extrair o JSON puro
+    start = full_text.find('{')
+    end = full_text.rfind('}') + 1
+    json_str = full_text[start:end]
+    
     return json.loads(json_str)
