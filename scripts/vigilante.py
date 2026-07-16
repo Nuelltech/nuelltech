@@ -12,11 +12,22 @@ notion = Client(auth=os.environ["NOTION_TOKEN"])
 DATABASE_ID = os.environ["NOTION_DATABASE_ID"]
 
 def artigo_ja_existe(nome_artigo):
-    response = notion.databases.query(
-        database_id=DATABASE_ID,
-        filter={"property": "Nome", "title": {"equals": nome_artigo}}
-    )
-    return len(response['results']) > 0
+    # A sintaxe correta é notion.databases.query
+    # Vamos garantir que chamamos diretamente do objeto cliente
+    try:
+        response = notion.databases.query(
+            database_id=DATABASE_ID,
+            filter={
+                "property": "Nome",
+                "title": {
+                    "equals": nome_artigo
+                }
+            }
+        )
+        return len(response['results']) > 0
+    except Exception as e:
+        print(f"Erro na verificação do Notion: {e}")
+        return False
 
 def procurar_dores():
     with open('scripts/alvos.json', 'r', encoding='utf-8') as f:
