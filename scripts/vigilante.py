@@ -3,7 +3,7 @@ import json
 import sys
 from tavily import TavilyClient
 from notion_client import Client
-from scripts.analista import processar_noticia
+from analista import processar_noticia
 
 # Inicialização dos serviços
 tavily = TavilyClient(api_key=os.environ["TAVILY_API_KEY"])
