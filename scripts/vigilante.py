@@ -16,7 +16,7 @@ except KeyError as e:
 def carregar_alvos():
     try:
         # Lê o ficheiro alvos.json na raiz do repositório
-        with open('alvos.json', 'r', encoding='utf-8') as f:
+        with open('scripts/alvos.json', 'r', encoding='utf-8') as f:
             return json.load(f)['setores']
     except Exception as e:
         print(f"Erro ao ler alvos.json: {e}")
