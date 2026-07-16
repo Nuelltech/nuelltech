@@ -1,0 +1,26 @@
+name: Agente Vigilante - Monitorização
+
+on:
+  schedule:
+    - cron: '0 8 * * *' # Corre todos os dias às 08:00 UTC
+  workflow_dispatch:     # Permite-te correr manualmente sempre que quiseres testar
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v3
+
+      - name: Instalar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Instalar dependências
+        run: pip install tavily-python
+
+      - name: Correr o Agente Vigilante
+        env:
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+        run: python scripts/vigilante.py # O teu script deve estar nesta pasta
