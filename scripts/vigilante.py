@@ -11,17 +11,15 @@ tavily = TavilyClient(api_key=os.environ["TAVILY_API_KEY"])
 notion = Client(auth=os.environ["NOTION_TOKEN"])
 DATABASE_ID = os.environ["NOTION_DATABASE_ID"]
 
+# Em scripts/vigilante.py, substitui a função por:
 def artigo_ja_existe(nome_artigo):
-    # A sintaxe correta é notion.databases.query
-    # Vamos garantir que chamamos diretamente do objeto cliente
     try:
+        # A sintaxe oficial da biblioteca é exatamente esta:
         response = notion.databases.query(
             database_id=DATABASE_ID,
             filter={
                 "property": "Nome",
-                "title": {
-                    "equals": nome_artigo
-                }
+                "title": {"equals": nome_artigo}
             }
         )
         return len(response['results']) > 0
