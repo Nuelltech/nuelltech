@@ -1,33 +1,60 @@
 import os
+import sys
 import json
 from anthropic import Anthropic
+from notion_client import Client
 
-client = Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+anthropic = Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+notion = Client(auth=os.environ["NOTION_TOKEN"])
 
-def processar_noticia(titulo, conteudo):
+def ler_contexto_notion(page_id):
+    blocks = notion.blocks.children.list(block_id=page_id)
+    return "\n".join([b['paragraph']['rich_text'][0]['plain_text'] for b in blocks['results'] if 'paragraph' in b and b['paragraph']['rich_text']])
+
+def processar_page(page):
+    page_id = page['id']
+    titulo = page['properties']['Nome']['title'][0]['text']['content']
+    contexto = ler_contexto_notion(os.environ["NOTION_CONTEXTO_PAGE_ID"])
+    
     prompt = f"""
-    Analisa este conteúdo de mercado: "{titulo} - {conteudo}"
-    Age como Diretor de Estratégia da Nuelltech.
-    Retorna APENAS um objeto JSON válido (sem texto adicional, sem blocos de pensamento): 
+    Contexto Nuelltech: {contexto}
+    Analisa este artigo: "{titulo}"
+    Retorna APENAS JSON estruturado:
     {{
-        "Dor": "Resumo da dor principal",
-        "Sentimento": "Positivo, Neutro ou Negativo",
-        "Oportunidade": "Como a Nuelltech ajuda com IA",
-        "Intensidade": 8
+        "Diagnostico_Problema": "...",
+        "Solucao_Nuelltech_Fit": "...",
+        "Argumentario_Venda": "...",
+        "Intensidade": 9
     }}
     """
     
-    response = client.messages.create(
-        model="claude-sonnet-5",
-        max_tokens=500,
+    response = anthropic.messages.create(
+        model="claude-3-5-sonnet-20240620",
+        max_tokens=2000,
         messages=[{"role": "user", "content": prompt}]
     )
     
-    # Processa para garantir que apenas o JSON é retornado
-    full_text = response.content[0].text
-    # Procura a posição do '{' e '}' para extrair o JSON puro
-    start = full_text.find('{')
-    end = full_text.rfind('}') + 1
-    json_str = full_text[start:end]
+    data = json.loads(response.content[0].text.split('{', 1)[1].rsplit('}', 1)[0].replace('{', '', 1))
     
-    return json.loads(json_str)
+    notion.pages.update(
+        page_id=page_id,
+        properties={
+            "Diagnostico_Problema": {"rich_text": [{"text": {"content": data['Diagnostico_Problema']}}]},
+            "Solucao_Nuelltech_Fit": {"rich_text": [{"text": {"content": data['Solucao_Nuelltech_Fit']}}]},
+            "Argumentario_Venda": {"rich_text": [{"text": {"content": data['Argumentario_Venda']}}]},
+            "Status": {"select": {"name": "Processado"}}
+        }
+    )
+
+def main():
+    if len(sys.argv) > 1:
+        page = notion.pages.retrieve(page_id=sys.argv[1])
+        processar_page(page)
+    else:
+        pendentes = notion.databases.query(database_id=os.environ["NOTION_DATABASE_ID"], 
+                                           filter={"property": "Status", "select": {"equals": "Novo"}})
+        for page in pendentes['results']:
+            processar_page(page)
+
+if __name__ == "__main__":
+    main()
