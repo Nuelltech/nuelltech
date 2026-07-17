@@ -2,67 +2,47 @@ import os
 import json
 from tavily import TavilyClient
 from notion_client import Client
-from analista import processar_noticia
 
-# Inicialização
 tavily = TavilyClient(api_key=os.environ["TAVILY_API_KEY"])
 notion = Client(auth=os.environ["NOTION_TOKEN"])
 DATABASE_ID = os.environ["NOTION_DATABASE_ID"]
 
-def artigo_ja_existe(nome_artigo):
-    try:
-        response = notion.databases.query(**{
-            "database_id": DATABASE_ID,
-            "filter": {"property": "Nome", "title": {"equals": nome_artigo}}
-        })
-        return len(response['results']) > 0
-    except:
-        return False
-
-def procurar_dores():
+def vigiar():
+    # 1. Carrega os setores
     with open('scripts/alvos.json', 'r', encoding='utf-8') as f:
-        alvos = json.load(f)['setores']
+        setores = json.load(f)['setores']
     
-    # Fontes de pesquisa: [Query, Nome da Fonte]
+    # 2. Define as fontes
     fontes = [
         ("dificuldades gestão processos {setor} PME Portugal", "Web"),
         ("site:reddit.com problemas gestão processos {setor} PME Portugal", "Reddit")
     ]
     
-    for setor in alvos:
-        print(f"--- Processando setor: {setor} ---")
+    # 3. Executa a caça
+    for setor in setores:
+        print(f"--- Pesquisando setor: {setor} ---")
         
         for base_query, tipo in fontes:
             query = base_query.format(setor=setor)
-            print(f"Pesquisando via {tipo}...")
+            results = tavily.search(query=query, max_results=3)
             
-            response = tavily.search(query=query, search_depth="advanced", max_results=3)
-            
-            for result in response.get('results', []):
-                titulo = f"[{tipo}] {result.get('title', 'Sem Título')}"[:200]
-                
-                if artigo_ja_existe(titulo):
-                    continue
+            for res in results.get('results', []):
+                # Prefixa o título para sabermos a origem
+                titulo_final = f"[{tipo}] {res['title']}"
                 
                 try:
-                    analise = processar_noticia(titulo, result.get('content', ''))
-                    
                     notion.pages.create(
                         parent={"database_id": DATABASE_ID},
                         properties={
-                            "Nome": {"title": [{"text": {"content": titulo}}]},
-                            "Resumo_Executivo": {"rich_text": [{"text": {"content": analise['Resumo_Executivo']}}]},
-                            "Oportunidade_Estrategica": {"rich_text": [{"text": {"content": analise['Oportunidade_Estrategica']}}]},
-                            "Acao_Imediata": {"rich_text": [{"text": {"content": analise['Acao_Imediata']}}]},
-                            "Fonte": {"url": result.get('url', '')},
+                            "Nome": {"title": [{"text": {"content": titulo_final[:200]}}]},
+                            "Fonte": {"url": res['url']},
                             "Setor": {"select": {"name": setor}},
-                            "Intensidade": {"number": int(analise['Intensidade'])},
                             "Status": {"select": {"name": "Novo"}}
                         }
                     )
-                    print(f"Sucesso: {titulo}")
+                    print(f"Adicionado ({tipo}): {res['title'][:50]}")
                 except Exception as e:
-                    print(f"Erro ao processar: {e}")
+                    print(f"Erro ao adicionar ao Notion: {e}")
 
 if __name__ == "__main__":
-    procurar_dores()
+    vigiar()
