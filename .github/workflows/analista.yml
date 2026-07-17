@@ -1,0 +1,21 @@
+name: Analista (Brain)
+on:
+  workflow_dispatch: # Apenas manual ou chamado por outro evento
+
+jobs:
+  run-analista:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with: {python-version: '3.9'}
+      - name: Install
+        run: pip install anthropic notion-client
+      - name: Executar
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+          NOTION_CONTEXTO_PAGE_ID: ${{ secrets.NOTION_CONTEXTO_PAGE_ID }}
+        run: python scripts/analista.py
