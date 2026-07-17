@@ -65,10 +65,16 @@ def main():
         page = notion.pages.retrieve(page_id=sys.argv[1])
         processar_page(page)
     else:
-        # Acesso direto ao método query conforme a documentação oficial
-        pendentes = notion.databases.query(
-            database_id=db_id,
-            filter={"property": "Status", "select": {"equals": "Novo"}}
+        # Contorno técnico: usamos o .request para invocar o endpoint diretamente
+        pendentes = notion.request(
+            path=f"databases/{db_id}/query",
+            method="POST",
+            body={
+                "filter": {
+                    "property": "Status",
+                    "select": {"equals": "Novo"}
+                }
+            }
         )
         for page in pendentes['results']:
             processar_page(page)
