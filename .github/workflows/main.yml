@@ -1,37 +1,22 @@
-name: Vigilante & Analista Ciclo
-
+name: Vigilante (Scout)
 on:
   schedule:
-    - cron: '0 8 * * *' # Corre todos os dias às 08:00
-  workflow_dispatch:      # Permite correr manualmente
+    - cron: '0 8 * * *'
+  workflow_dispatch:
 
 jobs:
-  execucao-inteligencia:
+  run-vigilante:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
       - name: Setup Python
         uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
-          
-      - name: Install dependencies
-        run: pip install tavily-python notion-client anthropic
-        
-      # Passo 1: O Vigilante recolhe os dados brutos
-      - name: Executar Vigilante
+        with: {python-version: '3.9'}
+      - name: Install
+        run: pip install tavily-python notion-client
+      - name: Executar
         env:
           TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
         run: python scripts/vigilante.py
-
-      # Passo 2: O Analista processa os dados (só os "Novo")
-      - name: Executar Analista
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
-          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
-          NOTION_CONTEXTO_PAGE_ID: ${{ secrets.NOTION_CONTEXTO_PAGE_ID }}
-        run: python scripts/analista.py
