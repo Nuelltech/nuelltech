@@ -2,7 +2,7 @@ import os
 import sys
 import json
 import re
-import requests
+import urllib.request
 from anthropic import Anthropic
 from notion_client import Client
 
@@ -26,17 +26,22 @@ def extract_notion_id(id_or_url):
 
 def query_database(db_id, filter_body):
     """
-    Consulta a base de dados Notion via HTTP direto — sem depender da versão do SDK.
+    Consulta a base de dados Notion via urllib (stdlib) — zero dependências externas.
     """
     url = f"https://api.notion.com/v1/databases/{db_id}/query"
-    headers = {
-        "Authorization": f"Bearer {NOTION_TOKEN}",
-        "Content-Type": "application/json",
-        "Notion-Version": NOTION_VERSION
-    }
-    response = requests.post(url, headers=headers, json=filter_body)
-    response.raise_for_status()
-    return response.json()
+    data = json.dumps(filter_body).encode("utf-8")
+    req = urllib.request.Request(
+        url,
+        data=data,
+        method="POST",
+        headers={
+            "Authorization": f"Bearer {NOTION_TOKEN}",
+            "Content-Type": "application/json",
+            "Notion-Version": NOTION_VERSION
+        }
+    )
+    with urllib.request.urlopen(req) as response:
+        return json.loads(response.read().decode("utf-8"))
 
 def ler_contexto_notion(page_id):
     clean_page_id = extract_notion_id(page_id)
