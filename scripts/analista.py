@@ -90,12 +90,15 @@ def main():
         page = notion.pages.retrieve(page_id=target_id)
         processar_page(page, contexto)
     else:
-        # Consulta padronizada via SDK do Notion
-        pendentes = notion.databases.query(
-            database_id=db_id,
-            filter={
-                "property": "Status",
-                "select": {"equals": "Teste"}
+        # Usa notion.request() com ID limpo — compatível com todas as versões do SDK
+        pendentes = notion.request(
+            path=f"databases/{db_id}/query",
+            method="POST",
+            body={
+                "filter": {
+                    "property": "Status",
+                    "select": {"equals": "Teste"}
+                }
             }
         )
         results = pendentes.get('results', [])
