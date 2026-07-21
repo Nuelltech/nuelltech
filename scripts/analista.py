@@ -13,9 +13,6 @@ NOTION_TOKEN = os.environ["NOTION_TOKEN"]
 NOTION_VERSION = "2022-06-28"
 
 def extract_notion_id(id_or_url):
-    """
-    Extrai e limpa o ID do Notion a partir de um ID, URL ou string com parâmetros query.
-    """
     if not id_or_url:
         return ""
     cleaned = id_or_url.strip().strip("'\"")
@@ -66,11 +63,12 @@ def processar_page(page, contexto):
     prompt = f"""
     Contexto Nuelltech: {contexto}
     Analisa este artigo: "{titulo}"
-    Retorna APENAS um objeto JSON. Não escrevas nada antes ou depois.
+    Retorna APENAS um objeto JSON válido. Não escrevas nada antes ou depois.
     {{
-        "Diagnostico_Problema": "Analisa o desafio, dor e impacto (2-3 parágrafos).",
-        "Solucao_Nuelltech_Fit": "Lógica técnica: Como resolvemos isto? (Arquitetura ou produto).",
-        "Argumentario_Venda": "Ângulo de venda, objeções a antecipar."
+        "Dor_Problema": "Descreve o desafio, dor e impacto para a empresa (2-3 parágrafos).",
+        "Resumo_Executivo": "Resumo executivo: como a Nuelltech resolve este problema com as suas soluções de IA e automação.",
+        "Oportunidade_Estrategica": "Qual é a oportunidade estratégica para a Nuelltech neste setor ou tema.",
+        "Acao_Imediata": "Ação comercial imediata: ângulo de venda, objeções a antecipar, próximo passo."
     }}
     """
     
@@ -85,13 +83,15 @@ def processar_page(page, contexto):
         json_str = content[content.find('{'):content.rfind('}')+1]
         data = json.loads(json_str)
         
+        # Nomes das colunas reais da base de dados Inbox_Mercado no Notion
         notion.pages.update(
             page_id=page_id,
             properties={
-                "Diagnostico_Problema": {"rich_text": [{"text": {"content": data.get('Diagnostico_Problema', '')[:2000]}}]},
-                "Solucao_Nuelltech_Fit": {"rich_text": [{"text": {"content": data.get('Solucao_Nuelltech_Fit', '')[:2000]}}]},
-                "Argumentario_Venda": {"rich_text": [{"text": {"content": data.get('Argumentario_Venda', '')[:2000]}}]},
-                "Status": {"select": {"name": "Processado"}}
+                "Dor/Problema":           {"rich_text": [{"text": {"content": data.get('Dor_Problema', '')[:2000]}}]},
+                "Resumo_Executivo":        {"rich_text": [{"text": {"content": data.get('Resumo_Executivo', '')[:2000]}}]},
+                "Oportunidade_Estrategica":{"rich_text": [{"text": {"content": data.get('Oportunidade_Estrategica', '')[:2000]}}]},
+                "Acao_Imediata":           {"rich_text": [{"text": {"content": data.get('Acao_Imediata', '')[:2000]}}]},
+                "Status":                  {"select": {"name": "Processado"}}
             }
         )
         print(f"Sucesso ao processar: {titulo}")
@@ -104,7 +104,10 @@ def main():
     
     contexto_page_id = os.environ.get("NOTION_CONTEXTO_PAGE_ID", "")
     contexto = ler_contexto_notion(contexto_page_id) if contexto_page_id else "Contexto indisponível."
-    
+
+    # Filtro: muda para "Novo" quando quiseres processar todos os artigos
+    status_filtro = "Teste"
+
     if len(sys.argv) > 1:
         target_id = extract_notion_id(sys.argv[1])
         page = notion.pages.retrieve(page_id=target_id)
@@ -113,11 +116,11 @@ def main():
         pendentes = query_database(db_id, {
             "filter": {
                 "property": "Status",
-                "select": {"equals": "Teste"}
+                "select": {"equals": status_filtro}
             }
         })
         results = pendentes.get('results', [])
-        print(f"Encontrados {len(results)} artigos pendentes com Status='Teste'.")
+        print(f"Encontrados {len(results)} artigos pendentes com Status='{status_filtro}'.")
         for page in results:
             processar_page(page, contexto)
 
