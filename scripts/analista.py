@@ -17,7 +17,6 @@ def ler_contexto_notion(page_id):
 
 def processar_page(page):
     page_id = page['id']
-    # Extração segura do título
     try:
         titulo = page['properties']['Nome']['title'][0]['text']['content']
     except (KeyError, IndexError):
@@ -43,11 +42,9 @@ def processar_page(page):
     )
     
     content = response.content[0].text
-    # Extração robusta de JSON
     json_str = content[content.find('{'):content.rfind('}')+1]
     data = json.loads(json_str)
     
-    # Atualização com corte de segurança para limites do Notion (2000 chars)
     notion.pages.update(
         page_id=page_id,
         properties={
@@ -65,15 +62,26 @@ def main():
         page = notion.pages.retrieve(page_id=sys.argv[1])
         processar_page(page)
     else:
-        # Forma correta e nativa do notion-client para queries de BD
-        pendentes = notion.databases.query(
-            database_id=db_id,
-            filter={
+        # Abordagem robusta utilizando o cliente HTTP interno do notion-client (httpx)
+        # Evita por completo o erro do DatabasesEndpoint
+        url = f"https://api.notion.com/v1/databases/{db_id}/query"
+        headers = {
+            "Authorization": f"Bearer {os.environ['NOTION_TOKEN']}",
+            "Notion-Version": "2022-02-22",
+            "Content-Type": "application/json"
+        }
+        body = {
+            "filter": {
                 "property": "Status",
-                "select": {"equals": "Novo"}
+                "select": {"equals": "Teste"}
             }
-        )
-        for page in pendentes['results']:
+        }
+        
+        # O notion-client expõe o cliente HTTP utilizado internamente em notion.client
+        response = notion.client.post(url, headers=headers, json=body)
+        pendentes = response.json()
+        
+        for page in pendentes.get('results', []):
             processar_page(page)
 
 if __name__ == "__main__":
