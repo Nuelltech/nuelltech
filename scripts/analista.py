@@ -35,9 +35,9 @@ def processar_page(page):
     }}
     """
     
-    # Atualizado para o alias mais recente e estável do Claude 3.5 Sonnet
+    # Atualizado para o ID de modelo estável e correto da Anthropic
     response = anthropic.messages.create(
-        model="claude-3-5-sonnet-latest",
+        model="claude-3-5-sonnet-20241022",
         max_tokens=2000,
         messages=[{"role": "user", "content": prompt}]
     )
