@@ -4,19 +4,15 @@ import re
 import urllib.request
 from anthropic import Anthropic
 
-# 1. Carregar Variáveis de Ambiente (Injetadas pelo GitHub Actions)
-NOTION_TOKEN      = os.environ.get("NOTION_API_KEY")   # Mapeado de secrets.NOTION_TOKEN no workflow
-INBOX_DB_ID_RAW   = os.environ.get("INBOX_DB_ID", "")
+NOTION_TOKEN        = os.environ.get("NOTION_API_KEY")
+INBOX_DB_ID_RAW     = os.environ.get("INBOX_DB_ID", "")
 CAMPANHAS_DB_ID_RAW = os.environ.get("CAMPANHAS_DB_ID", "")
-ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
+ANTHROPIC_API_KEY   = os.environ.get("ANTHROPIC_API_KEY")
 
 NOTION_VERSION = "2022-06-28"
 
 anthropic = Anthropic(api_key=ANTHROPIC_API_KEY)
 
-# ---------------------------------------------------------------------------
-# Utilitário: extrair UUID limpo a partir de URL ou ID do Notion
-# ---------------------------------------------------------------------------
 def extract_notion_id(id_or_url):
     if not id_or_url:
         return ""
@@ -32,9 +28,6 @@ def extract_notion_id(id_or_url):
 INBOX_DB_ID     = extract_notion_id(INBOX_DB_ID_RAW)
 CAMPANHAS_DB_ID = extract_notion_id(CAMPANHAS_DB_ID_RAW)
 
-# ---------------------------------------------------------------------------
-# Utilitário: chamada HTTP ao Notion (sem requests, usa stdlib)
-# ---------------------------------------------------------------------------
 def notion_post(path, payload):
     url = f"https://api.notion.com/v1/{path}"
     data = json.dumps(payload).encode("utf-8")
@@ -46,8 +39,14 @@ def notion_post(path, payload):
             "Notion-Version": NOTION_VERSION
         }
     )
-    with urllib.request.urlopen(req) as r:
-        return json.loads(r.read().decode("utf-8"))
+    try:
+        with urllib.request.urlopen(req) as r:
+            return json.loads(r.read().decode("utf-8"))
+    except urllib.error.HTTPError as e:
+        body = e.read().decode("utf-8")
+        print(f"  [NOTION ERROR {e.code}] Path: {path}")
+        print(f"  [NOTION ERROR] Detalhe: {body}")
+        raise
 
 def notion_patch(path, payload):
     url = f"https://api.notion.com/v1/{path}"
@@ -60,12 +59,15 @@ def notion_patch(path, payload):
             "Notion-Version": NOTION_VERSION
         }
     )
-    with urllib.request.urlopen(req) as r:
-        return json.loads(r.read().decode("utf-8"))
+    try:
+        with urllib.request.urlopen(req) as r:
+            return json.loads(r.read().decode("utf-8"))
+    except urllib.error.HTTPError as e:
+        body = e.read().decode("utf-8")
+        print(f"  [NOTION ERROR {e.code}] Path: {path}")
+        print(f"  [NOTION ERROR] Detalhe: {body}")
+        raise
 
-# ---------------------------------------------------------------------------
-# 1. Obter artigos processados da Inbox_Mercado para um setor
-# ---------------------------------------------------------------------------
 def obter_artigos_processados(setor_alvo):
     print(f"A procurar artigos processados para o setor: {setor_alvo}...")
     resultado = notion_post(f"databases/{INBOX_DB_ID}/query", {
@@ -78,7 +80,6 @@ def obter_artigos_processados(setor_alvo):
     })
 
     resultados = resultado.get("results", [])
-
     if not resultados:
         print(f"  Sem artigos processados para '{setor_alvo}'.")
         return None, []
@@ -120,9 +121,6 @@ def obter_artigos_processados(setor_alvo):
     print(f"  Encontrados {len(artigos_ids)} artigos para '{setor_alvo}'.")
     return contexto_para_claude, artigos_ids
 
-# ---------------------------------------------------------------------------
-# 2. Chamar Claude para gerar a campanha de prospeção
-# ---------------------------------------------------------------------------
 def gerar_campanha_com_claude(setor, contexto):
     print(f"  A gerar campanha com Claude para o setor: {setor}...")
 
@@ -151,38 +149,42 @@ def gerar_campanha_com_claude(setor, contexto):
     json_str = content[content.find('{'):content.rfind('}')+1]
     return json.loads(json_str)
 
-# ---------------------------------------------------------------------------
-# 3. Criar campanha na tabela Campanhas_Prospector no Notion
-# ---------------------------------------------------------------------------
 def criar_campanha_notion(setor, tema, draft_email, draft_linkedin, ids_origem):
     print("  A injetar nova campanha na tabela Campanhas_Prospector...")
 
-    relation_data = [{"id": page_id} for page_id in ids_origem]
-
-    payload = {
-        "parent": {"database_id": CAMPANHAS_DB_ID},
-        "properties": {
-            "Nome da Campanha": {"title": [{"text": {"content": f"Campanha {setor.capitalize()} - Automática"}}]},
-            "Setor_Alvo":       {"select": {"name": setor}},
-            "Status_Campanha":  {"select": {"name": "Rascunho Pronto"}},
-            "Tema_Central":     {"rich_text": [{"text": {"content": tema[:2000]}}]},
-            "Draft_Email":      {"rich_text": [{"text": {"content": draft_email[:2000]}}]},
-            "Draft_LinkedIn":   {"rich_text": [{"text": {"content": draft_linkedin[:2000]}}]},
-            "Artigos_Origem":   {"relation": relation_data}
-        }
+    # Propriedades base — apenas campos de texto e select, sem relation por agora
+    properties = {
+        "Nome da Campanha": {"title": [{"text": {"content": f"Campanha {setor.capitalize()} - Automática"}}]},
+        "Setor_Alvo":       {"select": {"name": setor}},
+        "Status_Campanha":  {"status": {"name": "Not started"}},
+        "Tema_Central":     {"rich_text": [{"text": {"content": tema[:2000]}}]},
+        "Draft_Email":      {"rich_text": [{"text": {"content": draft_email[:2000]}}]},
+        "Draft_LinkedIn":   {"rich_text": [{"text": {"content": draft_linkedin[:2000]}}]}
     }
 
+    # Tenta adicionar a relação — se falhar, cria a campanha sem ela
+    if ids_origem:
+        try:
+            properties["Artigos_Origem"] = {"relation": [{"id": pid} for pid in ids_origem]}
+        except Exception as e:
+            print(f"  Aviso: não foi possível definir Artigos_Origem: {e}")
+
     try:
-        notion_post("pages", payload)
+        notion_post("pages", {"parent": {"database_id": CAMPANHAS_DB_ID}, "properties": properties})
         print(f"  Campanha criada com sucesso para '{setor}'.")
         return True
-    except Exception as e:
-        print(f"  Erro ao criar campanha para '{setor}': {e}")
-        return False
+    except Exception:
+        # Segunda tentativa: sem a relação Artigos_Origem
+        print("  A tentar criar campanha sem Artigos_Origem...")
+        properties.pop("Artigos_Origem", None)
+        try:
+            notion_post("pages", {"parent": {"database_id": CAMPANHAS_DB_ID}, "properties": properties})
+            print(f"  Campanha criada (sem relação) para '{setor}'.")
+            return True
+        except Exception as e:
+            print(f"  Erro final ao criar campanha para '{setor}': {e}")
+            return False
 
-# ---------------------------------------------------------------------------
-# 4. Arquivar artigos usados (Status → "Utilizado")
-# ---------------------------------------------------------------------------
 def arquivar_artigos_usados(ids_origem):
     print("  A marcar artigos como 'Utilizado' na Inbox_Mercado...")
     for page_id in ids_origem:
@@ -195,9 +197,6 @@ def arquivar_artigos_usados(ids_origem):
         except Exception as e:
             print(f"  Aviso ao arquivar {page_id[:8]}...: {e}")
 
-# ---------------------------------------------------------------------------
-# Main
-# ---------------------------------------------------------------------------
 def main():
     try:
         with open("scripts/alvos.json", "r", encoding="utf-8") as f:
