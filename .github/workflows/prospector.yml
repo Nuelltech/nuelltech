@@ -25,9 +25,9 @@ jobs:
 
     - name: Executar Agente Prospector
       env:
-        NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
-        INBOX_DB_ID: ${{ secrets.INBOX_DB_ID }}
+        # Mapeamos o nome que o Python espera para o nome do Secret que tu tens
+        NOTION_API_KEY: ${{ secrets.NOTION_TOKEN }}
+        INBOX_DB_ID: ${{ secrets.NOTION_DATABASE_ID }}
         CAMPANHAS_DB_ID: ${{ secrets.CAMPANHAS_DB_ID }}
         ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-      # AQUI ESTÁ A MUDANÇA: aponta para a pasta scripts
       run: python scripts/prospector.py
