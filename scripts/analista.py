@@ -66,8 +66,8 @@ def processar_page(page, contexto):
     Retorna APENAS um objeto JSON válido. Não escrevas nada antes ou depois.
     {{
         "Dor_Problema": "Descreve o desafio, dor e impacto para a empresa (2-3 parágrafos).",
-        "Resumo_Executivo": "Resumo executivo: como a Nuelltech resolve este problema com as suas soluções de IA e automação.",
-        "Oportunidade_Estrategica": "Qual é a oportunidade estratégica para a Nuelltech neste setor ou tema.",
+        "Resumo_Executivo": "Resumo executivo: um resumo mais elaborado do artigo, de forma aque director de marketing, director comercial entendam o contexto, os envolvidos, os problemas e a questão em causa",
+        "Oportunidade_Estrategica": "Qual é a oportunidade estratégica para a Nuelltech neste setor ou tema. como A Nuelltech pode ajudar a resolver este assunto com as nossas soluções de IA e automação",
         "Acao_Imediata": "Ação comercial imediata: ângulo de venda, objeções a antecipar, próximo passo."
     }}
     """
