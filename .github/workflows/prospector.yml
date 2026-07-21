@@ -2,9 +2,8 @@ name: Motor Prospector Automático
 
 on:
   schedule:
-    # Agendado para correr todas as segundas-feiras às 07:00 da manhã
     - cron: '0 7 * * 1'
-  workflow_dispatch: # Permite-te correr o script manualmente com um botão no GitHub
+  workflow_dispatch:
 
 jobs:
   gerar-campanhas:
@@ -26,9 +25,9 @@ jobs:
 
     - name: Executar Agente Prospector
       env:
-        # As chaves devem ser configuradas nos "Secrets" do teu repositório GitHub
         NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
         INBOX_DB_ID: ${{ secrets.INBOX_DB_ID }}
         CAMPANHAS_DB_ID: ${{ secrets.CAMPANHAS_DB_ID }}
         ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-      run: python prospector.py
+      # AQUI ESTÁ A MUDANÇA: aponta para a pasta scripts
+      run: python scripts/prospector.py
