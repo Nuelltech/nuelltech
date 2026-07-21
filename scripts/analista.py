@@ -82,6 +82,7 @@ def processar_page(page, contexto):
 
 def main():
     db_id = extract_notion_id(os.environ["NOTION_DATABASE_ID"])
+    print(f"Database ID (primeiros 8 chars): {db_id[:8]}...")
     contexto_page_id = os.environ.get("NOTION_CONTEXTO_PAGE_ID", "")
     contexto = ler_contexto_notion(contexto_page_id) if contexto_page_id else "Contexto indisponível."
     
@@ -90,15 +91,12 @@ def main():
         page = notion.pages.retrieve(page_id=target_id)
         processar_page(page, contexto)
     else:
-        # Usa notion.request() com ID limpo — compatível com todas as versões do SDK
-        pendentes = notion.request(
-            path=f"databases/{db_id}/query",
-            method="POST",
-            body={
-                "filter": {
-                    "property": "Status",
-                    "select": {"equals": "Teste"}
-                }
+        # Consulta via SDK v2 (notion-client==2.2.1)
+        pendentes = notion.databases.query(
+            database_id=db_id,
+            filter={
+                "property": "Status",
+                "select": {"equals": "Teste"}
             }
         )
         results = pendentes.get('results', [])
