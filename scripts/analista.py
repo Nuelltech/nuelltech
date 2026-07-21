@@ -35,8 +35,9 @@ def processar_page(page):
     }}
     """
     
+    # Atualizado para o alias mais recente e estável do Claude 3.5 Sonnet
     response = anthropic.messages.create(
-        model="claude-3-5-sonnet-20240620",
+        model="claude-3-5-sonnet-latest",
         max_tokens=2000,
         messages=[{"role": "user", "content": prompt}]
     )
@@ -62,8 +63,6 @@ def main():
         page = notion.pages.retrieve(page_id=sys.argv[1])
         processar_page(page)
     else:
-        # Abordagem robusta utilizando o cliente HTTP interno do notion-client (httpx)
-        # Evita por completo o erro do DatabasesEndpoint
         url = f"https://api.notion.com/v1/databases/{db_id}/query"
         headers = {
             "Authorization": f"Bearer {os.environ['NOTION_TOKEN']}",
@@ -73,11 +72,10 @@ def main():
         body = {
             "filter": {
                 "property": "Status",
-                "select": {"equals": "Teste"}
+                "select": {"equals": "Novo"}
             }
         }
         
-        # O notion-client expõe o cliente HTTP utilizado internamente em notion.client
         response = notion.client.post(url, headers=headers, json=body)
         pendentes = response.json()
         
