@@ -24,10 +24,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests
 
-      - name: Run Prospector Script
+    - name: Run Prospector Script
         env:
           APOLLO_API_KEY: ${{ secrets.APOLLO_API_KEY }}
           NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
+          LEADS_DB_ID: ${{ secrets.LEADS_DB_ID }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           python main.py
