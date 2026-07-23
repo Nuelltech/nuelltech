@@ -1,0 +1,33 @@
+name: Automated Prospector & Lead Gen
+
+on:
+  schedule:
+    - cron: '0 8 * * 1' # Executa todas as segundas-feiras às 08:00 (podes ajustar ao teu gosto)
+  workflow_dispatch: # Permite executar manualmente no painel do GitHub
+
+jobs:
+  run-prospector:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Run Prospector Script
+        env:
+          APOLLO_API_KEY: ${{ secrets.APOLLO_API_KEY }}
+          NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          python main.py
