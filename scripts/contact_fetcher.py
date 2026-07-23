@@ -64,7 +64,6 @@ def correr_apify_gmaps(termo_busca, max_results):
     payload = {
         "searchStringsArray": [termo_busca],
         "maxCrawledPlacesPerSearch": max_results,
-        "language": "pt",
         "skipClosedPlaces": True,
     }
     data = json.dumps(payload).encode("utf-8")
