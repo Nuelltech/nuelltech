@@ -113,12 +113,23 @@ def main():
     print(f"  {len(website_por_dominio_para_nome)} empresas mapeadas por domínio.")
 
     print("\nA listar runs concluídos do Contact Details Scraper...")
+    runs_contactos = listar_runs_concluidos(CONTACTS_ACTOR)
+    print(f"  {len(runs_contactos)} runs encontrados.")
+
     contactos_por_dominio = {}
-    for run in listar_runs_concluidos(CONTACTS_ACTOR):
+    item_exemplo_mostrado = False
+    for run in runs_contactos:
         dataset_id = run.get("defaultDatasetId")
         if not dataset_id:
             continue
-        for item in obter_dataset_items(dataset_id):
+        items = obter_dataset_items(dataset_id)
+        if items and not item_exemplo_mostrado:
+            print("\n  --- Estrutura real de um item (diagnóstico) ---")
+            print(f"  {json.dumps(items[0], ensure_ascii=False, indent=2)[:1500]}")
+            print("  --- fim do diagnóstico ---\n")
+            item_exemplo_mostrado = True
+
+        for item in items:
             pagina_url = item.get("url") or item.get("referrerUrl") or ""
             dominio = dominio_de(pagina_url)
             if not dominio:
