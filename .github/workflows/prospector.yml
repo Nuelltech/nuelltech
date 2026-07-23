@@ -1,4 +1,4 @@
-name: Motor Prospector Automático
+name: Motor creador de comunicação Automático
 
 on:
   schedule:
