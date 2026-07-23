@@ -1,0 +1,25 @@
+name: Backfill - Recuperar dados já pagos da Apify
+
+on:
+  workflow_dispatch: {}   # só corre manualmente, é um script único
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Correr backfill_from_apify_runs.py
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          LEADS_DB_ID: ${{ secrets.LEADS_DB_ID }}
+          APIFY_API_TOKEN: ${{ secrets.APIFY_API_TOKEN }}
+        run: python scripts/backfill_from_apify_runs.py
