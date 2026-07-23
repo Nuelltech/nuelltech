@@ -31,4 +31,4 @@ jobs:
           LEADS_DB_ID: ${{ secrets.LEADS_DB_ID }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
-          python main.py
+          python scripts/leads_prospector.py
