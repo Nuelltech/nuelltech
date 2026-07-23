@@ -3,7 +3,7 @@ import requests
 
 # Carregamento das variáveis de ambiente / GitHub Secrets
 APOLLO_API_KEY = os.getenv("APOLLO_API_KEY")
-NOTION_API_KEY = os.getenv("NOTION_TOKEN")
+NOTION_TOKEN = os.getenv("NOTION_TOKEN")
 DATABASE_ID = os.getenv("LEADS_DB_ID")
 
 def search_apollo_decision_makers(job_titles, industry_keyword, limit=5):
@@ -53,7 +53,7 @@ def save_lead_to_notion(lead):
     url = "https://api.notion.com/v1/pages"
     
     headers = {
-        "Authorization": f"Bearer {NOTION_API_KEY}",
+        "Authorization": f"Bearer {NOTION_TOKEN}",
         "Content-Type": "application/json",
         "Notion-Version": "2022-06-28"
     }
@@ -88,8 +88,8 @@ def save_lead_to_notion(lead):
 
 def main():
     # Validação rápida de segurança das chaves
-    if not APOLLO_API_KEY or not NOTION_API_KEY or not DATABASE_ID:
-        print("Erro: Certifica-te de que todas as variáveis de ambiente (APOLLO_API_KEY, NOTION_API_KEY, LEADS_DB_ID) estão configuradas.")
+    if not APOLLO_API_KEY or not NOTION_TOKEN or not DATABASE_ID:
+        print("Erro: Certifica-te de que todas as variáveis de ambiente (APOLLO_API_KEY, NOTION_TOKEN, LEADS_DB_ID) estão configuradas.")
         return
 
     # Exemplo de execução para um dos setores-alvo (ex: Clínicas / Diretores e IT/Financeiro)
