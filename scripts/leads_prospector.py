@@ -107,4 +107,4 @@ def main():
             print(f"-> Ignorado (sem e-mail visível): {lead.get('name')}")
 
 if __name__ == "__main__":
-    main()S
+    main()
