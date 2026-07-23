@@ -3,7 +3,7 @@ import requests
 
 # Carregamento das variáveis de ambiente / GitHub Secrets
 APOLLO_API_KEY = os.getenv("APOLLO_API_KEY")
-NOTION_API_KEY = os.getenv("NOTION_API_KEY")
+NOTION_API_KEY = os.getenv("NOTION_TOKEN")
 DATABASE_ID = os.getenv("LEADS_DB_ID")
 
 def search_apollo_decision_makers(job_titles, industry_keyword, limit=5):
