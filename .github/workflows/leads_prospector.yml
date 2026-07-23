@@ -1,9 +1,7 @@
 name: Leads Prospector
 
 on:
-  workflow_dispatch: # Permite executar manualmente a partir do botão no GitHub
-  schedule:
-    - cron: '0 8 * * 1' # Exemplo: Corre todas as segundas-feiras às 08:00 (opcional)
+  workflow_dispatch:
 
 jobs:
   run-leads-prospector:
@@ -21,7 +19,7 @@ jobs:
         run: |
           pip install requests
 
-     - name: Run Leads Prospector Script
+      - name: Run Leads Prospector Script
         env:
           APOLLO_API_KEY: ${{ secrets.APOLLO_API_KEY }}
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
