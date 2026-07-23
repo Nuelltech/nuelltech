@@ -21,10 +21,10 @@ jobs:
         run: |
           pip install requests
 
-      - name: Run Leads Prospector Script
+     - name: Run Leads Prospector Script
         env:
           APOLLO_API_KEY: ${{ secrets.APOLLO_API_KEY }}
-          NOTION_API_KEY: ${{ secrets.NOTION_TOKEN }}
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           LEADS_DB_ID: ${{ secrets.LEADS_DB_ID }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
