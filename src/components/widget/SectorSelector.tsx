@@ -83,11 +83,13 @@ export default function SectorSelector({ isPt }: SectorSelectorProps) {
       if (response.ok) {
         const data = await response.json();
         if (data.messages) {
-          setSelectedSector(name);
-          sessionStorage.setItem('nuell_selected_sector', name);
+          // Extract short sector label (first 3 words) from full input
+          const sectorLabel = name.split(' ').slice(0, 3).join(' ');
+          setSelectedSector(sectorLabel);
+          sessionStorage.setItem('nuell_selected_sector', sectorLabel);
           sessionStorage.setItem('nuell_custom_messages', JSON.stringify(data.messages));
           window.dispatchEvent(new CustomEvent('nuell-sector-customized', {
-            detail: { sector: name, messages: data.messages }
+            detail: { sector: sectorLabel, challenge: name, messages: data.messages }
           }));
           window.dispatchEvent(new CustomEvent('nuell-open-chat'));
         }
@@ -120,11 +122,12 @@ export default function SectorSelector({ isPt }: SectorSelectorProps) {
         faq: `Want to know timelines or how automation works in ${name}?`,
       };
 
-      setSelectedSector(name);
-      sessionStorage.setItem('nuell_selected_sector', name);
+      const sectorLabel = name.split(' ').slice(0, 3).join(' ');
+      setSelectedSector(sectorLabel);
+      sessionStorage.setItem('nuell_selected_sector', sectorLabel);
       sessionStorage.setItem('nuell_custom_messages', JSON.stringify(mockCustom));
       window.dispatchEvent(new CustomEvent('nuell-sector-customized', {
-        detail: { sector: name, messages: mockCustom }
+        detail: { sector: sectorLabel, challenge: name, messages: mockCustom }
       }));
       window.dispatchEvent(new CustomEvent('nuell-open-chat'));
     } finally {

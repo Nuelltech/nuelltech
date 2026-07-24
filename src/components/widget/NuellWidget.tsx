@@ -188,9 +188,9 @@ export default function NuellWidget({ lang }: NuellWidgetProps) {
   // Listen for sector selection from the homepage banner
   useEffect(() => {
     const handleSectorCustomized = (e: Event) => {
-      const customEvent = e as CustomEvent<{ sector: string; messages: Record<string, string> | null }>;
-      const { sector, messages } = customEvent.detail;
-      setLeadInfo(prev => ({ ...prev, sector, challenge: '', name: '', contact: '' }));
+      const customEvent = e as CustomEvent<{ sector: string; challenge?: string; messages: Record<string, string> | null }>;
+      const { sector, challenge, messages } = customEvent.detail;
+      setLeadInfo(prev => ({ ...prev, sector, challenge: challenge || sector, name: '', contact: '' }));
       setCustomMessages(messages);
       
       // Clear messages history and reset session for the new sector
@@ -285,19 +285,18 @@ export default function NuellWidget({ lang }: NuellWidgetProps) {
     if (isOpen && messages.length === 0) {
       const timer = setTimeout(() => {
         const sector = leadInfo.sector;
+        const challenge = leadInfo.challenge;
         if (sector) {
-          setMessages([
-            {
-              sender: 'nuell',
-              text: pt
-                ? `Olá! Vejo que o seu negócio é no setor de ${sector} *(não é o seu? [reset:sector:Mudar Setor])*. Sou o NUELL, o seu assistente inteligente.
+          // Build a short, smart opening that uses the challenge context if available
+          const openingText = challenge && challenge !== sector
+            ? (pt
+                ? `Olá! Sou o NUELL. Percebi — ${challenge.length > 80 ? challenge.substring(0, 80) + '…' : challenge}. Para entender melhor o vosso caso, qual é o maior impacto disto no dia-a-dia?`
+                : `Hi! I'm NUELL. Got it — ${challenge.length > 80 ? challenge.substring(0, 80) + '…' : challenge}. To better understand your case, what's the biggest day-to-day impact of this?`)
+            : (pt
+                ? `Olá! Sou o NUELL. Em que posso ajudar no vosso negócio de ${sector}?`
+                : `Hello! I'm NUELL. How can I help with your ${sector} business?`);
 
-Em que processos de ${sector} gostaria de introduzir IA? Que tarefas rotineiras ou informações gostava de ver aceleradas hoje? Com base na sua resposta, posso mostrar-lhe exemplos práticos ou explicar como desenhar a solução ideal para o que precisa.`
-                : `Hello! I see your business is in the ${sector} sector *(not yours? [reset:sector:Change Sector])*. I am NUELL, your smart assistant.
-
-In which processes of ${sector} would you like to introduce AI? Which routine tasks or information would you like to see accelerated today? Based on your answer, I can show you practical examples or explain how to design the ideal solution for what you need.`,
-            },
-          ]);
+          setMessages([{ sender: 'nuell', text: openingText }]);
           setIsTyping(false);
           setTurnCount(2); // Skip sector turn, next is user challenge details/contact
         } else {
@@ -305,8 +304,8 @@ In which processes of ${sector} would you like to introduce AI? Which routine ta
             {
               sender: 'nuell',
               text: pt
-                ? 'Olá! Sou o NUELL, o assistente inteligente da Nuelltech. Para o poder ajudar melhor, qual é o setor do seu negócio (ex: restaurante, farmácia, ginásio) e qual o seu maior desafio de gestão hoje?'
-                : 'Hello! I am NUELL, Nuelltech\'s smart assistant. To help you best, what is your business sector (e.g., restaurant, pharmacy, gym) and what is your biggest management challenge today?',
+                ? 'Olá! Sou o NUELL, o assistente da Nuelltech. Diga-me: qual é a tarefa que a sua equipa mais odeia fazer todas as semanas?'
+                : 'Hello! I am NUELL, Nuelltech\'s assistant. Tell me: what is the task your team dreads doing every single week?',
             },
           ]);
           setIsTyping(false);
@@ -398,6 +397,7 @@ In which processes of ${sector} would you like to introduce AI? Which routine ta
           turn: currentTurn,
           lang,
           leadInfo: currentLeadInfo,
+          history: messages, // Send full conversation history for context
           sessionId: isExcluded ? '' : (localStorage.getItem('nuell_session_id') || ''),
         }),
       });

@@ -98,11 +98,11 @@ export default function Footer({ lang, dict }: FooterProps) {
           </h4>
           
           <a
-            href="mailto:geral@nuelltech.com"
+            href="mailto:info@nuelltech.com"
             className="flex items-center gap-2 hover:text-brand-ink transition w-max"
           >
             <Mail className="w-4 h-4 text-brand-accent-soft" />
-            <span>geral@nuelltech.com</span>
+            <span>info@nuelltech.com</span>
           </a>
 
           <div className="flex items-center gap-2 w-max">
