@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Mail, MapPin } from 'lucide-react';
+import { Mail, MapPin, ExternalLink } from 'lucide-react';
 
 const LinkedinIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
@@ -105,10 +105,19 @@ export default function Footer({ lang, dict }: FooterProps) {
             <span>info@nuelltech.com</span>
           </a>
 
-          <div className="flex items-center gap-2 w-max">
-            <MapPin className="w-4 h-4 text-brand-accent-soft" />
-            <span>{dict.footer.location}</span>
-          </div>
+          <a
+            href="https://www.google.com/maps/search/?api=1&query=Rua+Promotores+do+circuito+de+Vila+Real+496+Loja+2+5000-720+Vila+Real"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-start gap-2 hover:text-brand-ink transition group max-w-xs text-xs"
+            title={lang === 'pt' ? 'Abrir no Google Maps' : 'Open in Google Maps'}
+          >
+            <MapPin className="w-4 h-4 text-brand-accent-soft shrink-0 mt-0.5 group-hover:scale-110 transition duration-150" />
+            <span className="leading-snug">
+              {dict.footer.location}
+              <ExternalLink className="w-3 h-3 inline-block ml-1.5 opacity-60 group-hover:opacity-100 transition" />
+            </span>
+          </a>
 
           <a
             href="https://linkedin.com/company/nuelltech"

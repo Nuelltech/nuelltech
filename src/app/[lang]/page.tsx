@@ -95,6 +95,8 @@ export default async function Page({
             'description': dict.meta.description,
             'address': {
               '@type': 'PostalAddress',
+              'streetAddress': 'Rua Promotores do circuito de Vila Real 496 Loja 2',
+              'postalCode': '5000-720',
               'addressLocality': 'Vila Real',
               'addressCountry': 'PT',
             },
