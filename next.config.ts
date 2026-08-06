@@ -1,7 +1,21 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  async redirects() {
+    return [
+      {
+        source: "/questionarios/farmacia",
+        destination: "https://forms.gle/mxBAdMZnVALTVk6D7",
+        permanent: false,
+      },
+      {
+        source: "/:lang(pt|en)/questionarios/farmacia",
+        destination: "https://forms.gle/mxBAdMZnVALTVk6D7",
+        permanent: false,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
+
