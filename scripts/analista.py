@@ -158,19 +158,29 @@ def call_claude_json(system_prompt, user_prompt, max_tokens=2000):
     Executa chamada à API do Claude e devolve objeto JSON.
     Possui 1 retry se a resposta de JSON for inválida.
     """
+    default_system = "És um assistente especializado que responde EXCLUSIVAMENTE em formato JSON válido. Não incluas introduções, explicações nem texto fora das chaves JSON."
+    sys_p = f"{default_system}\n{system_prompt}".strip() if system_prompt else default_system
+
     def execute_call():
         messages = [{"role": "user", "content": user_prompt}]
         kwargs = {
             "model": "claude-sonnet-4-6",
             "max_tokens": max_tokens,
+            "system": sys_p,
             "messages": messages
         }
-        if system_prompt:
-            kwargs["system"] = system_prompt
             
         resp = anthropic.messages.create(**kwargs)
-        content = resp.content[0].text
-        json_str = content[content.find('{'):content.rfind('}')+1]
+        content = resp.content[0].text if resp.content else ""
+
+        start_idx = content.find('{')
+        end_idx = content.rfind('}')
+
+        if start_idx == -1 or end_idx == -1 or start_idx > end_idx:
+            print(f"  [DEBUG RESPOSTA BRUTA CLAUDE]: '{content}'")
+            raise ValueError(f"Resposta do Claude não contém chaves JSON '{{' e '}}'. Resposta bruta: {content[:300]}")
+
+        json_str = content[start_idx:end_idx+1]
         return json.loads(json_str)
 
     try:
@@ -194,12 +204,21 @@ def processar_page(page, config):
     except (KeyError, IndexError):
         titulo = "Artigo sem título"
 
+    try:
+        fonte_url = page['properties']['Fonte']['url'] or ""
+    except (KeyError, IndexError):
+        fonte_url = ""
+
     # Extrai o corpo do texto da página no Notion
     corpo_pagina = ler_pagina_notion(page_id)
+    parts = [f"Título: {titulo}"]
+    if fonte_url:
+        parts.append(f"URL/Fonte: {fonte_url}")
     if corpo_pagina:
-        texto_completo = f"Título: {titulo}\n\nConteúdo:\n{corpo_pagina}"
-    else:
-        texto_completo = titulo
+        parts.append(f"Conteúdo:\n{corpo_pagina}")
+
+    texto_completo = "\n\n".join(parts)
+
 
     print(f"\n==================================================")
     print(f"Iniciando Pipeline v2 para: '{titulo}' ({page_id[:8]}...)")
