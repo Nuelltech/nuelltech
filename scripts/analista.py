@@ -20,13 +20,21 @@ NOTION_VERSION = "2022-06-28"
 
 def fetch_e_extrair_artigo(url):
     """
-    Descarrega o HTML da URL da notícia e extrai o corpo do artigo usando trafilatura.
+    Descarrega o conteúdo da URL da notícia e extrai o corpo do artigo.
+    - Reddit: usa a API JSON pública (endpoint .json) — evita o bloqueio 403 ao scraping HTML.
+    - Todos os outros: usa trafilatura.
     Timeout: 15s.
     Devolve: (sucesso: bool, texto_ou_erro: str, num_chars: int)
     """
     if not url or not url.startswith("http"):
         return False, "URL de origem inválida ou ausente", 0
 
+    # --- Caminho Reddit: API JSON pública ---
+    is_reddit = "reddit.com/r/" in url or "reddit.com/comments/" in url
+    if is_reddit:
+        return _fetch_reddit_json(url)
+
+    # --- Caminho geral: trafilatura ---
     try:
         downloaded = trafilatura.fetch_url(url)
 
@@ -53,6 +61,75 @@ def fetch_e_extrair_artigo(url):
         return True, texto_extraido, num_chars
     except Exception as e:
         return False, f"Erro inesperado durante o fetch da URL '{url}': {e}", 0
+
+def _fetch_reddit_json(url):
+    """
+    Extrai conteúdo de um post Reddit usando a API JSON pública.
+    Acrescenta .json à URL e faz parse do título, selftext e top-level comments.
+    Não requer autenticação.
+    """
+    try:
+        # Normalizar URL: remover query string e garantir extensão .json
+        base_url = url.split("?")[0].rstrip("/")
+        if not base_url.endswith(".json"):
+            base_url += ".json"
+
+        req = urllib.request.Request(
+            base_url,
+            headers={
+                # Reddit exige User-Agent não vazio e não parecido com um bot genérico
+                "User-Agent": "Mozilla/5.0 (compatible; NuelltechAnalista/1.0; +https://nuelltech.pt)",
+                "Accept": "application/json"
+            }
+        )
+
+        with urllib.request.urlopen(req, timeout=15) as response:
+            data = json.loads(response.read().decode("utf-8"))
+
+        # A resposta é uma lista de 2 elementos: [post_listing, comments_listing]
+        post_data = data[0]["data"]["children"][0]["data"]
+        titulo_post = post_data.get("title", "")
+        selftext = post_data.get("selftext", "").strip()
+        subreddit = post_data.get("subreddit", "")
+        score = post_data.get("score", 0)
+        num_comments = post_data.get("num_comments", 0)
+
+        partes = [f"[Reddit r/{subreddit}] {titulo_post}"]
+        partes.append(f"Score: {score} | Comentários: {num_comments}")
+
+        if selftext and selftext not in ("[removed]", "[deleted]"):
+            partes.append(f"\nTexto do Post:\n{selftext}")
+
+        # Extrair top-level comments (até 10, mínimo 10 palavras cada)
+        comentarios = []
+        try:
+            comments_children = data[1]["data"]["children"]
+            for child in comments_children[:15]:
+                if child.get("kind") != "t1":
+                    continue
+                body = child["data"].get("body", "").strip()
+                if body and body not in ("[removed]", "[deleted]") and len(body.split()) >= 10:
+                    comentarios.append(body)
+                if len(comentarios) >= 10:
+                    break
+        except (KeyError, IndexError):
+            pass
+
+        if comentarios:
+            partes.append("\nComentários relevantes:")
+            for i, c in enumerate(comentarios, 1):
+                partes.append(f"[{i}] {c}")
+
+        texto_final = "\n".join(partes).strip()
+        num_chars = len(texto_final)
+
+        if num_chars < 500:
+            return False, f"Conteúdo Reddit insuficiente ({num_chars} caracteres) — post possivelmente removido ou sem texto", num_chars
+
+        return True, texto_final, num_chars
+
+    except Exception as e:
+        return False, f"Erro ao aceder à API JSON do Reddit para '{url}': {e}", 0
 
 def guardar_texto_no_notion(page_id, texto_extraido):
     """
