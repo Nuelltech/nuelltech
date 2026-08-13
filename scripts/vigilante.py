@@ -1,6 +1,8 @@
 import os
 import json
+import re
 from datetime import datetime
+from email.utils import parsedate_to_datetime
 from tavily import TavilyClient
 from notion_client import Client
 
@@ -9,7 +11,7 @@ notion = Client(auth=os.environ["NOTION_TOKEN"])
 DATABASE_ID = os.environ["NOTION_DATABASE_ID"]
 
 # ---------------------------------------------------------------------------
-# Domínios a excluir sistematicamente — académicos, dicionários, lixo genérico
+# Domínios a excluir sistematicamente — académicos, dicionários, entretenimento, lixo
 # ---------------------------------------------------------------------------
 DOMINIOS_EXCLUIR = [
     "fenix.tecnico.ulisboa.pt",
@@ -27,85 +29,95 @@ DOMINIOS_EXCLUIR = [
     "infopedia.pt",
     "academia.edu",
     "researchgate.net",
+    "folha.uol.com.br",
+    "globo.com",
 ]
 
-# Extensões de ficheiros binários a ignorar na origem (antes de criar registo no Notion)
+# Extensões de ficheiros binários a ignorar na origem
 EXTENSOES_IGNORAR = (".pdf", ".docx", ".doc", ".pptx", ".xls", ".xlsx", ".zip", ".rar")
 
 # ---------------------------------------------------------------------------
-# Queries por setor — cada entrada é um dict com os parâmetros Tavily
-#
-# topic="news" + days=N  →  só artigos publicados nos últimos N dias
-# topic="general"        →  pesquisa geral (para Reddit e queries atemporais)
-#
-# Estratégia: 2 queries de notícias recentes (Web) por setor (Reddit em pausa)
+# Palavras-chave obrigatórias por setor (Filtro de Relevância Temática)
+# Pelo menos UMA destas raízes de palavras tem de constar no título, URL ou resumo
+# ---------------------------------------------------------------------------
+PALAVRAS_CHAVE_SETOR = {
+    "farmacias": [
+        "farmác", "farmac", "infarmed", "medicament", "farma", "prescrição",
+        "prescricao", "farmacêutic", "farmaceutic", "receita médica", "anf"
+    ],
+    "clinicas": [
+        "clínic", "clinic", "hospital", "médic", "medic", "saúde", "saude",
+        "pacient", "consultór", "consultor", "exame", "diagnóstico", "diagnostico", "ers"
+    ],
+    "restaurantes": [
+        "restauran", "restauraç", "restaurac", "gastronom", "hotelaria", "menu",
+        "ementa", "cozinha", "chef", "ahresp", "refeição", "refeicao", "takeaway"
+    ],
+    "fábricas": [
+        "fábric", "fabric", "indústria", "industria", "manufactur", "produção",
+        "producao", "operá", "opera", "metalur", "têxtil", "textil", "moldes",
+        "automação", "automacao", "robot", "cadeia de abastecimento"
+    ],
+}
+
+# ---------------------------------------------------------------------------
+# Queries focadas por setor (sem anos passados nem termos longos que provocam fallbacks)
 # ---------------------------------------------------------------------------
 FONTES_POR_SETOR = {
     "farmacias": [
         {
-            "query": "farmácias Portugal regulação INFARMED margens preços 2025",
+            "query": "farmácia OR farmácias gestão desafios Portugal",
             "tipo": "Web",
-            "topic": "news",
             "days": 30,
         },
         {
-            "query": "farmácia Portugal digitalização gestão stock automação desafios",
+            "query": "farmácias regulação INFARMED margens preços Portugal",
             "tipo": "Web",
-            "topic": "news",
             "days": 60,
         },
     ],
     "clinicas": [
         {
-            "query": "clínicas privadas Portugal gestão custos SNS digitalização 2025",
+            "query": "clínica OR clínicas privadas saúde gestão Portugal",
             "tipo": "Web",
-            "topic": "news",
             "days": 30,
         },
         {
-            "query": "saúde privada Portugal desafios agendamento faturação tecnologia 2025",
+            "query": "saúde privada clínicas agendamento faturação desafios Portugal",
             "tipo": "Web",
-            "topic": "news",
             "days": 60,
         },
     ],
     "restaurantes": [
         {
-            "query": "restaurantes Portugal custos energia pessoal encerramento margens 2025",
+            "query": "restaurante OR restaurantes restauração gestão custos Portugal",
             "tipo": "Web",
-            "topic": "news",
             "days": 30,
         },
         {
-            "query": "restauração Portugal digitalização desperdício alimentar gestão tecnologia 2025",
+            "query": "restauração restaurantes margens pessoal digitalização Portugal",
             "tipo": "Web",
-            "topic": "news",
             "days": 60,
         },
     ],
     "fábricas": [
         {
-            "query": "indústria PME Portugal automação produtividade custos produção 2025",
+            "query": "fábrica OR fábricas indústria PME produção Portugal",
             "tipo": "Web",
-            "topic": "news",
             "days": 30,
         },
         {
-            "query": "manufactura Portugal digitalização indústria 4.0 PME desafios 2025",
+            "query": "indústria manufactura automação produtividade PME Portugal",
             "tipo": "Web",
-            "topic": "news",
             "days": 60,
         },
     ],
 }
 
 
-from email.utils import parsedate_to_datetime
-import re
-
 def formatar_data_iso(pub_date):
     """
-    Converte qualquer string de data recebida da API Tavily (ISO 8601, RFC 2822, etc.)
+    Converte qualquer string de data recebida da API Tavily
     num formato estrito ISO YYYY-MM-DD exigido pela API do Notion.
     """
     if not pub_date or not isinstance(pub_date, str):
@@ -129,9 +141,23 @@ def formatar_data_iso(pub_date):
     return datetime.now().strftime("%Y-%m-%d")
 
 
+def eh_relevante_ao_setor(setor, titulo, url, snippet):
+    """
+    Verifica se pelo menos uma palavra-chave do setor está presente no título, URL ou snippet.
+    Evita inserir notícias de celebridades, desporto, política ou temas alheios ao setor.
+    """
+    palavras = PALAVRAS_CHAVE_SETOR.get(setor, [])
+    if not palavras:
+        return True
+
+    texto_combinado = f"{titulo} {url} {snippet}".lower()
+    return any(p in texto_combinado for p in palavras)
+
+
 def vigiar():
     total_adicionados = 0
-    total_ignorados = 0
+    total_ignorados_binarios = 0
+    total_ignorados_tematica = 0
 
     for setor, fontes in FONTES_POR_SETOR.items():
         print(f"\n--- Pesquisando setor: {setor} ---")
@@ -139,22 +165,18 @@ def vigiar():
         for fonte in fontes:
             query = fonte["query"]
             tipo = fonte["tipo"]
-            topic = fonte["topic"]
-            days = fonte["days"]
+            days = fonte.get("days", 30)
 
-            print(f"  Query ({tipo}): {query[:80]}...")
+            print(f"  Query ({tipo}): {query}...")
 
             try:
                 kwargs = {
                     "query": query,
+                    "search_depth": "advanced",
                     "max_results": 5,
+                    "days": days,
                     "exclude_domains": DOMINIOS_EXCLUIR,
                 }
-                if topic == "news":
-                    kwargs["topic"] = "news"
-                if days:
-                    kwargs["days"] = days
-
                 results = tavily.search(**kwargs)
             except Exception as e:
                 print(f"  [ERRO] Falha na pesquisa Tavily: {e}")
@@ -163,16 +185,22 @@ def vigiar():
             for res in results.get('results', []):
                 url = res.get('url', '')
                 titulo = res.get('title', 'Sem título')
+                snippet = res.get('content', '')
 
-                # Filtrar PDFs e ficheiros binários na origem
+                # 1. Filtrar PDFs e ficheiros binários na origem
                 url_lower = url.lower().split("?")[0]
                 if any(url_lower.endswith(ext) for ext in EXTENSOES_IGNORAR):
-                    print(f"  [Ignorado — ficheiro binário] {url[:80]}")
-                    total_ignorados += 1
+                    print(f"  [Ignorado — Ficheiro binário] {url[:70]}")
+                    total_ignorados_binarios += 1
+                    continue
+
+                # 2. Filtro de Relevância Temática do Setor (impede notícias de fofoca, desporto, etc.)
+                if not eh_relevante_ao_setor(setor, titulo, url, snippet):
+                    print(f"  [Ignorado — Fora do tema '{setor}'] {titulo[:70]}")
+                    total_ignorados_tematica += 1
                     continue
 
                 titulo_final = f"[{tipo}] {titulo}"
-
                 pub_date = res.get('published_date')
                 data_str = formatar_data_iso(pub_date)
 
@@ -192,7 +220,7 @@ def vigiar():
                 except Exception as e:
                     print(f"  [ERRO Notion] {e}")
 
-    print(f"\n=== Vigilante concluído: {total_adicionados} artigos adicionados, {total_ignorados} ficheiros ignorados ===")
+    print(f"\n=== Vigilante concluído: {total_adicionados} artigos adicionados, {total_ignorados_binarios} PDFs ignorados, {total_ignorados_tematica} fora de tema ignorados ===")
 
 
 if __name__ == "__main__":
