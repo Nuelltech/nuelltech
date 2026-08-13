@@ -70,9 +70,68 @@ def fetch_e_extrair_artigo(url):
         if num_chars < 500:
             return False, f"Extração de conteúdo insuficiente ({num_chars} caracteres extraídos, mínimo exigido: 500) — possível paywall ou bloqueio anti-scraping", num_chars
 
+        # Detetar cookie walls / páginas de T&C extraídas em vez do artigo real
+        wall_detectado, motivo_wall = _detetar_conteudo_wall(texto_extraido)
+        if wall_detectado:
+            return False, f"Conteúdo extraído é uma página de {motivo_wall}, não o artigo real — artigo possivelmente protegido por cookie wall ou paywall", 0
+
         return True, texto_extraido, num_chars
     except Exception as e:
         return False, f"Erro inesperado durante o fetch da URL '{url}': {e}", 0
+
+def _detetar_conteudo_wall(texto):
+    """
+    Deteta se o texto extraído é uma página de T&C, cookie wall ou paywall
+    em vez do conteúdo real do artigo.
+    Verifica os primeiros 400 caracteres (onde estas páginas revelam-se imediatamente).
+    Devolve: (wall_detectado: bool, descricao: str)
+    """
+    amostra = texto[:400].lower()
+
+    # Padrões de T&C / Política de Privacidade
+    padroes_tc = [
+        ("termos", "condições"),
+        ("terms", "conditions"),
+        ("política de privacidade", "utilizaç"),
+        ("privacy policy", "terms of use"),
+        ("termos de utilização", "propriedade intelectual"),
+        ("termos e condições", "política"),
+    ]
+    for p1, p2 in padroes_tc:
+        if p1 in amostra and p2 in amostra:
+            return True, "Termos e Condições / Política de Privacidade"
+
+    # Padrões de cookie wall / consentimento
+    padroes_cookies = [
+        ("usamos cookies", ),
+        ("este site usa cookies", ),
+        ("utilizamos cookies", ),
+        ("we use cookies", ),
+        ("cookie policy", ),
+        ("aceitar cookies", ),
+        ("aceitar todos os cookies", ),
+        ("gdpr", "consentimento"),
+        ("ao continuar a navegar", ),
+        ("by continuing to browse", ),
+    ]
+    for p in padroes_cookies:
+        if all(k in amostra for k in p):
+            return True, "Cookie Wall / Consentimento GDPR"
+
+    # Padrões de paywall / subscrição
+    padroes_paywall = [
+        ("subscreva para ler", ),
+        ("subscribe to read", ),
+        ("artigo reservado a assinantes", ),
+        ("para ler este artigo", "assinar"),
+        ("conteúdo exclusivo para assinantes", ),
+        ("this content is for subscribers", ),
+    ]
+    for p in padroes_paywall:
+        if all(k in amostra for k in p):
+            return True, "Paywall / Artigo reservado a assinantes"
+
+    return False, ""
 
 def _fetch_reddit_json(url):
     """
