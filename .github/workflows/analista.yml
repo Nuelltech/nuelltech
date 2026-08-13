@@ -42,7 +42,8 @@ jobs:
         uses: actions/setup-python@v4
         with: {python-version: '3.9'}
       - name: Install
-        run: pip install anthropic notion-client
+        run: pip install anthropic notion-client trafilatura
+
       - name: Executar
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}

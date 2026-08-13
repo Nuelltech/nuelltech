@@ -9,12 +9,71 @@ from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
 from anthropic import Anthropic
 from notion_client import Client
+import trafilatura
 
 # Inicialização
 anthropic = Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
 notion = Client(auth=os.environ["NOTION_TOKEN"])
 NOTION_TOKEN = os.environ["NOTION_TOKEN"]
 NOTION_VERSION = "2022-06-28"
+
+def fetch_e_extrair_artigo(url):
+    """
+    Descarrega o HTML da URL da notícia e extrai o corpo do artigo usando trafilatura.
+    Timeout: 15s.
+    Devolve: (sucesso: bool, texto_ou_erro: str, num_chars: int)
+    """
+    if not url or not url.startswith("http"):
+        return False, "URL de origem inválida ou ausente", 0
+
+    try:
+        user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        downloaded = trafilatura.fetch_url(url, user_agent=user_agent)
+
+        if not downloaded:
+            return False, f"Falha ao aceder à URL '{url}' (timeout ou erro de ligação 403/404)", 0
+
+        texto_extraido = trafilatura.extract(
+            downloaded,
+            include_comments=False,
+            include_tables=True,
+            no_fallback=False
+        )
+
+        if not texto_extraido:
+            return False, f"Parser não conseguiu extrair texto relevante da URL '{url}'", 0
+
+        texto_extraido = texto_extraido.strip()
+        num_chars = len(texto_extraido)
+
+        if num_chars < 500:
+            return False, f"Extração de conteúdo insuficiente ({num_chars} caracteres extraídos, mínimo exigido: 500) — possível paywall ou bloqueio anti-scraping", num_chars
+
+        return True, texto_extraido, num_chars
+    except Exception as e:
+        return False, f"Erro inesperado durante o fetch da URL '{url}': {e}", 0
+
+def guardar_texto_no_notion(page_id, texto_extraido):
+    """
+    Guarda o texto extraído do artigo como blocos de parágrafo na própria página do Notion.
+    """
+    try:
+        paragrafos = [p.strip() for p in texto_extraido.split("\n") if p.strip()]
+        children_blocks = []
+        for p in paragrafos[:25]:
+            children_blocks.append({
+                "object": "block",
+                "type": "paragraph",
+                "paragraph": {
+                    "rich_text": [{"type": "text", "text": {"content": p[:2000]}}]
+                }
+            })
+        if children_blocks:
+            notion.blocks.children.append(block_id=page_id, children=children_blocks)
+            print(f"  [Notion Sync] Texto extraído ({len(children_blocks)} blocos) guardado na página do Notion com sucesso.")
+    except Exception as e:
+        print(f"  [Aviso Notion Sync] Não foi possível guardar texto extraído no corpo da página: {e}")
+
 
 def extract_notion_id(id_or_url):
     if not id_or_url:
@@ -209,23 +268,6 @@ def processar_page(page, config):
     except (KeyError, IndexError):
         fonte_url = ""
 
-    # Extrai o corpo do texto da página no Notion
-    corpo_pagina = ler_pagina_notion(page_id)
-    parts = [f"Título: {titulo}"]
-    if fonte_url:
-        parts.append(f"URL/Fonte: {fonte_url}")
-    if corpo_pagina:
-        parts.append(f"Conteúdo:\n{corpo_pagina}")
-
-    texto_completo = "\n\n".join(parts)
-
-
-    print(f"\n==================================================")
-    print(f"Iniciando Pipeline v2 para: '{titulo}' ({page_id[:8]}...)")
-    print(f"  [Info Artigo] Tamanho do Texto Completo: {len(texto_completo)} caracteres")
-    print(f"  [Info Artigo] Primeiros 150 caracteres: '{texto_completo[:150]}...'")
-    print(f"==================================================")
-
     data_hoje = datetime.now().strftime("%Y-%m-%d")
 
     # Helper para marcar Erro Técnico no Notion
@@ -239,6 +281,44 @@ def processar_page(page, config):
                 "Dor/Problema": {"rich_text": [{"text": {"content": f"[ERRO TÉCNICO] {motivo}"[:2000]}}]}
             }
         )
+
+    print(f"\n==================================================")
+    print(f"Iniciando Pipeline v2 para: '{titulo}' ({page_id[:8]}...)")
+    print(f"==================================================")
+
+    # ----------------------------------------------------
+    # PASSO 0: FETCH + EXTRAÇÃO DE CONTEÚDO (PRÉ-CAMADA 1)
+    # ----------------------------------------------------
+    corpo_existente = ler_pagina_notion(page_id)
+
+    if corpo_existente and len(corpo_existente) >= 500:
+        print(f"  [Fetch] Reutilizando texto existente guardado no Notion ({len(corpo_existente)} caracteres).")
+        texto_artigo = corpo_existente
+    else:
+        print(f"  [Fetch] A aceder a: {fonte_url}...")
+        sucesso_fetch, resultado_fetch, n_chars = fetch_e_extrair_artigo(fonte_url)
+
+        if not sucesso_fetch:
+            print(f"  [Fetch ERRO] {resultado_fetch}")
+            marcar_erro_tecnico(resultado_fetch)
+            return
+
+        texto_artigo = resultado_fetch
+        print(f"  [Fetch] Sucesso — {n_chars} caracteres extraídos.")
+        print(f"  [Fetch] Primeiros 150 caracteres: '{texto_artigo[:150]}...'")
+
+        # Persistir na página Notion para execuções futuras
+        guardar_texto_no_notion(page_id, texto_artigo)
+
+    parts = [f"Título: {titulo}"]
+    if fonte_url:
+        parts.append(f"URL/Fonte: {fonte_url}")
+    parts.append(f"Conteúdo Completo do Artigo:\n{texto_artigo}")
+
+    texto_completo = "\n\n".join(parts)
+
+    print(f"  [Info Artigo Preparado] Tamanho Total enviado para o Prompt: {len(texto_completo)} caracteres")
+
 
     # ----------------------------------------------------
     # CAMADA 1: Triagem
