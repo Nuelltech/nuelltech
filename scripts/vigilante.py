@@ -181,11 +181,31 @@ def eh_relevante_ao_setor(setor, titulo, url, snippet):
     return any(p in texto_combinado for p in palavras)
 
 
+import time
+
+def obter_propriedades_db(db_id):
+    """
+    Verifica no arranque as colunas existentes na base de dados Notion
+    para não tentar enviar propriedades inexistentes (evita warnings).
+    """
+    try:
+        db = notion.databases.retrieve(database_id=db_id)
+        return db.get("properties", {})
+    except Exception as e:
+        print(f"  [Aviso Notion Schema] Não foi possível obter schema da DB: {e}")
+        return {}
+
+
 def vigiar():
     total_adicionados = 0
     total_ignorados_binarios = 0
     total_ignorados_emprego = 0
     total_ignorados_tematica = 0
+
+    # Verificar schema da DB Notion no arranque
+    db_props = obter_propriedades_db(DATABASE_ID)
+    tem_pilar_origem = "Pilar_Origem" in db_props
+    print(f"  - Coluna 'Pilar_Origem' na base de dados Notion: {'✓ Encontrada' if tem_pilar_origem else '✗ Não existe (será omitida)'}")
 
     for setor, pilares in QUERIES_3_PILARES.items():
         print(f"\n==================================================")
@@ -213,6 +233,7 @@ def vigiar():
                         "exclude_domains": DOMINIOS_EXCLUIR,
                     }
                     results = tavily.search(**kwargs)
+                    time.sleep(1)  # Pausa entre pesquisas para evitar rate limit da API Tavily
                 except Exception as e:
                     print(f"  [ERRO] Falha na pesquisa Tavily: {e}")
                     continue
@@ -259,18 +280,15 @@ def vigiar():
                         "Status":      {"select": {"name": "Novo"}},
                         "Data_Coleta": {"date": {"start": data_str}},
                     }
+                    if tem_pilar_origem:
+                        props["Pilar_Origem"] = {"select": {"name": pilar_nome}}
 
                     try:
-                        # Tentar incluir Pilar_Origem ("Dor" ou "IA_Tecnologia")
-                        props_com_pilar = dict(props)
-                        props_com_pilar["Pilar_Origem"] = {"select": {"name": pilar_nome}}
-                        notion.pages.create(parent={"database_id": DATABASE_ID}, properties=props_com_pilar)
-                    except Exception:
-                        # Fallback se a propriedade Pilar_Origem ainda não estiver criada no Notion DB
                         notion.pages.create(parent={"database_id": DATABASE_ID}, properties=props)
-
-                    print(f"  [+] ({pilar_nome}) {titulo[:70]} [{data_str}]")
-                    total_adicionados += 1
+                        print(f"  [+] ({pilar_nome}) {titulo[:70]} [{data_str}]")
+                        total_adicionados += 1
+                    except Exception as e:
+                        print(f"  [ERRO Notion] {e}")
 
     print(f"\n==================================================")
     print(f"=== Vigilante concluído ===")
