@@ -46,10 +46,11 @@ jobs:
           INPUT_DATA_INICIO: ${{ github.event.inputs.data_inicio }}
           INPUT_DATA_FIM: ${{ github.event.inputs.data_fim }}
         run: |
-          ARGS=""
-          if [ -n "$INPUT_SETOR" ]; then ARGS="$ARGS --setor \"$INPUT_SETOR\""; fi
-          if [ -n "$INPUT_STATUS" ]; then ARGS="$ARGS --status \"$INPUT_STATUS\""; else ARGS="$ARGS --status \"Novo\""; fi
-          if [ -n "$INPUT_DATA_INICIO" ]; then ARGS="$ARGS --data-inicio \"$INPUT_DATA_INICIO\""; fi
-          if [ -n "$INPUT_DATA_FIM" ]; then ARGS="$ARGS --data-fim \"$INPUT_DATA_FIM\""; fi
-          python scripts/analista.py $ARGS
+          ARGS=()
+          if [ -n "$INPUT_SETOR" ]; then ARGS+=(--setor "$INPUT_SETOR"); fi
+          if [ -n "$INPUT_STATUS" ]; then ARGS+=(--status "$INPUT_STATUS"); else ARGS+=(--status "Novo"); fi
+          if [ -n "$INPUT_DATA_INICIO" ]; then ARGS+=(--data-inicio "$INPUT_DATA_INICIO"); fi
+          if [ -n "$INPUT_DATA_FIM" ]; then ARGS+=(--data-fim "$INPUT_DATA_FIM"); fi
+          python scripts/analista.py "${ARGS[@]}"
+
 

@@ -4,6 +4,8 @@ import json
 import re
 import argparse
 import urllib.request
+import urllib.error
+from datetime import datetime
 from anthropic import Anthropic
 from notion_client import Client
 
@@ -38,8 +40,14 @@ def query_database(db_id, filter_body):
             "Notion-Version": NOTION_VERSION
         }
     )
-    with urllib.request.urlopen(req) as response:
-        return json.loads(response.read().decode("utf-8"))
+    try:
+        with urllib.request.urlopen(req) as response:
+            return json.loads(response.read().decode("utf-8"))
+    except urllib.error.HTTPError as e:
+        body = e.read().decode("utf-8")
+        print(f"  [ERRO API NOTION {e.code}] ao consultar base de dados:")
+        print(f"  [DETALHE DO ERRO NOTION]: {body}")
+        raise
 
 def ler_contexto_notion(page_id):
     clean_page_id = extract_notion_id(page_id)
@@ -85,6 +93,7 @@ def processar_page(page, contexto):
         data = json.loads(json_str)
         
         # Nomes das colunas reais da base de dados Inbox_Mercado no Notion
+        data_hoje = datetime.now().strftime("%Y-%m-%d")
         notion.pages.update(
             page_id=page_id,
             properties={
@@ -92,12 +101,18 @@ def processar_page(page, contexto):
                 "Resumo_Executivo":        {"rich_text": [{"text": {"content": data.get('Resumo_Executivo', '')[:2000]}}]},
                 "Oportunidade_Estrategica":{"rich_text": [{"text": {"content": data.get('Oportunidade_Estrategica', '')[:2000]}}]},
                 "Acao_Imediata":           {"rich_text": [{"text": {"content": data.get('Acao_Imediata', '')[:2000]}}]},
-                "Status":                  {"select": {"name": "Processado"}}
+                "Status":                  {"select": {"name": "Processado"}},
+                "Data_Resumo":             {"date": {"start": data_hoje}}
             }
         )
-        print(f"Sucesso ao processar: {titulo}")
+        print(f"Sucesso ao processar: {titulo} [Data_Resumo: {data_hoje}]")
     except Exception as e:
         print(f"Erro ao processar página {page_id[:8]}...: {e}")
+
+def clean_str(val):
+    if not val:
+        return ""
+    return val.strip('\'" \t\r\n')
 
 def main():
     parser = argparse.ArgumentParser(description="Analista Brain - Analisa artigos de mercado no Notion.")
@@ -126,7 +141,7 @@ def main():
     filters = []
 
     # 1. Filtro de Status (opcional, padrão: "Novo")
-    status_filtro = args.status.strip() if args.status else ""
+    status_filtro = clean_str(args.status)
     if status_filtro:
         filters.append({
             "property": "Status",
@@ -134,7 +149,7 @@ def main():
         })
 
     # 2. Filtro de Setor (opcional, ex: "farmacias")
-    setor_filtro = args.setor.strip() if args.setor else ""
+    setor_filtro = clean_str(args.setor)
     if setor_filtro:
         filters.append({
             "property": "Setor",
@@ -142,7 +157,7 @@ def main():
         })
 
     # 3. Filtros de Data (opcional, YYYY-MM-DD) - verifica a coluna Data_Coleta ou a data de criação nativa
-    data_inicio = args.data_inicio.strip() if args.data_inicio else ""
+    data_inicio = clean_str(args.data_inicio)
     if data_inicio:
         filters.append({
             "or": [
@@ -151,7 +166,7 @@ def main():
             ]
         })
 
-    data_fim = args.data_fim.strip() if args.data_fim else ""
+    data_fim = clean_str(args.data_fim)
     if data_fim:
         filters.append({
             "or": [
@@ -159,7 +174,6 @@ def main():
                 {"timestamp": "created_time", "created_time": {"on_or_before": data_fim}}
             ]
         })
-
 
     # Monta a estrutura de filtro do Notion
     if len(filters) == 0:
@@ -184,4 +198,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
