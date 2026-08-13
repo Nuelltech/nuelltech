@@ -1,8 +1,8 @@
 {
   "setores": [
-    "restaurantes",
     "farmacias",
     "clinicas",
-    "fábricas"
+    "restaurantes",
+    "ecommerce"
   ]
 }

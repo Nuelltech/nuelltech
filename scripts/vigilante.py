@@ -53,26 +53,28 @@ PALAVRAS_CHAVE_SETOR = {
         "restauran", "restauraç", "restaurac", "gastronom", "hotelaria", "menu",
         "ementa", "cozinha", "chef", "ahresp", "refeição", "refeicao", "takeaway"
     ],
-    "fábricas": [
-        "fábric", "fabric", "indústria", "industria", "manufactur", "produção",
-        "producao", "operá", "opera", "metalur", "têxtil", "textil", "moldes",
-        "automação", "automacao", "robot", "cadeia de abastecimento"
+    "ecommerce": [
+        "e-commerce", "ecommerce", "loja online", "lojas online", "venda online",
+        "vendas online", "comércio eletrónico", "comercio eletronico", "carrinho",
+        "checkout", "marketplace", "logística", "logistica", "ctt", "dhl"
     ],
 }
 
 # ---------------------------------------------------------------------------
-# Queries focadas por setor (sem anos passados nem termos longos que provocam fallbacks)
+# Queries focadas por setor (apenas os 4 setores oficiais da Nuelltech)
 # ---------------------------------------------------------------------------
 FONTES_POR_SETOR = {
     "farmacias": [
         {
             "query": "farmácia OR farmácias gestão desafios Portugal",
             "tipo": "Web",
+            "topic": "news",
             "days": 30,
         },
         {
             "query": "farmácias regulação INFARMED margens preços Portugal",
             "tipo": "Web",
+            "topic": "news",
             "days": 60,
         },
     ],
@@ -80,11 +82,13 @@ FONTES_POR_SETOR = {
         {
             "query": "clínica OR clínicas privadas saúde gestão Portugal",
             "tipo": "Web",
+            "topic": "news",
             "days": 30,
         },
         {
             "query": "saúde privada clínicas agendamento faturação desafios Portugal",
             "tipo": "Web",
+            "topic": "news",
             "days": 60,
         },
     ],
@@ -92,23 +96,27 @@ FONTES_POR_SETOR = {
         {
             "query": "restaurante OR restaurantes restauração gestão custos Portugal",
             "tipo": "Web",
+            "topic": "news",
             "days": 30,
         },
         {
             "query": "restauração restaurantes margens pessoal digitalização Portugal",
             "tipo": "Web",
+            "topic": "news",
             "days": 60,
         },
     ],
-    "fábricas": [
+    "ecommerce": [
         {
-            "query": "fábrica OR fábricas indústria PME produção Portugal",
+            "query": "e-commerce OR ecommerce loja online desafios gestão Portugal",
             "tipo": "Web",
+            "topic": "news",
             "days": 30,
         },
         {
-            "query": "indústria manufactura automação produtividade PME Portugal",
+            "query": "comércio eletrónico lojas online vendas custos logística Portugal",
             "tipo": "Web",
+            "topic": "news",
             "days": 60,
         },
     ],
@@ -163,15 +171,18 @@ def vigiar():
         print(f"\n--- Pesquisando setor: {setor} ---")
 
         for fonte in fontes:
-            query = fonte["query"]
+            query_texto = fonte["query"]
             tipo = fonte["tipo"]
+            topic = fonte.get("topic", "news")
             days = fonte.get("days", 30)
 
-            print(f"  Query ({tipo}): {query}...")
+            # Verificação 2: Logging detalhado da query exata enviada ao Tavily
+            print(f"[Vigilante Query] Setor: {setor} | Query: '{query_texto}' | Params: topic={topic}, days={days}, exclude_domains={DOMINIOS_EXCLUIR}")
 
             try:
                 kwargs = {
-                    "query": query,
+                    "query": query_texto,
+                    "topic": topic,
                     "search_depth": "advanced",
                     "max_results": 5,
                     "days": days,
@@ -182,7 +193,13 @@ def vigiar():
                 print(f"  [ERRO] Falha na pesquisa Tavily: {e}")
                 continue
 
-            for res in results.get('results', []):
+            resultados = results.get('results', [])
+            # Verificação 2: Logging dos resultados brutos devolvidos
+            print(f"[Vigilante Resultado] Setor: {setor} | {len(resultados)} resultados devolvidos:")
+            for r in resultados:
+                print(f"  - {r.get('title', '')} ({r.get('url', '')})")
+
+            for res in resultados:
                 url = res.get('url', '')
                 titulo = res.get('title', 'Sem título')
                 snippet = res.get('content', '')
