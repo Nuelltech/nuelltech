@@ -711,7 +711,30 @@ def main():
     print(f"\nEncontrados {len(results)} artigos correspondentes aos critérios.")
 
     for page in results:
-        processar_page(page, config)
+        try:
+            processar_page(page, config)
+        except Exception as e:
+            page_id_safe = extract_notion_id(page.get("id", ""))
+            titulo_safe = ""
+            try:
+                titulo_safe = page['properties']['Nome']['title'][0]['text']['content']
+            except Exception:
+                titulo_safe = page_id_safe[:8] if page_id_safe else "desconhecido"
+            print(f"\n  [ERRO NÃO TRATADO] Falha inesperada no artigo '{titulo_safe}': {e}")
+            print(f"  --> A continuar para o próximo artigo...\n")
+            # Tentar marcar o registo como Erro no Notion (best-effort)
+            if page_id_safe:
+                try:
+                    notion.pages.update(
+                        page_id=page_id_safe,
+                        properties={
+                            "Status": {"select": {"name": "Erro"}},
+                            "Dor/Problema": {"rich_text": [{"text": {"content": f"[ERRO NÃO TRATADO] {e}"[:2000]}}]}
+                        }
+                    )
+                except Exception:
+                    pass  # Não bloquear o loop se o próprio Notion estiver em baixo
+
 
 if __name__ == "__main__":
     main()
