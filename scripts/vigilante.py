@@ -38,7 +38,7 @@ EXTENSOES_IGNORAR = (".pdf", ".docx", ".doc", ".pptx", ".xls", ".xlsx", ".zip", 
 # topic="news" + days=N  →  só artigos publicados nos últimos N dias
 # topic="general"        →  pesquisa geral (para Reddit e queries atemporais)
 #
-# Estratégia: 2 queries de notícias recentes (Web) + 1 Reddit por setor
+# Estratégia: 2 queries de notícias recentes (Web) por setor (Reddit em pausa)
 # ---------------------------------------------------------------------------
 FONTES_POR_SETOR = {
     "farmacias": [
@@ -54,12 +54,6 @@ FONTES_POR_SETOR = {
             "topic": "news",
             "days": 60,
         },
-        {
-            "query": "site:reddit.com farmácias Portugal gestão problemas dificuldades",
-            "tipo": "Reddit",
-            "topic": "general",
-            "days": 30,
-        },
     ],
     "clinicas": [
         {
@@ -73,12 +67,6 @@ FONTES_POR_SETOR = {
             "tipo": "Web",
             "topic": "news",
             "days": 60,
-        },
-        {
-            "query": "site:reddit.com clínicas saúde privada Portugal problemas gestão",
-            "tipo": "Reddit",
-            "topic": "general",
-            "days": 30,
         },
     ],
     "restaurantes": [
@@ -94,12 +82,6 @@ FONTES_POR_SETOR = {
             "topic": "news",
             "days": 60,
         },
-        {
-            "query": "site:reddit.com restaurantes Portugal gestão custos problemas dificuldades",
-            "tipo": "Reddit",
-            "topic": "general",
-            "days": 30,
-        },
     ],
     "fábricas": [
         {
@@ -113,12 +95,6 @@ FONTES_POR_SETOR = {
             "tipo": "Web",
             "topic": "news",
             "days": 60,
-        },
-        {
-            "query": "site:reddit.com indústria fábricas Portugal PME problemas gestão",
-            "tipo": "Reddit",
-            "topic": "general",
-            "days": 30,
         },
     ],
 }
