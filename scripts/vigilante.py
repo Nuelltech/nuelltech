@@ -100,6 +100,35 @@ FONTES_POR_SETOR = {
 }
 
 
+from email.utils import parsedate_to_datetime
+import re
+
+def formatar_data_iso(pub_date):
+    """
+    Converte qualquer string de data recebida da API Tavily (ISO 8601, RFC 2822, etc.)
+    num formato estrito ISO YYYY-MM-DD exigido pela API do Notion.
+    """
+    if not pub_date or not isinstance(pub_date, str):
+        return datetime.now().strftime("%Y-%m-%d")
+
+    pub_date = pub_date.strip()
+
+    # 1. Procurar padrão YYYY-MM-DD direto na string
+    match_iso = re.search(r'\b(\d{4}-\d{2}-\d{2})\b', pub_date)
+    if match_iso:
+        return match_iso.group(1)
+
+    # 2. Tentar parse RFC 2822 (ex: "Tue, 04 Aug 2025 12:00:00 GMT")
+    try:
+        dt = parsedate_to_datetime(pub_date)
+        if dt:
+            return dt.strftime("%Y-%m-%d")
+    except Exception:
+        pass
+
+    return datetime.now().strftime("%Y-%m-%d")
+
+
 def vigiar():
     total_adicionados = 0
     total_ignorados = 0
@@ -145,7 +174,7 @@ def vigiar():
                 titulo_final = f"[{tipo}] {titulo}"
 
                 pub_date = res.get('published_date')
-                data_str = pub_date[:10] if (pub_date and len(pub_date) >= 10) else datetime.now().strftime("%Y-%m-%d")
+                data_str = formatar_data_iso(pub_date)
 
                 try:
                     notion.pages.create(
