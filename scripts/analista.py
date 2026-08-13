@@ -141,20 +141,25 @@ def main():
             "select": {"equals": setor_filtro}
         })
 
-    # 3. Filtros de Data de Criação no Notion (opcional, YYYY-MM-DD)
+    # 3. Filtros de Data (opcional, YYYY-MM-DD) - verifica a coluna Data_Coleta ou a data de criação nativa
     data_inicio = args.data_inicio.strip() if args.data_inicio else ""
     if data_inicio:
         filters.append({
-            "timestamp": "created_time",
-            "created_time": {"on_or_after": data_inicio}
+            "or": [
+                {"property": "Data_Coleta", "date": {"on_or_after": data_inicio}},
+                {"timestamp": "created_time", "created_time": {"on_or_after": data_inicio}}
+            ]
         })
 
     data_fim = args.data_fim.strip() if args.data_fim else ""
     if data_fim:
         filters.append({
-            "timestamp": "created_time",
-            "created_time": {"on_or_before": data_fim}
+            "or": [
+                {"property": "Data_Coleta", "date": {"on_or_before": data_fim}},
+                {"timestamp": "created_time", "created_time": {"on_or_before": data_fim}}
+            ]
         })
+
 
     # Monta a estrutura de filtro do Notion
     if len(filters) == 0:

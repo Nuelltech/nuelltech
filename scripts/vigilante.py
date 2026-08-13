@@ -1,5 +1,6 @@
 import os
 import json
+from datetime import datetime
 from tavily import TavilyClient
 from notion_client import Client
 
@@ -30,6 +31,10 @@ def vigiar():
                 # Prefixa o título para sabermos a origem
                 titulo_final = f"[{tipo}] {res['title']}"
                 
+                # Data de coleta / publicação (YYYY-MM-DD)
+                pub_date = res.get('published_date')
+                data_str = pub_date[:10] if (pub_date and len(pub_date) >= 10) else datetime.now().strftime("%Y-%m-%d")
+                
                 try:
                     notion.pages.create(
                         parent={"database_id": DATABASE_ID},
@@ -37,12 +42,14 @@ def vigiar():
                             "Nome": {"title": [{"text": {"content": titulo_final[:200]}}]},
                             "Fonte": {"url": res['url']},
                             "Setor": {"select": {"name": setor}},
-                            "Status": {"select": {"name": "Novo"}}
+                            "Status": {"select": {"name": "Novo"}},
+                            "Data_Coleta": {"date": {"start": data_str}}
                         }
                     )
-                    print(f"Adicionado ({tipo}): {res['title'][:50]}")
+                    print(f"Adicionado ({tipo}): {res['title'][:50]} [Data_Coleta: {data_str}]")
                 except Exception as e:
                     print(f"Erro ao adicionar ao Notion: {e}")
 
 if __name__ == "__main__":
     vigiar()
+
