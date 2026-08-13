@@ -19,11 +19,35 @@ NOTION_VERSION = "2022-06-28"
 def extract_notion_id(id_or_url):
     if not id_or_url:
         return ""
-    cleaned = id_or_url.strip().strip("'\"")
+    cleaned = id_or_url.strip().strip("'\" \t\r\n")
+    # Procura por 32 ou 36 caracteres hexadecimais (com ou sem hífens)
     match = re.search(r'([a-f0-9]{8}-?[a-f0-9]{4}-?[a-f0-9]{4}-?[a-f0-9]{4}-?[a-f0-9]{12})', cleaned, re.IGNORECASE)
     if match:
-        return match.group(1)
-    return cleaned.split('?')[0].split('/')[-1]
+        raw = match.group(1).replace("-", "")
+        return f"{raw[:8]}-{raw[8:12]}-{raw[12:16]}-{raw[16:20]}-{raw[20:]}"
+    last_part = cleaned.split('?')[0].split('/')[-1]
+    match_last = re.search(r'([a-f0-9]{32})', last_part, re.IGNORECASE)
+    if match_last:
+        raw = match_last.group(1)
+        return f"{raw[:8]}-{raw[8:12]}-{raw[12:16]}-{raw[16:20]}-{raw[20:]}"
+    return last_part if len(last_part) in [32, 36] else ""
+
+def normalizar_setor_notion(setor_input):
+    if not setor_input:
+        return ""
+    s = setor_input.lower().strip().strip('\'" \t\r\n')
+    if "farm" in s:
+        return "farmacias"
+    elif "clin" in s:
+        return "clinicas"
+    elif "rest" in s:
+        return "restaurantes"
+    elif "fabr" in s or "fábr" in s:
+        return "fábricas"
+    elif "ecom" in s:
+        return "ecommerce"
+    return s
+
 
 def query_database(db_id, filter_body):
     """
@@ -458,12 +482,13 @@ def main():
         })
 
     # 2. Filtro de Setor (opcional, ex: "farmacias")
-    setor_filtro = clean_str(args.setor)
+    setor_filtro = normalizar_setor_notion(args.setor)
     if setor_filtro:
         filters.append({
             "property": "Setor",
             "select": {"equals": setor_filtro}
         })
+
 
     # 3. Filtros de Data (opcional, YYYY-MM-DD)
     data_inicio = clean_str(args.data_inicio)

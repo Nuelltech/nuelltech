@@ -5,10 +5,18 @@ on:
   workflow_dispatch:
     inputs:
       setor:
-        description: 'Setor a analisar (ex: farmacias, restaurantes). Deixar vazio para todos.'
+        description: 'Setor a analisar (vazio = todos os setores)'
         required: false
-        type: string
+        type: choice
+        options:
+          - ''
+          - 'farmacias'
+          - 'clinicas'
+          - 'restaurantes'
+          - 'fábricas'
+          - 'ecommerce'
         default: ''
+
       status:
         description: 'Estado dos artigos (ex: Novo, Teste, Processado). Padrão: Novo'
         required: false
