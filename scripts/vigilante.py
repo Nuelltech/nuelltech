@@ -58,7 +58,7 @@ FONTES_POR_SETOR = {
             "query": "site:reddit.com farmácias Portugal gestão problemas dificuldades",
             "tipo": "Reddit",
             "topic": "general",
-            "days": None,
+            "days": 30,
         },
     ],
     "clinicas": [
@@ -78,7 +78,7 @@ FONTES_POR_SETOR = {
             "query": "site:reddit.com clínicas saúde privada Portugal problemas gestão",
             "tipo": "Reddit",
             "topic": "general",
-            "days": None,
+            "days": 30,
         },
     ],
     "restaurantes": [
@@ -98,7 +98,7 @@ FONTES_POR_SETOR = {
             "query": "site:reddit.com restaurantes Portugal gestão custos problemas dificuldades",
             "tipo": "Reddit",
             "topic": "general",
-            "days": None,
+            "days": 30,
         },
     ],
     "fábricas": [
@@ -118,7 +118,7 @@ FONTES_POR_SETOR = {
             "query": "site:reddit.com indústria fábricas Portugal PME problemas gestão",
             "tipo": "Reddit",
             "topic": "general",
-            "days": None,
+            "days": 30,
         },
     ],
 }
