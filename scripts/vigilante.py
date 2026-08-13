@@ -37,13 +37,27 @@ DOMINIOS_EXCLUIR = [
 EXTENSOES_IGNORAR = (".pdf", ".docx", ".doc", ".pptx", ".xls", ".xlsx", ".zip", ".rar")
 
 # ---------------------------------------------------------------------------
+# Pilar C: Filtro Negativo de Ofertas de Emprego (Aplicado a TODOS os resultados)
+# ---------------------------------------------------------------------------
+PALAVRAS_EXCLUIDAS_TITULO = [
+    "emprego", "vaga", "vagas", "careers", "career",
+    "recrutamento", "estágio", "estagio", "hiring",
+    "job details", "job opening", "oferta de emprego",
+    "programa de estágio", "recruitment"
+]
+
+def titulo_e_oferta_emprego(titulo: str) -> bool:
+    titulo_lower = titulo.lower()
+    return any(palavra in titulo_lower for palavra in PALAVRAS_EXCLUIDAS_TITULO)
+
+# ---------------------------------------------------------------------------
 # Palavras-chave obrigatórias por setor (Filtro de Relevância Temática)
-# Pelo menos UMA destas raízes de palavras tem de constar no título, URL ou resumo
 # ---------------------------------------------------------------------------
 PALAVRAS_CHAVE_SETOR = {
     "farmacias": [
         "farmác", "farmac", "infarmed", "medicament", "farma", "prescrição",
-        "prescricao", "farmacêutic", "farmaceutic", "receita médica", "anf"
+        "prescricao", "farmacêutic", "farmaceutic", "receita médica", "anf",
+        "pharmacy", "pharmaceutical", "drugstore"
     ],
     "clinicas": [
         "clínic", "clinic", "hospital", "médic", "medic", "saúde", "saude",
@@ -56,70 +70,75 @@ PALAVRAS_CHAVE_SETOR = {
     "ecommerce": [
         "e-commerce", "ecommerce", "loja online", "lojas online", "venda online",
         "vendas online", "comércio eletrónico", "comercio eletronico", "carrinho",
-        "checkout", "marketplace", "logística", "logistica", "ctt", "dhl"
+        "checkout", "marketplace", "logística", "logistica", "ctt", "dhl",
+        "online store", "online shop"
     ],
 }
 
 # ---------------------------------------------------------------------------
-# Queries focadas por setor (apenas os 4 setores oficiais da Nuelltech)
+# Definição das Queries dos 3 Pilares por Setor (4 Setores Oficiais)
 # ---------------------------------------------------------------------------
-FONTES_POR_SETOR = {
-    "farmacias": [
-        {
-            "query": "farmácia OR farmácias gestão desafios Portugal",
-            "tipo": "Web",
-            "topic": "news",
-            "days": 30,
-        },
-        {
-            "query": "farmácias regulação INFARMED margens preços Portugal",
-            "tipo": "Web",
-            "topic": "news",
-            "days": 60,
-        },
-    ],
-    "clinicas": [
-        {
-            "query": "clínica OR clínicas privadas saúde gestão Portugal",
-            "tipo": "Web",
-            "topic": "news",
-            "days": 30,
-        },
-        {
-            "query": "saúde privada clínicas agendamento faturação desafios Portugal",
-            "tipo": "Web",
-            "topic": "news",
-            "days": 60,
-        },
-    ],
-    "restaurantes": [
-        {
-            "query": "restaurante OR restaurantes restauração gestão custos Portugal",
-            "tipo": "Web",
-            "topic": "news",
-            "days": 30,
-        },
-        {
-            "query": "restauração restaurantes margens pessoal digitalização Portugal",
-            "tipo": "Web",
-            "topic": "news",
-            "days": 60,
-        },
-    ],
-    "ecommerce": [
-        {
-            "query": "e-commerce OR ecommerce loja online desafios gestão Portugal",
-            "tipo": "Web",
-            "topic": "news",
-            "days": 30,
-        },
-        {
-            "query": "comércio eletrónico lojas online vendas custos logística Portugal",
-            "tipo": "Web",
-            "topic": "news",
-            "days": 60,
-        },
-    ],
+QUERIES_3_PILARES = {
+    "farmacias": {
+        "PilarA": [
+            "farmácias Portugal stock parado validade desperdício",
+            "farmácias Portugal margens comparticipação concorrência parafarmácias",
+            "farmacêuticos Portugal escassez emigração salários",
+            "farmácias Portugal digitalização presença online",
+            "farmácias Portugal INFARMED regulação comparticipação",
+            "farmácias Portugal parafarmácias supermercados concorrência",
+            "farmácias Portugal fidelização clientes CRM",
+        ],
+        "PilarB": [
+            "farmácias Portugal inteligência artificial automação",
+            "pharmacy AI automation UK Spain innovation",
+        ]
+    },
+    "clinicas": {
+        "PilarA": [
+            "clínicas privadas Portugal agendamento faltas no-shows",
+            "clínicas privadas Portugal faturação recibos convenção SNS",
+            "clínicas privadas Portugal médicos retenção escassez",
+            "clínicas privadas Portugal registos clínicos histórico doente",
+            "clínicas privadas Portugal ERS regulação conformidade",
+            "clínicas privadas Portugal concorrência grandes grupos saúde",
+            "clínicas privadas Portugal reputação avaliações comunicação doente",
+        ],
+        "PilarB": [
+            "clínicas Portugal IA agendamento agentes",
+            "clinic AI scheduling automation Europe",
+        ]
+    },
+    "restaurantes": {
+        "PilarA": [
+            "restaurantes Portugal desperdício alimentar stocks margens",
+            "restaurantes Portugal escassez pessoal rotação funcionários",
+            "restaurantes Portugal custos energia matérias-primas margens",
+            "restaurantes Portugal reservas no-shows ocupação mesas",
+            "restaurantes Portugal ASAE HACCP higiene regulação",
+            "restaurantes Portugal plataformas entregas comissões concorrência",
+            "restaurantes Portugal fidelização clientes presença digital",
+        ],
+        "PilarB": [
+            "restaurantes Portugal automação gestão IA",
+            "restaurant AI automation management Europe",
+        ]
+    },
+    "ecommerce": {
+        "PilarA": [
+            "e-commerce Portugal abandono carrinho conversão",
+            "e-commerce Portugal custos expedição devoluções logística",
+            "e-commerce Portugal atendimento apoio cliente tempo resposta",
+            "e-commerce Portugal gestão stock sincronização inventário",
+            "e-commerce Portugal RGPD privacidade proteção dados",
+            "e-commerce Portugal concorrência marketplaces gigantes",
+            "e-commerce Portugal fidelização repetição compra",
+        ],
+        "PilarB": [
+            "e-commerce Portugal IA agentes atendimento",
+            "e-commerce AI customer service agents Europe",
+        ]
+    }
 }
 
 
@@ -165,79 +184,101 @@ def eh_relevante_ao_setor(setor, titulo, url, snippet):
 def vigiar():
     total_adicionados = 0
     total_ignorados_binarios = 0
+    total_ignorados_emprego = 0
     total_ignorados_tematica = 0
 
-    for setor, fontes in FONTES_POR_SETOR.items():
-        print(f"\n--- Pesquisando setor: {setor} ---")
+    for setor, pilares in QUERIES_3_PILARES.items():
+        print(f"\n==================================================")
+        print(f"Pesquisando Setor: {setor.upper()}")
+        print(f"==================================================")
 
-        for fonte in fontes:
-            query_texto = fonte["query"]
-            tipo = fonte["tipo"]
-            topic = fonte.get("topic", "news")
-            days = fonte.get("days", 30)
+        for pilar_key in ["PilarA", "PilarB"]:
+            pilar_nome = "Dor" if pilar_key == "PilarA" else "IA_Tecnologia"
+            queries = pilares.get(pilar_key, [])
 
-            # Verificação 2: Logging detalhado da query exata enviada ao Tavily
-            print(f"[Vigilante Query] Setor: {setor} | Query: '{query_texto}' | Params: topic={topic}, days={days}, exclude_domains={DOMINIOS_EXCLUIR}")
+            for query_texto in queries:
+                days = 60
+                topic = "news"
 
-            try:
-                kwargs = {
-                    "query": query_texto,
-                    "topic": topic,
-                    "search_depth": "advanced",
-                    "max_results": 5,
-                    "days": days,
-                    "exclude_domains": DOMINIOS_EXCLUIR,
-                }
-                results = tavily.search(**kwargs)
-            except Exception as e:
-                print(f"  [ERRO] Falha na pesquisa Tavily: {e}")
-                continue
-
-            resultados = results.get('results', [])
-            # Verificação 2: Logging dos resultados brutos devolvidos
-            print(f"[Vigilante Resultado] Setor: {setor} | {len(resultados)} resultados devolvidos:")
-            for r in resultados:
-                print(f"  - {r.get('title', '')} ({r.get('url', '')})")
-
-            for res in resultados:
-                url = res.get('url', '')
-                titulo = res.get('title', 'Sem título')
-                snippet = res.get('content', '')
-
-                # 1. Filtrar PDFs e ficheiros binários na origem
-                url_lower = url.lower().split("?")[0]
-                if any(url_lower.endswith(ext) for ext in EXTENSOES_IGNORAR):
-                    print(f"  [Ignorado — Ficheiro binário] {url[:70]}")
-                    total_ignorados_binarios += 1
-                    continue
-
-                # 2. Filtro de Relevância Temática do Setor (impede notícias de fofoca, desporto, etc.)
-                if not eh_relevante_ao_setor(setor, titulo, url, snippet):
-                    print(f"  [Ignorado — Fora do tema '{setor}'] {titulo[:70]}")
-                    total_ignorados_tematica += 1
-                    continue
-
-                titulo_final = f"[{tipo}] {titulo}"
-                pub_date = res.get('published_date')
-                data_str = formatar_data_iso(pub_date)
+                # Verificação 2: Logging detalhado da query exata enviada ao Tavily
+                print(f"\n[Vigilante Query] Pilar: {pilar_nome} | Setor: {setor} | Query: '{query_texto}' | Params: topic={topic}, days={days}")
 
                 try:
-                    notion.pages.create(
-                        parent={"database_id": DATABASE_ID},
-                        properties={
-                            "Nome":        {"title": [{"text": {"content": titulo_final[:200]}}]},
-                            "Fonte":       {"url": url},
-                            "Setor":       {"select": {"name": setor}},
-                            "Status":      {"select": {"name": "Novo"}},
-                            "Data_Coleta": {"date": {"start": data_str}},
-                        }
-                    )
-                    print(f"  [+] ({tipo}) {titulo[:70]} [{data_str}]")
-                    total_adicionados += 1
+                    kwargs = {
+                        "query": query_texto,
+                        "topic": topic,
+                        "search_depth": "advanced",
+                        "max_results": 3,
+                        "days": days,
+                        "exclude_domains": DOMINIOS_EXCLUIR,
+                    }
+                    results = tavily.search(**kwargs)
                 except Exception as e:
-                    print(f"  [ERRO Notion] {e}")
+                    print(f"  [ERRO] Falha na pesquisa Tavily: {e}")
+                    continue
 
-    print(f"\n=== Vigilante concluído: {total_adicionados} artigos adicionados, {total_ignorados_binarios} PDFs ignorados, {total_ignorados_tematica} fora de tema ignorados ===")
+                resultados = results.get('results', [])
+                # Verificação 2: Logging dos resultados brutos devolvidos
+                print(f"[Vigilante Resultado] Pilar: {pilar_nome} | Setor: {setor} | {len(resultados)} resultados devolvidos:")
+                for r in resultados:
+                    print(f"  - {r.get('title', '')} ({r.get('url', '')})")
+
+                for res in resultados:
+                    url = res.get('url', '')
+                    titulo = res.get('title', 'Sem título')
+                    snippet = res.get('content', '')
+
+                    # 1. Filtrar PDFs e ficheiros binários na origem
+                    url_lower = url.lower().split("?")[0]
+                    if any(url_lower.endswith(ext) for ext in EXTENSOES_IGNORAR):
+                        print(f"  [Ignorado — Ficheiro binário] {url[:70]}")
+                        total_ignorados_binarios += 1
+                        continue
+
+                    # 2. Pilar C: Filtro Negativo de Ofertas de Emprego
+                    if titulo_e_oferta_emprego(titulo):
+                        print(f"  [Ignorado — Oferta de Emprego (Pilar C)] {titulo[:70]}")
+                        total_ignorados_emprego += 1
+                        continue
+
+                    # 3. Filtro de Relevância Temática do Setor (impede notícias de fofoca, desporto, etc.)
+                    if not eh_relevante_ao_setor(setor, titulo, url, snippet):
+                        print(f"  [Ignorado — Fora do tema '{setor}'] {titulo[:70]}")
+                        total_ignorados_tematica += 1
+                        continue
+
+                    titulo_final = f"[Web] {titulo}"
+                    pub_date = res.get('published_date')
+                    data_str = formatar_data_iso(pub_date)
+
+                    # Propriedades para o Notion
+                    props = {
+                        "Nome":        {"title": [{"text": {"content": titulo_final[:200]}}]},
+                        "Fonte":       {"url": url},
+                        "Setor":       {"select": {"name": setor}},
+                        "Status":      {"select": {"name": "Novo"}},
+                        "Data_Coleta": {"date": {"start": data_str}},
+                    }
+
+                    try:
+                        # Tentar incluir Pilar_Origem ("Dor" ou "IA_Tecnologia")
+                        props_com_pilar = dict(props)
+                        props_com_pilar["Pilar_Origem"] = {"select": {"name": pilar_nome}}
+                        notion.pages.create(parent={"database_id": DATABASE_ID}, properties=props_com_pilar)
+                    except Exception:
+                        # Fallback se a propriedade Pilar_Origem ainda não estiver criada no Notion DB
+                        notion.pages.create(parent={"database_id": DATABASE_ID}, properties=props)
+
+                    print(f"  [+] ({pilar_nome}) {titulo[:70]} [{data_str}]")
+                    total_adicionados += 1
+
+    print(f"\n==================================================")
+    print(f"=== Vigilante concluído ===")
+    print(f"  - Artigos adicionados: {total_adicionados}")
+    print(f"  - PDFs ignorados: {total_ignorados_binarios}")
+    print(f"  - Ofertas de Emprego ignoradas (Pilar C): {total_ignorados_emprego}")
+    print(f"  - Fora de tema ignorados: {total_ignorados_tematica}")
+    print(f"==================================================")
 
 
 if __name__ == "__main__":
