@@ -251,10 +251,32 @@ def call_claude_json(system_prompt, user_prompt, max_tokens=2000):
         except Exception as retry_error:
             raise ValueError(f"Falha ao obter JSON válido do Claude após retry: {retry_error}")
 
+def substituir_placeholders_artigo(prompt_text, titulo, texto_completo):
+    # Substituir placeholders de título
+    title_phs = ["{{titulo}}", "{{title}}", "{{titulo_noticia}}", "{{titulo_artigo}}"]
+    for ph in title_phs:
+        if ph in prompt_text:
+            prompt_text = prompt_text.replace(ph, titulo)
+
+    # Substituir placeholders de texto/conteúdo
+    text_phs = ["{{texto_completo}}", "{{artigo_completo}}", "{{texto_noticia}}", "{{noticia_completa}}", "{{conteudo}}", "{{texto}}", "{{noticia}}", "{{artigo}}", "{{corpo_noticia}}"]
+    replaced = False
+    for ph in text_phs:
+        if ph in prompt_text:
+            prompt_text = prompt_text.replace(ph, texto_completo)
+            replaced = True
+
+    # Se NENHUM placeholder de texto/conteúdo foi encontrado no prompt, anexar o texto da notícia explicitamente!
+    if not replaced:
+        prompt_text += f"\n\n--- NOTÍCIA / CONTEÚDO A ANALISAR ---\n{texto_completo}\n--------------------------------------\n"
+
+    return prompt_text
+
 def clean_str(val):
     if not val:
         return ""
     return val.strip('\'" \t\r\n')
+
 
 def processar_page(page, config):
     page_id = extract_notion_id(page['id'])
@@ -332,13 +354,14 @@ def processar_page(page, config):
     p1 = p1.replace("{{contexto_setor_clinicas}}", config["SEC"].get("clinicas", ""))
     p1 = p1.replace("{{contexto_setor_restaurantes}}", config["SEC"].get("restaurantes", ""))
     p1 = p1.replace("{{contexto_setor_ecommerce}}", config["SEC"].get("ecommerce", ""))
-    p1 = p1.replace("{{titulo}}", titulo)
-    p1 = p1.replace("{{texto_completo}}", texto_completo)
+
+    p1 = substituir_placeholders_artigo(p1, titulo, texto_completo)
 
     # Prevenir que o Claude copie o literal do schema de opções
     p1 = p1.replace('"Setor": "Farmácias | Clínicas | Restaurantes | E-commerce | Nenhum"',
                     '"Setor": "<escolhe exatamente UM destes valores: Farmácias, Clínicas, Restaurantes, E-commerce, Nenhum — nunca copies a lista, escreve só o valor escolhido>"')
 
+    print(f"  [C1 Prompt] Tamanho do Prompt C1 final enviado ao Claude: {len(p1)} caracteres")
     print("  [C1] Executando Triagem...")
     try:
         c1_output = call_claude_json(system_prompt="", user_prompt=p1)
@@ -400,7 +423,8 @@ def processar_page(page, config):
         marcar_erro_tecnico("Prompt da Camada 2 (C2) inacessível ou vazio")
         return
 
-    p2 = prompt_c2.replace("{{titulo}}", titulo).replace("{{texto_completo}}", texto_completo)
+    p2 = substituir_placeholders_artigo(prompt_c2, titulo, texto_completo)
+
 
     print("  [C2] Executando Extração Factual...")
     try:
