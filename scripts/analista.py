@@ -127,8 +127,9 @@ def main():
     db_id = extract_notion_id(os.environ["NOTION_DATABASE_ID"])
     print(f"Database ID (primeiros 8 chars): {db_id[:8]}...")
     
-    contexto_page_id = os.environ.get("NOTION_CONTEXTO_PAGE_ID", "")
+    contexto_page_id = os.environ.get("CONTEXTO_PAGE_ID") or os.environ.get("NOTION_CONTEXTO_PAGE_ID", "")
     contexto = ler_contexto_notion(contexto_page_id) if contexto_page_id else "Contexto indisponível."
+
 
     if args.target_id:
         target_id = extract_notion_id(args.target_id)
