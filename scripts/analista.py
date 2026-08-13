@@ -194,8 +194,17 @@ def processar_page(page, config):
     except (KeyError, IndexError):
         titulo = "Artigo sem título"
 
+    # Extrai o corpo do texto da página no Notion
+    corpo_pagina = ler_pagina_notion(page_id)
+    if corpo_pagina:
+        texto_completo = f"Título: {titulo}\n\nConteúdo:\n{corpo_pagina}"
+    else:
+        texto_completo = titulo
+
     print(f"\n==================================================")
     print(f"Iniciando Pipeline v2 para: '{titulo}' ({page_id[:8]}...)")
+    print(f"  [Info Artigo] Tamanho do Texto Completo: {len(texto_completo)} caracteres")
+    print(f"  [Info Artigo] Primeiros 150 caracteres: '{texto_completo[:150]}...'")
     print(f"==================================================")
 
     data_hoje = datetime.now().strftime("%Y-%m-%d")
@@ -225,7 +234,11 @@ def processar_page(page, config):
     p1 = p1.replace("{{contexto_setor_restaurantes}}", config["SEC"].get("restaurantes", ""))
     p1 = p1.replace("{{contexto_setor_ecommerce}}", config["SEC"].get("ecommerce", ""))
     p1 = p1.replace("{{titulo}}", titulo)
-    p1 = p1.replace("{{texto_completo}}", titulo)
+    p1 = p1.replace("{{texto_completo}}", texto_completo)
+
+    # Prevenir que o Claude copie o literal do schema de opções
+    p1 = p1.replace('"Setor": "Farmácias | Clínicas | Restaurantes | E-commerce | Nenhum"',
+                    '"Setor": "<escolhe exatamente UM destes valores: Farmácias, Clínicas, Restaurantes, E-commerce, Nenhum — nunca copies a lista, escreve só o valor escolhido>"')
 
     print("  [C1] Executando Triagem...")
     try:
@@ -234,16 +247,27 @@ def processar_page(page, config):
         marcar_erro_tecnico(f"Erro na Camada 1 (Triagem): {e}")
         return
 
-    setor = c1_output.get("Setor", "Nenhum")
+    print(f"  [C1 JSON Bruto Devolvido pelo Claude]: {json.dumps(c1_output, ensure_ascii=False)}")
+
+    setor = clean_str(c1_output.get("Setor", "Nenhum"))
     score_relevance = c1_output.get("Score_Relevancia", 0)
     avanca = c1_output.get("Avanca_Pipeline", True)
 
-    print(f"  [C1 Output] Setor: '{setor}' | Score: {score_relevance} | Avança: {avanca}")
+    # Validação de robustez: se o modelo devolveu o template com pipe "|" ou valor fora da lista válida, é um Erro Técnico!
+    setores_validos = ["farmácias", "clínicas", "restaurantes", "e-commerce", "nenhum", "farmacias", "clinicas", "fábricas", "fabricas", "ecommerce"]
+    setor_limpo = setor.lower().strip()
 
-    # Se Avanca_Pipeline for False, marca como "Não Relevante" e encerra
-    if not avanca or score_relevance < 40 or setor == "Nenhum":
-        print(f"  --> Notícia marcada como 'Não Relevante' (Score: {score_relevance}/100, Setor: '{setor}'). Parando pipeline.")
-        setor_gravacao = setor if setor in ["farmacias", "clinicas", "restaurantes", "ecommerce"] else "farmacias"
+    if "|" in setor or (setor_limpo not in setores_validos and not any(k in setor_limpo for k in ["farm", "clin", "rest", "ecom", "fabr", "nenhum"])):
+        marcar_erro_tecnico(f"Modelo devolveu valor de Setor inválido/template na Camada 1: '{setor}'")
+        return
+
+    print(f"  [C1 Output Avaliado] Setor: '{setor}' | Score: {score_relevance} | Avança: {avanca}")
+
+    # Se Avanca_Pipeline for False, Score < 40 ou Setor == "Nenhum", marca como "Não Relevante" e encerra
+    if not avanca or score_relevance < 40 or "nenhum" in setor_limpo:
+        print(f"  --> Notícia considerada 'Não Relevante' (Score: {score_relevance}/100, Setor: '{setor}', Avança: {avanca}). Parando pipeline.")
+        setor_key_temp = normalizar_setor_notion(setor)
+        setor_gravacao = setor_key_temp if setor_key_temp in ["farmacias", "clinicas", "restaurantes", "ecommerce", "fábricas"] else "farmacias"
         notion.pages.update(
             page_id=page_id,
             properties={
@@ -254,6 +278,7 @@ def processar_page(page, config):
             }
         )
         return
+
 
     # Normalizar chave do setor para taxonomias/contextos
     setor_norm = setor.lower().strip()
@@ -276,7 +301,8 @@ def processar_page(page, config):
         marcar_erro_tecnico("Prompt da Camada 2 (C2) inacessível ou vazio")
         return
 
-    p2 = prompt_c2.replace("{{titulo}}", titulo).replace("{{texto_completo}}", titulo)
+    p2 = prompt_c2.replace("{{titulo}}", titulo).replace("{{texto_completo}}", texto_completo)
+
     print("  [C2] Executando Extração Factual...")
     try:
         c2_output = call_claude_json(system_prompt="", user_prompt=p2)
