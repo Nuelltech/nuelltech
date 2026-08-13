@@ -27,11 +27,11 @@ def fetch_e_extrair_artigo(url):
         return False, "URL de origem inválida ou ausente", 0
 
     try:
-        user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-        downloaded = trafilatura.fetch_url(url, user_agent=user_agent)
+        downloaded = trafilatura.fetch_url(url)
 
         if not downloaded:
             return False, f"Falha ao aceder à URL '{url}' (timeout ou erro de ligação 403/404)", 0
+
 
         texto_extraido = trafilatura.extract(
             downloaded,
