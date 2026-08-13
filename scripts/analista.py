@@ -10,6 +10,7 @@ from concurrent.futures import ThreadPoolExecutor
 from anthropic import Anthropic
 from notion_client import Client
 import trafilatura
+from prompts import PROMPT_C1, PROMPT_C2, PROMPT_C3, PROMPT_C4, PROMPT_C5, PROMPT_C6, PROMPT_C7
 
 # Inicialização
 anthropic = Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
@@ -156,27 +157,11 @@ def ler_pagina_notion(page_id):
 
 def load_pipeline_config():
     """
-    Carrega todas as páginas de prompts, taxonomias e contextos do Notion uma única vez no arranque (Cache).
+    Carrega taxonomias, contextos de setor e catálogo Nuelltech do Notion uma única vez no arranque.
+    Os prompts C1-C7 estão hardcoded em prompts.py — não são lidos do Notion.
     """
-    print("\n--- Carregando Configuração e Prompts do Notion (Startup Cache) ---")
+    print("\n--- Carregando Configuração do Notion (Startup Cache) ---")
     config = {}
-
-    # Prompts de Camadas C1 a C7 e C8 Output
-    prompt_secrets = {
-        "C1": os.environ.get("NOTION_ANALISTA_C1", ""),
-        "C2": os.environ.get("NOTION_ANALISTA_C2", ""),
-        "C3": os.environ.get("NOTION_ANALISTA_C3", ""),
-        "C4": os.environ.get("NOTION_ANALISTA_C4", ""),
-        "C5": os.environ.get("NOTION_ANALISTA_C5", ""),
-        "C6": os.environ.get("NOTION_ANALISTA_C6", ""),
-        "C7": os.environ.get("NOTION_ANALISTA_C7", ""),
-        "C8_OUTPUT": os.environ.get("NOTION_ANALISTA_C8_OUTPUT", ""),
-    }
-
-    for key, pid in prompt_secrets.items():
-        content = ler_pagina_notion(pid) if pid else ""
-        config[key] = content
-        print(f"  - {key}: {'✓ Carregado' if content else '✗ Inacessível ou Vazio'}")
 
     # Contextos por Setor
     sec_secrets = {
@@ -251,27 +236,6 @@ def call_claude_json(system_prompt, user_prompt, max_tokens=2000):
         except Exception as retry_error:
             raise ValueError(f"Falha ao obter JSON válido do Claude após retry: {retry_error}")
 
-def substituir_placeholders_artigo(prompt_text, titulo, texto_completo):
-    # Substituir placeholders de título
-    title_phs = ["{{titulo}}", "{{title}}", "{{titulo_noticia}}", "{{titulo_artigo}}"]
-    for ph in title_phs:
-        if ph in prompt_text:
-            prompt_text = prompt_text.replace(ph, titulo)
-
-    # Substituir placeholders de texto/conteúdo
-    text_phs = ["{{texto_completo}}", "{{artigo_completo}}", "{{texto_noticia}}", "{{noticia_completa}}", "{{conteudo}}", "{{texto}}", "{{noticia}}", "{{artigo}}", "{{corpo_noticia}}"]
-    replaced = False
-    for ph in text_phs:
-        if ph in prompt_text:
-            prompt_text = prompt_text.replace(ph, texto_completo)
-            replaced = True
-
-    # Se NENHUM placeholder de texto/conteúdo foi encontrado no prompt, anexar o texto da notícia explicitamente!
-    if not replaced:
-        prompt_text += f"\n\n--- NOTÍCIA / CONTEÚDO A ANALISAR ---\n{texto_completo}\n--------------------------------------\n"
-
-    return prompt_text
-
 def clean_str(val):
     if not val:
         return ""
@@ -343,23 +307,15 @@ def processar_page(page, config):
 
 
     # ----------------------------------------------------
-    # CAMADA 1: Triagem
+    # CAMADA 1: Triagem (prompt hardcoded em prompts.py)
     # ----------------------------------------------------
-    prompt_c1 = config.get("C1", "")
-    if not prompt_c1:
-        marcar_erro_tecnico("Prompt da Camada 1 (C1) inacessível ou vazio")
-        return
-
-    p1 = prompt_c1.replace("{{contexto_setor_farmacias}}", config["SEC"].get("farmacias", ""))
+    p1 = PROMPT_C1
+    p1 = p1.replace("{{contexto_setor_farmacias}}", config["SEC"].get("farmacias", ""))
     p1 = p1.replace("{{contexto_setor_clinicas}}", config["SEC"].get("clinicas", ""))
     p1 = p1.replace("{{contexto_setor_restaurantes}}", config["SEC"].get("restaurantes", ""))
     p1 = p1.replace("{{contexto_setor_ecommerce}}", config["SEC"].get("ecommerce", ""))
-
-    p1 = substituir_placeholders_artigo(p1, titulo, texto_completo)
-
-    # Prevenir que o Claude copie o literal do schema de opções
-    p1 = p1.replace('"Setor": "Farmácias | Clínicas | Restaurantes | E-commerce | Nenhum"',
-                    '"Setor": "<escolhe exatamente UM destes valores: Farmácias, Clínicas, Restaurantes, E-commerce, Nenhum — nunca copies a lista, escreve só o valor escolhido>"')
+    p1 = p1.replace("{{titulo}}", titulo)
+    p1 = p1.replace("{{texto_completo}}", texto_completo)
 
     print(f"  [C1 Prompt] Tamanho do Prompt C1 final enviado ao Claude: {len(p1)} caracteres")
     print("  [C1] Executando Triagem...")
@@ -375,7 +331,7 @@ def processar_page(page, config):
     score_relevance = c1_output.get("Score_Relevancia", 0)
     avanca = c1_output.get("Avanca_Pipeline", True)
 
-    # Validação de robustez: se o modelo devolveu o template com pipe "|" ou valor fora da lista válida, é um Erro Técnico!
+    # Validação de robustez: se o modelo devolveu o template com pipe "|", é um Erro Técnico!
     setores_validos = ["farmácias", "clínicas", "restaurantes", "e-commerce", "nenhum", "farmacias", "clinicas", "fábricas", "fabricas", "ecommerce"]
     setor_limpo = setor.lower().strip()
 
@@ -401,7 +357,6 @@ def processar_page(page, config):
         )
         return
 
-
     # Normalizar chave do setor para taxonomias/contextos
     setor_norm = setor.lower().strip()
     if "farm" in setor_norm:
@@ -416,14 +371,12 @@ def processar_page(page, config):
         setor_key = "farmacias"
 
     # ----------------------------------------------------
-    # CAMADA 2: Extração Factual Ancorada
+    # CAMADA 2: Extração Factual Ancorada (prompt hardcoded)
     # ----------------------------------------------------
-    prompt_c2 = config.get("C2", "")
-    if not prompt_c2:
-        marcar_erro_tecnico("Prompt da Camada 2 (C2) inacessível ou vazio")
-        return
+    p2 = PROMPT_C2
+    p2 = p2.replace("{{titulo}}", titulo)
+    p2 = p2.replace("{{texto_completo}}", texto_completo)
 
-    p2 = substituir_placeholders_artigo(prompt_c2, titulo, texto_completo)
 
 
     print("  [C2] Executando Extração Factual...")
@@ -434,15 +387,11 @@ def processar_page(page, config):
         return
 
     # ----------------------------------------------------
-    # CAMADA 3: Diagnóstico da Dor
+    # CAMADA 3: Diagnóstico da Dor (prompt hardcoded)
     # ----------------------------------------------------
-    prompt_c3 = config.get("C3", "")
-    if not prompt_c3:
-        marcar_erro_tecnico("Prompt da Camada 3 (C3) inacessível ou vazio")
-        return
-
     taxonomia_setor = config["TAX"].get(setor_key, "")
-    p3 = prompt_c3.replace("{{setor}}", setor)
+    p3 = PROMPT_C3
+    p3 = p3.replace("{{setor}}", setor)
     p3 = p3.replace("{{taxonomia_dores_setor}}", taxonomia_setor)
     p3 = p3.replace("{{output_camada_2}}", json.dumps(c2_output, ensure_ascii=False, indent=2))
 
@@ -454,27 +403,22 @@ def processar_page(page, config):
         return
 
     # ----------------------------------------------------
-    # CAMADAS 4 & 5 (PARALELO): Resumo Executivo & Oportunidade Estratégica
+    # CAMADAS 4 & 5 (PARALELO): Resumo Executivo & Oportunidade Estratégica (prompts hardcoded)
     # ----------------------------------------------------
-    prompt_c4 = config.get("C4", "")
-    prompt_c5 = config.get("C5", "")
-
-    if not prompt_c4 or not prompt_c5:
-        marcar_erro_tecnico("Prompt da Camada 4 ou 5 inacessível ou vazio")
-        return
-
     intensidade_info = c3_output.get("Intensidade", {})
     intensidade_val = intensidade_info.get("valor", 0) if isinstance(intensidade_info, dict) else 0
     intensidade_just = intensidade_info.get("justificacao", "") if isinstance(intensidade_info, dict) else ""
 
-    p4 = prompt_c4.replace("{{setor}}", setor)
+    p4 = PROMPT_C4
+    p4 = p4.replace("{{setor}}", setor)
     p4 = p4.replace("{{output_camada_2}}", json.dumps(c2_output, ensure_ascii=False, indent=2))
     p4 = p4.replace("{{categoria_dor}}", c3_output.get("Categoria_Dor", ""))
     p4 = p4.replace("{{intensidade}}", str(intensidade_val))
     p4 = p4.replace("{{justificacao_intensidade}}", intensidade_just)
     p4 = p4.replace("{{evidencia}}", c3_output.get("Evidencia", ""))
 
-    p5 = prompt_c5.replace("{{catalogo_nuelltech}}", config.get("CATALOGO", ""))
+    p5 = PROMPT_C5
+    p5 = p5.replace("{{catalogo_nuelltech}}", config.get("CATALOGO", ""))
     p5 = p5.replace("{{setor}}", setor)
     p5 = p5.replace("{{categoria_dor}}", c3_output.get("Categoria_Dor", ""))
     p5 = p5.replace("{{intensidade}}", str(intensidade_val))
@@ -492,19 +436,13 @@ def processar_page(page, config):
         return
 
     # ----------------------------------------------------
-    # CAMADA 6: Ação Comercial Imediata
+    # CAMADA 6: Ação Comercial Imediata (prompt hardcoded)
     # ----------------------------------------------------
-    prompt_c6 = config.get("C6", "")
-    if not prompt_c6:
-        marcar_erro_tecnico("Prompt da Camada 6 (C6) inacessível ou vazio")
-        return
-
     sec_context = config["SEC"].get(setor_key, "")
 
-    p6 = prompt_c6.replace("{{setor}}", setor)
-    p6 = p6.replace("{{ciclo_vendas_setor}}", sec_context)
-    p6 = p6.replace("{{status_quo_setor}}", sec_context)
-    p6 = p6.replace("{{estrutura_decisao_setor}}", sec_context)
+    p6 = PROMPT_C6
+    p6 = p6.replace("{{setor}}", setor)
+    p6 = p6.replace("{{contexto_setor}}", sec_context)
     p6 = p6.replace("{{categoria_dor}}", c3_output.get("Categoria_Dor", ""))
     p6 = p6.replace("{{intensidade}}", str(intensidade_val))
     p6 = p6.replace("{{solucao_nuelltech}}", c5_output.get("Solucao_Nuelltech", ""))
@@ -520,14 +458,10 @@ def processar_page(page, config):
         return
 
     # ----------------------------------------------------
-    # CAMADA 7: QA / Quarentena
+    # CAMADA 7: QA / Quarentena (prompt hardcoded)
     # ----------------------------------------------------
-    prompt_c7 = config.get("C7", "")
-    if not prompt_c7:
-        marcar_erro_tecnico("Prompt da Camada 7 (C7) inacessível ou vazio")
-        return
-
-    p7 = prompt_c7.replace("{{setor}}", setor)
+    p7 = PROMPT_C7
+    p7 = p7.replace("{{setor}}", setor)
     p7 = p7.replace("{{score_relevancia}}", str(score_relevance))
     p7 = p7.replace("{{apto_conteudo_publico}}", json.dumps(c1_output.get("Apto_Conteudo_Publico", {}), ensure_ascii=False))
     p7 = p7.replace("{{output_camada_2}}", json.dumps(c2_output, ensure_ascii=False, indent=2))
