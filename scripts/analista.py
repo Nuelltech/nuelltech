@@ -21,6 +21,7 @@ NOTION_VERSION = "2022-06-28"
 def fetch_e_extrair_artigo(url):
     """
     Descarrega o conteúdo da URL da notícia e extrai o corpo do artigo.
+    - PDFs e ficheiros binários: rejeita com mensagem clara (não suportado).
     - Reddit: usa a API JSON pública (endpoint .json) — evita o bloqueio 403 ao scraping HTML.
     - Todos os outros: usa trafilatura.
     Timeout: 15s.
@@ -28,6 +29,17 @@ def fetch_e_extrair_artigo(url):
     """
     if not url or not url.startswith("http"):
         return False, "URL de origem inválida ou ausente", 0
+
+    # --- Deteção precoce de ficheiros não suportados (PDF, DOCX, etc.) ---
+    url_path = url.split("?")[0].lower()
+    TIPOS_NAO_SUPORTADOS = (".pdf", ".docx", ".doc", ".pptx", ".xls", ".xlsx", ".zip", ".rar")
+    for ext in TIPOS_NAO_SUPORTADOS:
+        if url_path.endswith(ext):
+            tipo = url_path.rsplit(".", 1)[-1].upper()
+            return False, (
+                f"Ficheiro {tipo} não suportado — o cron Analista processa apenas páginas web HTML. "
+                f"Sugere-se remover esta entrada da base de dados ou o cron de recolha deve filtrar ficheiros {tipo} na origem."
+            ), 0
 
     # --- Caminho Reddit: API JSON pública ---
     is_reddit = "reddit.com/r/" in url or "reddit.com/comments/" in url
@@ -363,7 +375,19 @@ def processar_page(page, config):
 
         if not sucesso_fetch:
             print(f"  [Fetch ERRO] {resultado_fetch}")
-            marcar_erro_tecnico(resultado_fetch)
+            # PDFs e ficheiros não suportados: status diferente para distinguir no Notion
+            if "não suportado" in resultado_fetch.lower():
+                print(f"  [Não Suportado] Ficheiro binário/PDF — a marcar como 'Não Suportado' no Notion.")
+                notion.pages.update(
+                    page_id=page_id,
+                    properties={
+                        "Status": {"select": {"name": "Erro"}},
+                        "Data_Resumo": {"date": {"start": data_hoje}},
+                        "Dor/Problema": {"rich_text": [{"text": {"content": f"[NÃO SUPORTADO] {resultado_fetch}"[:2000]}}]}
+                    }
+                )
+            else:
+                marcar_erro_tecnico(resultado_fetch)
             return
 
         texto_artigo = resultado_fetch
