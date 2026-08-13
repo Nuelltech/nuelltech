@@ -1,6 +1,29 @@
 name: Analista (Brain)
 on:
-  workflow_dispatch: # Apenas manual ou chamado por outro evento
+  schedule:
+    - cron: '0 9 * * *'
+  workflow_dispatch:
+    inputs:
+      setor:
+        description: 'Setor a analisar (ex: farmacias, restaurantes). Deixar vazio para todos.'
+        required: false
+        type: string
+        default: ''
+      status:
+        description: 'Estado dos artigos (ex: Novo, Teste, Processado). Padrão: Novo'
+        required: false
+        type: string
+        default: 'Novo'
+      data_inicio:
+        description: 'Data inicial em formato YYYY-MM-DD. Deixar vazio para sem limite.'
+        required: false
+        type: string
+        default: ''
+      data_fim:
+        description: 'Data final em formato YYYY-MM-DD. Deixar vazio para sem limite.'
+        required: false
+        type: string
+        default: ''
 
 jobs:
   run-analista:
@@ -18,4 +41,15 @@ jobs:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
           NOTION_CONTEXTO_PAGE_ID: ${{ secrets.NOTION_CONTEXTO_PAGE_ID }}
-        run: python scripts/analista.py
+          INPUT_SETOR: ${{ github.event.inputs.setor }}
+          INPUT_STATUS: ${{ github.event.inputs.status }}
+          INPUT_DATA_INICIO: ${{ github.event.inputs.data_inicio }}
+          INPUT_DATA_FIM: ${{ github.event.inputs.data_fim }}
+        run: |
+          ARGS=""
+          if [ -n "$INPUT_SETOR" ]; then ARGS="$ARGS --setor \"$INPUT_SETOR\""; fi
+          if [ -n "$INPUT_STATUS" ]; then ARGS="$ARGS --status \"$INPUT_STATUS\""; else ARGS="$ARGS --status \"Novo\""; fi
+          if [ -n "$INPUT_DATA_INICIO" ]; then ARGS="$ARGS --data-inicio \"$INPUT_DATA_INICIO\""; fi
+          if [ -n "$INPUT_DATA_FIM" ]; then ARGS="$ARGS --data-fim \"$INPUT_DATA_FIM\""; fi
+          python scripts/analista.py $ARGS
+

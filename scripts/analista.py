@@ -2,6 +2,7 @@ import os
 import sys
 import json
 import re
+import argparse
 import urllib.request
 from anthropic import Anthropic
 from notion_client import Client
@@ -99,30 +100,83 @@ def processar_page(page, contexto):
         print(f"Erro ao processar página {page_id[:8]}...: {e}")
 
 def main():
+    parser = argparse.ArgumentParser(description="Analista Brain - Analisa artigos de mercado no Notion.")
+    parser.add_argument("--setor", "-s", type=str, default="", help="Filtrar por setor (ex: farmacias, restaurantes). Vazio para todos.")
+    parser.add_argument("--status", "-st", type=str, default="Novo", help="Filtrar por status (ex: Novo, Teste, Processado). Padrão: Novo.")
+    parser.add_argument("--data-inicio", "-di", type=str, default="", help="Filtrar artigos criados a partir desta data (YYYY-MM-DD).")
+    parser.add_argument("--data-fim", "-df", type=str, default="", help="Filtrar artigos criados até esta data (YYYY-MM-DD).")
+    parser.add_argument("target_id", nargs="?", type=str, default="", help="ID ou URL de uma página específica no Notion a processar.")
+
+    args = parser.parse_args()
+
     db_id = extract_notion_id(os.environ["NOTION_DATABASE_ID"])
     print(f"Database ID (primeiros 8 chars): {db_id[:8]}...")
     
     contexto_page_id = os.environ.get("NOTION_CONTEXTO_PAGE_ID", "")
     contexto = ler_contexto_notion(contexto_page_id) if contexto_page_id else "Contexto indisponível."
 
-    # Filtro: muda para "Novo" quando quiseres processar todos os artigos
-    status_filtro = "Teste"
-
-    if len(sys.argv) > 1:
-        target_id = extract_notion_id(sys.argv[1])
+    if args.target_id:
+        target_id = extract_notion_id(args.target_id)
+        print(f"Processando página específica: {target_id[:8]}...")
         page = notion.pages.retrieve(page_id=target_id)
         processar_page(page, contexto)
-    else:
-        pendentes = query_database(db_id, {
-            "filter": {
-                "property": "Status",
-                "select": {"equals": status_filtro}
-            }
+        return
+
+    # Construir filtros para a query do Notion
+    filters = []
+
+    # 1. Filtro de Status (opcional, padrão: "Novo")
+    status_filtro = args.status.strip() if args.status else ""
+    if status_filtro:
+        filters.append({
+            "property": "Status",
+            "select": {"equals": status_filtro}
         })
-        results = pendentes.get('results', [])
-        print(f"Encontrados {len(results)} artigos pendentes com Status='{status_filtro}'.")
-        for page in results:
-            processar_page(page, contexto)
+
+    # 2. Filtro de Setor (opcional, ex: "farmacias")
+    setor_filtro = args.setor.strip() if args.setor else ""
+    if setor_filtro:
+        filters.append({
+            "property": "Setor",
+            "select": {"equals": setor_filtro}
+        })
+
+    # 3. Filtros de Data de Criação no Notion (opcional, YYYY-MM-DD)
+    data_inicio = args.data_inicio.strip() if args.data_inicio else ""
+    if data_inicio:
+        filters.append({
+            "timestamp": "created_time",
+            "created_time": {"on_or_after": data_inicio}
+        })
+
+    data_fim = args.data_fim.strip() if args.data_fim else ""
+    if data_fim:
+        filters.append({
+            "timestamp": "created_time",
+            "created_time": {"on_or_before": data_fim}
+        })
+
+    # Monta a estrutura de filtro do Notion
+    if len(filters) == 0:
+        filter_body = {}
+    elif len(filters) == 1:
+        filter_body = {"filter": filters[0]}
+    else:
+        filter_body = {"filter": {"and": filters}}
+
+    print("Parâmetros de filtro aplicados:")
+    print(f"  - Status: '{status_filtro if status_filtro else 'Todos'}'")
+    print(f"  - Setor: '{setor_filtro if setor_filtro else 'Todos'}'")
+    print(f"  - Data Início: '{data_inicio if data_inicio else 'Sem limite'}'")
+    print(f"  - Data Fim: '{data_fim if data_fim else 'Sem limite'}'")
+
+    pendentes = query_database(db_id, filter_body)
+    results = pendentes.get('results', [])
+    print(f"\nEncontrados {len(results)} artigos correspondentes aos critérios.")
+
+    for page in results:
+        processar_page(page, contexto)
 
 if __name__ == "__main__":
     main()
+
