@@ -43,6 +43,27 @@ jobs:
           CONTEXTO_PAGE_ID: ${{ secrets.CONTEXTO_PAGE_ID || secrets.NOTION_CONTEXTO_PAGE_ID }}
           NOTION_CONTEXTO_PAGE_ID: ${{ secrets.NOTION_CONTEXTO_PAGE_ID || secrets.CONTEXTO_PAGE_ID }}
 
+          NOTION_ANALISTA_C0: ${{ secrets.NOTION_ANALISTA_C0 }}
+          NOTION_ANALISTA_C1: ${{ secrets.NOTION_ANALISTA_C1 }}
+          NOTION_ANALISTA_C2: ${{ secrets.NOTION_ANALISTA_C2 }}
+          NOTION_ANALISTA_C3: ${{ secrets.NOTION_ANALISTA_C3 }}
+          NOTION_ANALISTA_C4: ${{ secrets.NOTION_ANALISTA_C4 }}
+          NOTION_ANALISTA_C5: ${{ secrets.NOTION_ANALISTA_C5 }}
+          NOTION_ANALISTA_C6: ${{ secrets.NOTION_ANALISTA_C6 }}
+          NOTION_ANALISTA_C7: ${{ secrets.NOTION_ANALISTA_C7 }}
+          NOTION_ANALISTA_C8_OUTPUT: ${{ secrets.NOTION_ANALISTA_C8_OUTPUT }}
+
+          NOTION_SEC_FARM: ${{ secrets.NOTION_SEC_FARM }}
+          NOTION_SEC_CLI: ${{ secrets.NOTION_SEC_CLI }}
+          NOTION_SEC_REST: ${{ secrets.NOTION_SEC_REST }}
+          NOTION_SEC_ECOM: ${{ secrets.NOTION_SEC_ECOM }}
+
+          NOTION_TAX_FARM: ${{ secrets.NOTION_TAX_FARM }}
+          NOTION_TAX_CLI: ${{ secrets.NOTION_TAX_CLI }}
+          NOTION_TAX_REST: ${{ secrets.NOTION_TAX_REST }}
+          NOTION_TAX_ECOM: ${{ secrets.NOTION_TAX_ECOM }}
+
+
           INPUT_SETOR: ${{ github.event.inputs.setor }}
           INPUT_STATUS: ${{ github.event.inputs.status }}
           INPUT_DATA_INICIO: ${{ github.event.inputs.data_inicio }}
