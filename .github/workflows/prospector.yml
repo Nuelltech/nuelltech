@@ -1,9 +1,8 @@
 name: Motor creador de comunicação Automático
 
 on:
-  schedule:
-    - cron: '0 7 * * 1'
   workflow_dispatch:
+
 
 jobs:
   gerar-campanhas:

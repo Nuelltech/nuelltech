@@ -1,8 +1,7 @@
 name: Analista (Brain)
 on:
-  schedule:
-    - cron: '0 9 * * *'
   workflow_dispatch:
+
     inputs:
       setor:
         description: 'Setor a analisar (vazio = todos os setores)'
