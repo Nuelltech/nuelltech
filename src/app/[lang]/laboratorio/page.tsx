@@ -110,11 +110,16 @@ export default async function LabPage({
               </div>
             </div>
 
-            <div className="border-t border-brand-border/40 pt-4 flex justify-between items-center text-[10px]">
-              <span className="text-brand-ink-dim">{pt ? 'Tecnologias: Next.js API Routes, NASA Horizons, Claude API' : 'Tech Stack: Next.js API Routes, NASA Horizons, Claude API'}</span>
-              <span className="bg-brand-ok/10 border border-brand-ok/20 px-2 py-0.5 rounded text-brand-ok font-semibold font-mono">
-                {pt ? 'Live Demo' : 'Live Demo'}
-              </span>
+            <div className="border-t border-brand-border/40 pt-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 text-[10px]">
+              <span className="text-brand-ink-dim">{pt ? 'Tecnologias: Flask API, Swiss Ephemeris (NASA JPL), Claude API, Resend, Twilio' : 'Tech Stack: Flask API, Swiss Ephemeris (NASA JPL), Claude API, Resend, Twilio'}</span>
+              <a
+                href="https://viunu.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-brand-accent/20 hover:bg-brand-accent border border-brand-accent/40 text-brand-accent hover:text-white px-3.5 py-1.5 rounded-lg text-xs font-bold font-mono transition-colors flex items-center gap-1.5 shadow-sm"
+              >
+                {pt ? 'Visitar viunu.com' : 'Visit viunu.com'} &rarr;
+              </a>
             </div>
           </div>
 

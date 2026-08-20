@@ -43,11 +43,11 @@ Nuelltech transforms scattered data and manual processes into automated business
 
 ---
 
-## R&D / Lab
-
-### VIUNU
-- **URL:** https://nuelltech.com/pt/laboratorio (PT) / https://nuelltech.com/en/laboratorio (EN)
-- **Core Functionality:** High-precision astronomical API integration (NASA ephemerides Horizon reference) sending calculations to Claude API to generate formatted astrological profile PDFs. Proves technical ability to query scientific datasets.
+### VIUNU (Astrological Calculation & Interpretation Engine)
+- **Official Platform URL:** https://viunu.com
+- **Lab Info Page:** https://nuelltech.com/pt/laboratorio (PT) / https://nuelltech.com/en/laboratorio (EN)
+- **Category:** Official Product & R&D Platform by Nuelltech
+- **Core Functionality:** High-precision astronomical calculation engine (Swiss Ephemeris / NASA JPL reference) coupled with Anthropic Claude AI interpretation to generate instant interactive web dashboards and 10-15 page premium astrological profile PDFs delivered via Email and WhatsApp.
 
 ---
 
