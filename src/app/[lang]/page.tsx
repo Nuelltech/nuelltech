@@ -7,7 +7,7 @@ import Footer from '@/components/Footer';
 import SandboxHub from '@/components/demos/SandboxHub';
 import NuellWidget from '@/components/widget/NuellWidget';
 import IaFaqAccordion from '@/components/IaFaqAccordion';
-import SectorSelector from '@/components/widget/SectorSelector';
+import HeroAiChat from '@/components/HeroAiChat';
 import { ArrowRight, Sparkles, HelpCircle, Briefcase, ChevronRight, TrendingUp, CheckCircle2, AlertTriangle, FileText } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -170,174 +170,74 @@ export default async function Page({
 
       <Header lang={lang as Locale} dict={dict} />
 
-      {/* 1. HERO SECTION */}
-      <section id="hero" className="relative pt-24 pb-20 px-6 overflow-hidden">
-        {/* Glow decorative gradients */}
-        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-[#2054C7]/10 rounded-full blur-[120px] pointer-events-none" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[45%] h-[45%] bg-[#5B9CF7]/5 rounded-full blur-[100px] pointer-events-none" />
+      {/* 1. HERO SECTION (CENTERED & STREAMLINED) */}
+      <section id="hero" className="relative pt-24 sm:pt-32 pb-20 sm:pb-28 px-6 overflow-hidden">
+        {/* Ambient atmospheric glows */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[850px] h-[450px] bg-gradient-to-b from-cyan-600/15 via-indigo-600/10 to-transparent rounded-full blur-[130px] pointer-events-none" />
+        <div className="absolute top-1/3 left-1/4 w-[350px] h-[350px] bg-purple-600/10 rounded-full blur-[120px] pointer-events-none" />
 
-        <div className="max-w-6xl mx-auto relative z-10 grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-12 items-center">
-          {/* Col 1: Text Content */}
-          <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
-            <div className="bg-brand-accent/10 border border-brand-accent/20 px-3.5 py-1 rounded-full text-xs font-mono font-semibold text-brand-accent-soft flex items-center gap-2 mb-6 w-fit">
-              <Sparkles className="w-3.5 h-3.5" />
-              {isPt ? 'Automação & IA para PMEs' : 'Automation & AI for SMEs'}
-            </div>
-
-            <h1 className="text-3xl sm:text-5xl font-extrabold font-display leading-[1.15] text-brand-ink mb-6 text-glow">
-              {isPt 
-                ? 'Decisões de Gestão Automatizadas com IA'
-                : 'AI-Powered Business Management Automation'}
-            </h1>
-
-            <p className="text-sm sm:text-base text-brand-ink-dim leading-relaxed mb-10 max-w-xl">
-              {isPt 
-                ? 'A Nuelltech transforma dados dispersos e processos manuais de PMEs em fluxos automatizados. Reduza de 12 a 15 horas de trabalho semanal e proteja as suas margens com Inteligência Artificial aplicada ao seu negócio.'
-                : 'Nuelltech transforms scattered data and manual processes of SMEs into automated workflows. Save 12 to 15 hours of manual work per week and protect your profit margins with Artificial Intelligence applied to your business.'}
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center w-full sm:w-auto">
-              <a
-                href="#demos"
-                data-analytics-id="hero_cta_explore_sandboxes"
-                className="w-full sm:w-auto bg-brand-accent hover:bg-brand-accent-dark text-[#04060C] font-bold py-3.5 px-8 rounded-xl text-xs transition duration-150 shadow-lg shadow-brand-accent/20 flex items-center justify-center gap-2"
-              >
-                {isPt ? 'Explorar Sandboxes' : 'Explore Sandboxes'}
-                <ArrowRight className="w-4 h-4" />
-              </a>
-              <a
-                href="https://calendly.com/nuelltech/30min"
-                data-analytics-id="hero_cta_book_demo"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full sm:w-auto border border-brand-accent/60 hover:border-brand-accent hover:bg-brand-accent/5 text-brand-accent-soft font-bold py-3.5 px-8 rounded-xl text-xs transition duration-150 flex items-center justify-center"
-              >
-                {isPt ? 'Reservar Demo' : 'Book a Demo'}
-              </a>
-            </div>
+        <div className="max-w-4xl mx-auto relative z-10 flex flex-col items-center text-center">
+          {/* Top Badge */}
+          <div className="bg-gradient-to-r from-cyan-500/15 via-indigo-500/15 to-purple-500/15 border border-cyan-500/30 px-4 py-1.5 rounded-full text-xs font-mono font-semibold text-cyan-300 flex items-center gap-2 mb-8 shadow-sm backdrop-blur-md">
+            <Sparkles className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
+            <span>{isPt ? 'Inteligência Artificial & Automação de Gestão' : 'Artificial Intelligence & Business Automation'}</span>
           </div>
 
-          {/* Centered Logo: Stacked inline on mobile, floating glass badge on desktop */}
-          {/* Mobile version */}
-          <div className="flex justify-center items-center my-6 lg:hidden select-none">
-            <Image
-              src="/logo.png"
-              alt="Nuelltech Logo"
-              width={330}
-              height={82}
-              className="h-14 w-auto object-contain"
-              priority
-            />
-          </div>
+          {/* Centered Main Headline */}
+          <h1 className="text-3.5xl sm:text-5xl md:text-6xl font-extrabold font-display leading-[1.15] text-white tracking-tight mb-5 max-w-3xl">
+            {isPt ? (
+              <>
+                Decisões de Gestão <br />
+                <span className="bg-gradient-to-r from-cyan-400 via-sky-400 to-indigo-400 bg-clip-text text-transparent">
+                  Automatizadas com IA
+                </span>
+              </>
+            ) : (
+              <>
+                AI-Powered <br />
+                <span className="bg-gradient-to-r from-cyan-400 via-sky-400 to-indigo-400 bg-clip-text text-transparent">
+                  Management Decisions
+                </span>
+              </>
+            )}
+          </h1>
 
-          {/* Desktop version */}
-          <div className="hidden lg:flex absolute left-1/2 top-[20%] -translate-x-1/2 -translate-y-1/2 z-30 select-none">
-            <Image
-              src="/logo.png"
-              alt="Nuelltech Logo"
-              width={360}
-              height={90}
-              className="h-16 w-auto object-contain hover:scale-[1.02] transition duration-200"
-              priority
-            />
-          </div>
+          {/* Centered Refined Subtitle */}
+          <p className="text-sm sm:text-base md:text-lg text-slate-300 leading-relaxed mb-8 max-w-2xl mx-auto font-normal">
+            {isPt 
+              ? 'Transformamos dados dispersos e processos manuais em informação pronta e útil para a decisão — reduzindo 12 a 15 horas de trabalho semanal e melhorando os resultados do seu negócio.'
+              : 'We transform scattered data and manual processes into actionable business intelligence — reducing 12 to 15 hours of weekly work and improving your bottom-line results.'}
+          </p>
 
-          {/* Col 2: High-End Floating Graphic Dashboard - Hidden on Mobile */}
-          <div className="relative w-full max-w-md mx-auto aspect-square hidden lg:flex items-center justify-center lg:mt-0 mt-12 animate-float pointer-events-none select-none">
-            {/* Background decorative glow */}
-            <div className="absolute inset-0 bg-brand-accent/5 rounded-full blur-3xl pointer-events-none" />
+          {/* LLM Chat Input Box (ChatGPT / Claude style) */}
+          <HeroAiChat isPt={isPt} />
 
-            {/* Card 1: Main Dashboard (Reconciliation Engine) */}
-            <div className="bg-brand-card/90 border border-brand-border/60 p-6 rounded-2xl glass shadow-2xl relative w-11/12 z-20 overflow-hidden gradient-border-card">
-              <div className="flex justify-between items-center mb-4 border-b border-brand-border/40 pb-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-2.5 h-2.5 rounded-full bg-brand-ok animate-pulse" />
-                  <span className="text-[10px] font-mono text-brand-ink uppercase font-bold tracking-wider">Nuell Reconciler</span>
-                </div>
-                <span className="text-[9px] font-mono text-brand-accent-soft">v2.4.0</span>
-              </div>
+          {/* Secondary Quick Action Links */}
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 mt-12 pt-8 border-t border-white/10 w-full max-w-2xl text-xs font-medium text-slate-400">
+            <a
+              href="#demos"
+              data-analytics-id="hero_cta_explore_sandboxes"
+              className="flex items-center gap-1.5 text-cyan-400 hover:text-cyan-300 transition"
+            >
+              <span>{isPt ? 'Explorar Demonstrações Interativas' : 'Explore Interactive Demos'}</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </a>
 
-              {/* Mini chart */}
-              <div className="flex flex-col gap-2 mb-4">
-                <div className="flex justify-between text-[9px] text-brand-ink-dim font-mono">
-                  <span>{isPt ? 'Taxa de Margem Média' : 'Average Margin Rate'}</span>
-                  <span className="text-brand-ok font-bold">+18.4%</span>
-                </div>
-                <div className="h-16 w-full flex items-end gap-1.5 pt-2 border-b border-brand-border/30">
-                  <div className="bg-brand-border h-[40%] w-full rounded-t-sm" />
-                  <div className="bg-brand-border h-[50%] w-full rounded-t-sm" />
-                  <div className="bg-brand-border h-[45%] w-full rounded-t-sm" />
-                  <div className="bg-brand-border h-[65%] w-full rounded-t-sm" />
-                  <div className="bg-brand-accent/60 h-[75%] w-full rounded-t-sm" />
-                  <div className="bg-brand-accent h-[90%] w-full rounded-t-sm" />
-                </div>
-              </div>
+            <span className="w-1 h-1 rounded-full bg-slate-700 hidden sm:inline" />
 
-              {/* Warning box */}
-              <div className="bg-brand-risk/10 border border-brand-risk/30 rounded-xl p-3 flex items-start gap-2.5 text-[10px] text-brand-risk animate-pulse mb-3">
-                <AlertTriangle className="w-4 h-4 flex-shrink-0 text-brand-risk" />
-                <div>
-                  <span className="font-bold block text-left">{isPt ? 'Alerta de Quebra de Margem' : 'Margin Leak Alert'}</span>
-                  <span className="text-brand-ink-dim block text-[9px] mt-0.5 text-left">
-                    {isPt ? 'Fatura Fornecedor #4829 detetou desvio de +23%' : 'Invoice #4829 detected +23% price deviation'}
-                  </span>
-                </div>
-              </div>
-
-              {/* Powered by Nuelltech watermark */}
-              <div className="mt-3 border-t border-brand-border/30 pt-2 flex justify-between items-center text-[7.5px] font-mono text-brand-ink-dim uppercase select-none">
-                <span>System Status: {isPt ? 'Ativo' : 'Active'}</span>
-                <span>[powered_by: nuelltech]</span>
-              </div>
-            </div>
-
-            {/* Card 2: OCR Extraction Floating Card */}
-            <div className="absolute -bottom-4 -left-2 bg-brand-card/95 border border-brand-border/80 p-4 rounded-xl shadow-2xl w-2/3 z-30 animate-float-delayed flex flex-col gap-2 glass">
-              <div className="flex items-center gap-2 border-b border-brand-border/30 pb-2">
-                <FileText className="w-3.5 h-3.5 text-brand-accent-soft" />
-                <span className="text-[9px] font-mono font-bold text-brand-ink">OCR Scanner</span>
-              </div>
-              <div className="flex flex-col gap-1 text-[9px] font-mono">
-                <div className="flex justify-between text-brand-ink-dim">
-                  <span>Doc:</span>
-                  <span className="text-brand-ink">Fatura_Peixe.pdf</span>
-                </div>
-                <div className="flex justify-between text-brand-ink-dim">
-                  <span>Status:</span>
-                  <span className="text-brand-ok font-semibold">{isPt ? 'Extraído (99.7%)' : 'Parsed (99.7%)'}</span>
-                </div>
-                <div className="border-t border-brand-border/20 my-1" />
-                <div className="flex justify-between text-brand-ink-dim">
-                  <span>{isPt ? 'Linhas lidas:' : 'Parsed items:'}</span>
-                  <span className="text-brand-ink">14</span>
-                </div>
-                <div className="flex justify-between text-brand-risk font-semibold">
-                  <span>{isPt ? 'Desvios:' : 'Discrepancies:'}</span>
-                  <span>+45.20 €</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Card 3: Stock Forecast Floating Widget */}
-            <div className="absolute -top-4 -right-2 bg-brand-card/95 border border-brand-border/80 p-3 rounded-xl shadow-xl w-1/2 z-10 flex flex-col gap-1 glass">
-              <div className="flex items-center justify-between">
-                <span className="text-[8px] font-mono text-brand-ink-dim uppercase">{isPt ? 'Previsão Rotura' : 'Stock Forecast'}</span>
-                <CheckCircle2 className="w-3 h-3 text-brand-ok" />
-              </div>
-              <div className="flex items-baseline gap-1 mt-1">
-                <span className="text-sm font-bold text-brand-ink">94%</span>
-                <span className="text-[8px] text-brand-ok font-mono font-bold">+12%</span>
-              </div>
-              <div className="w-full bg-brand-border/50 h-1 rounded-full overflow-hidden mt-1">
-                <div className="bg-brand-ok h-full w-[94%]" />
-              </div>
-            </div>
+            <a
+              href="https://calendly.com/nuelltech/30min"
+              data-analytics-id="hero_cta_book_demo"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-slate-300 hover:text-white transition"
+            >
+              <span>{isPt ? 'Agendar Diagnóstico Gratuito (30 min)' : 'Book Free 30-min Diagnostic'}</span>
+              <span className="text-[10px] text-cyan-400 font-mono">↗</span>
+            </a>
           </div>
         </div>
       </section>
-
-      {/* 1.5 SECTOR SELECTION PANEL (NUELL CONTEXT INITIALIZER) */}
-      <SectorSelector isPt={isPt} />
 
       {/* 2. O PROBLEMA SECTION (PAIN) */}
       <section id="problem" className="py-24 px-6 bg-[#04060C] relative">
