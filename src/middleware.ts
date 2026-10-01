@@ -33,9 +33,11 @@ export function middleware(request: NextRequest) {
 
   if (pathnameHasLocale) return;
 
-  // Skip public assets, api requests, sitemap, robots, etc.
+  // Skip public assets, api requests, business cards (/c/), sitemap, robots, etc.
   const isAssetOrApi = 
     pathname.startsWith('/api') ||
+    pathname.startsWith('/c/') ||
+    pathname === '/c' ||
     pathname.startsWith('/_next') ||
     pathname.includes('.') || // e.g. favicon.ico, sitemap.xml, robots.txt
     pathname === '/robots.txt' ||

@@ -43,10 +43,14 @@ next-env.d.ts
 # Project specific ignores
 briefing/
 extracted_files/
+__pycache__/
+*.pyc
 *.zip
 *.txt
 *.png
 !public/logo.png
+!public/logo-tight.png
+!public/team/**
 !src/app/icon.png
 !public/llms.txt
 !public/robots.txt
