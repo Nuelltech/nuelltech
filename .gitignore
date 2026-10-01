@@ -51,6 +51,9 @@ __pycache__/
 !public/logo.png
 !public/logo-tight.png
 !public/team/**
+!public/icons/**
+!public/manifest.json
+!public/sw.js
 !src/app/icon.png
 !public/llms.txt
 !public/robots.txt

@@ -33,9 +33,46 @@ export default function VirtualBusinessCard({ employee }: VirtualBusinessCardPro
   const [isDownloading, setIsDownloading] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [isOfflineReady, setIsOfflineReady] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [showIosInstallModal, setShowIosInstallModal] = useState(false);
+  const [isInstalled, setIsInstalled] = useState(false);
 
   const cardRef = useRef<HTMLDivElement>(null);
   const gyroActiveRef = useRef(false);
+
+  // Register Service Worker for Offline caching & PWA
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+      navigator.serviceWorker
+        .register('/sw.js')
+        .then(() => {
+          setIsOfflineReady(true);
+        })
+        .catch((err) => {
+          console.warn('Falha no registo do ServiceWorker:', err);
+        });
+    }
+
+    // Detect if running as standalone app (already installed on homescreen)
+    if (
+      typeof window !== 'undefined' &&
+      (window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone === true)
+    ) {
+      setIsInstalled(true);
+    }
+
+    // Capture Android beforeinstallprompt
+    const handleBeforeInstall = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+    };
+  }, []);
 
   // Fallback avatar initials
   const initials = employee.fullName
@@ -202,6 +239,21 @@ export default function VirtualBusinessCard({ employee }: VirtualBusinessCardPro
   );
   const whatsappUrl = `https://wa.me/${employee.whatsapp}?text=${whatsappText}`;
 
+  // Handle PWA Installation
+  const handleInstallApp = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const choiceResult = await deferredPrompt.userChoice;
+      if (choiceResult.outcome === 'accepted') {
+        setIsInstalled(true);
+      }
+      setDeferredPrompt(null);
+    } else {
+      // Show iOS / general instructions modal
+      setShowIosInstallModal(true);
+    }
+  };
+
   // QR Code payload
   const qrCodePayload =
     qrMode === 'vcard'
@@ -216,8 +268,8 @@ export default function VirtualBusinessCard({ employee }: VirtualBusinessCardPro
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-tr from-cyan-600/20 via-indigo-600/20 to-purple-600/20 blur-[100px] pointer-events-none rounded-full" />
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2 w-80 h-80 bg-blue-600/10 blur-[90px] pointer-events-none rounded-full" />
 
-      {/* Top action bar: iOS Gyroscope activation & Web Share */}
-      <div className="relative z-30 w-full max-w-[360px] flex items-center justify-between mb-4 px-1 text-xs">
+      {/* Top action bar: iOS Gyroscope activation, Offline indicator & Add to Home Screen */}
+      <div className="relative z-30 w-full max-w-[360px] flex items-center justify-between mb-4 px-1 text-xs gap-2">
         {needsIosPermission && !isIosPermissionGranted ? (
           <button
             onClick={requestIosPermission}
@@ -230,28 +282,101 @@ export default function VirtualBusinessCard({ employee }: VirtualBusinessCardPro
           <div className="flex items-center gap-1.5 text-slate-400">
             <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
             <span className="text-[11px] font-medium tracking-wide uppercase text-slate-300">
-              Cartão Digital Ativo
+              {isOfflineReady ? 'Offline Ready' : 'Cartão Digital'}
             </span>
           </div>
         )}
 
-        <button
-          onClick={handleShare}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10 hover:text-white transition active:scale-95"
-        >
-          {copiedLink ? (
-            <>
-              <Check className="w-3.5 h-3.5 text-emerald-400" />
-              <span className="text-emerald-400">Copiado!</span>
-            </>
-          ) : (
-            <>
-              <Share2 className="w-3.5 h-3.5" />
-              <span>Partilhar</span>
-            </>
+        <div className="flex items-center gap-1.5">
+          {!isInstalled && (
+            <button
+              onClick={handleInstallApp}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/25 transition active:scale-95 text-[11px] font-medium"
+              title="Adicionar ao Ecrã Principal do Telemóvel"
+            >
+              <span>+ App Ecrã</span>
+            </button>
           )}
-        </button>
+
+          <button
+            onClick={handleShare}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10 hover:text-white transition active:scale-95 text-[11px]"
+          >
+            {copiedLink ? (
+              <>
+                <Check className="w-3.5 h-3.5 text-emerald-400" />
+                <span className="text-emerald-400">Copiado!</span>
+              </>
+            ) : (
+              <>
+                <Share2 className="w-3.5 h-3.5" />
+                <span>Partilhar</span>
+              </>
+            )}
+          </button>
+        </div>
       </div>
+
+      {/* iOS & Mobile Add to Home Screen Instructions Modal */}
+      {showIosInstallModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
+          <div className="w-full max-w-sm rounded-3xl bg-slate-900 border border-white/20 p-6 shadow-2xl relative text-left">
+            <button
+              onClick={() => setShowIosInstallModal(false)}
+              className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-slate-300 hover:text-white transition cursor-pointer"
+            >
+              ✕
+            </button>
+
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 rounded-2xl bg-slate-950 border border-white/10 p-2 flex items-center justify-center">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/icons/apple-touch-icon.png" alt="Nuell ID" className="w-full h-full object-contain" />
+              </div>
+              <div>
+                <h4 className="font-bold text-base text-white">Adicionar ao Ecrã</h4>
+                <p className="text-xs text-cyan-400">Abre sem internet como App nativa</p>
+              </div>
+            </div>
+
+            <div className="space-y-3 text-xs text-slate-300">
+              <div className="flex items-start gap-3 p-3 rounded-2xl bg-white/5 border border-white/10">
+                <span className="w-5 h-5 rounded-full bg-cyan-500/20 text-cyan-300 flex items-center justify-center font-bold text-[11px] shrink-0 mt-0.5">
+                  1
+                </span>
+                <p>
+                  No Safari (iPhone) toque no botão <strong className="text-white">Partilhar</strong> (ícone com quadrado e seta ⎋) na barra inferior.
+                </p>
+              </div>
+
+              <div className="flex items-start gap-3 p-3 rounded-2xl bg-white/5 border border-white/10">
+                <span className="w-5 h-5 rounded-full bg-cyan-500/20 text-cyan-300 flex items-center justify-center font-bold text-[11px] shrink-0 mt-0.5">
+                  2
+                </span>
+                <p>
+                  Deslize e selecione <strong className="text-white">«Adicionar ao Ecrã Principal»</strong> (➕).
+                </p>
+              </div>
+
+              <div className="flex items-start gap-3 p-3 rounded-2xl bg-white/5 border border-white/10">
+                <span className="w-5 h-5 rounded-full bg-cyan-500/20 text-cyan-300 flex items-center justify-center font-bold text-[11px] shrink-0 mt-0.5">
+                  3
+                </span>
+                <p>
+                  Pronto! O ícone <strong className="text-white">Nuell ID</strong> fica no seu ecrã e abre imediatamente a qualquer momento, mesmo sem rede.
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setShowIosInstallModal(false)}
+              className="w-full mt-5 py-3 rounded-2xl bg-gradient-to-r from-cyan-500 to-indigo-600 text-slate-950 font-bold text-xs uppercase tracking-wide cursor-pointer transition active:scale-95"
+            >
+              Entendido
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* 3D Perspective Container */}
       <div
