@@ -281,64 +281,65 @@ export default function NuellWidget({ lang }: NuellWidgetProps) {
   }, [activeSection, customMessages, lang, isOpen, visitedSections]);
 
   // 3. INITIAL CHAT MESSAGE WHEN OPENED
-  // Maps the user's typed challenge to a sharp, consultant-style diagnostic opening.
-  // Never echoes back what they wrote — shows understanding and asks ONE key question.
+  // Detects the topic from the user's first message and asks ONE open context question.
+  // Never echoes their words back. Never assumes their situation — just acknowledges the topic
+  // and requests the context needed to give a relevant answer.
   const buildOpeningMessage = (challenge: string, sector: string, isPt: boolean): string => {
     const t = challenge.toLowerCase();
 
     // OCR / invoices / supplier prices
     if (/fatura|invoice|fornecedor|supplier|ocr|pdf|leitura|preço|aumentos?|cobr/i.test(t)) {
       return isPt
-        ? 'Entendido. O problema das faturas é quase sempre o mesmo — os aumentos dos fornecedores entram silenciosamente e só se nota na margem no fim do mês. Quantos fornecedores diferentes têm faturas a entrar por semana, ordem de grandeza?'
-        : 'Got it. Supplier invoice issues are almost always the same — price increases slip in silently and you only notice it in the margin at month end. Roughly how many different suppliers send you invoices per week?';
+        ? 'Faturas de fornecedores, percebido. Para entender melhor o vosso contexto — que tipo de negócio têm e como é que esse processo funciona hoje em dia?'
+        : 'Supplier invoices, noted. To better understand your context — what type of business do you run and how does that process work today?';
     }
 
     // Stock / inventory / expiry / waste
     if (/stock|inventário|validade|desperdício|inventario|expir|escoamento|sku|armazém|armazem/i.test(t)) {
       return isPt
-        ? 'Percebo. Stock descontrolado é dinheiro parado — e o pior é quando só se nota no inventário mensal. O problema principal é excesso de stock a expirar, falta de produto na hora certa, ou os dois?'
-        : 'Understood. Stock issues mean capital stuck on shelves — and the worst part is only noticing at month-end inventory. Is the main problem excess stock expiring, running out of product at the wrong time, or both?';
+        ? 'Gestão de stock, entendido. Que tipo de negócio têm e como controlam o stock atualmente?'
+        : 'Stock management, noted. What type of business do you run and how do you currently track your inventory?';
     }
 
     // Excel / manual processes / spreadsheets
     if (/excel|planilha|folha|manual|digitação|digit|sheet|tabela/i.test(t)) {
       return isPt
-        ? 'Claro. Processos manuais em Excel são um risco — erros de fórmula, versões em conflito, e ninguém tem a mesma informação ao mesmo tempo. Qual é o processo que consome mais tempo por semana neste momento?'
-        : 'Sure. Manual Excel processes are a real risk — formula errors, version conflicts, and no one has the same data at the same time. Which process takes the most time per week right now?';
+        ? 'Processos manuais, percebido. Qual é o tipo de negócio e que processo em concreto querem automatizar?'
+        : 'Manual processes, noted. What type of business do you run and which specific process are you looking to automate?';
     }
 
     // Routes / drivers / logistics / delivery
     if (/rota|motorista|entrega|logística|logistica|distribuição|distribuicao|conferência|conferencia|guia|manifesto/i.test(t)) {
       return isPt
-        ? 'Conheço bem esse cenário. Rotas em Excel partilhado com edições em conflito e conferência de caixa manual no fim do dia é um clássico. O que gera mais erros — a gestão das rotas em si ou a reconciliação dos pagamentos dos motoristas?'
-        : 'I know that scenario well. Shared Excel routes with conflicting edits and manual cash reconciliation at end of day is a classic. What causes more errors — managing the routes themselves or reconciling driver payments?';
+        ? 'Logística e entregas, entendido. Que tipo de operação têm e como é que gerem isso hoje?'
+        : 'Logistics and deliveries, noted. What kind of operation do you run and how do you manage that today?';
     }
 
     // Margins / costs / CMV / recipe costs
     if (/margem|margin|cmv|custo|receita|prato|ementa|menu|perder dinheiro|f&b/i.test(t)) {
       return isPt
-        ? 'A margem desaparecer sem perceber porquê é dos problemas mais comuns — e mais silenciosos. O que têm hoje para acompanhar os custos reais por prato ou produto?'
-        : 'Margins disappearing without knowing why is one of the most common — and most silent — problems. What do you currently use to track real costs per dish or product?';
+        ? 'Margens e custos, percebido. Que tipo de negócio têm e como acompanham os custos neste momento?'
+        : 'Margins and costs, noted. What type of business do you run and how do you currently track your costs?';
     }
 
     // ERP / API / integration / systems
     if (/erp|api|integr|sistema|software|primavera|sage|sap|phc|glintt|pos|webhook/i.test(t)) {
       return isPt
-        ? 'Integrar sistemas é sempre mais complexo do que parece à partida. Qual é o software principal que precisam de ligar — e o que está a impedir que a informação flua automaticamente entre eles hoje?'
-        : 'Integrating systems is always more complex than it looks upfront. What is the main software you need to connect — and what is currently stopping data from flowing automatically between them?';
+        ? 'Integração de sistemas, entendido. Que software utilizam atualmente e o que precisam de ligar?'
+        : 'System integration, noted. What software do you currently use and what do you need to connect?';
     }
 
     // Sales / team / training / voice
     if (/venda|equipa|comercial|treino|objec|delegado|pitch|simulad/i.test(t)) {
       return isPt
-        ? 'Equipas comerciais perdem muitas vendas por falta de treino em situações de pressão real. O desafio é mais a preparação antes das reuniões, ou a gestão de objeções durante?'
-        : 'Sales teams lose deals mostly due to lack of training under real pressure. Is the main gap preparation before meetings, or handling objections in the moment?';
+        ? 'Equipa comercial e vendas, percebido. Que tipo de negócio têm e qual é o desafio principal da equipa neste momento?'
+        : 'Sales team, noted. What type of business do you run and what is the main challenge your team faces right now?';
     }
 
-    // Generic / sector-based fallback
+    // Generic fallback
     return isPt
-      ? `Entendido. Para perceber melhor o vosso caso — qual é a tarefa que a vossa equipa mais tempo perde por semana neste momento?`
-      : `Understood. To better grasp your situation — what is the task your team loses the most time on every week right now?`;
+      ? 'Percebido. Para dar-vos uma resposta útil — que tipo de negócio têm e qual é o principal problema que querem resolver?'
+      : 'Understood. To give you a useful answer — what type of business do you run and what is the main problem you want to solve?';
   };
 
   useEffect(() => {
