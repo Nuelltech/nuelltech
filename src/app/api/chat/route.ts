@@ -74,6 +74,94 @@ async function saveChatLog(sessionId: string | undefined, role: 'user' | 'nuell'
   }
 }
 
+interface LeadInfo {
+  sector: string;
+  challenge: string;
+  name: string;
+  contact: string;
+}
+
+/**
+ * Persists a qualified lead to Supabase and sends a notification email via Resend.
+ * Should only be called the first time a contact is captured in a session.
+ */
+async function saveLeadAndNotify(
+  sessionId: string | undefined,
+  leadInfo: LeadInfo,
+  lang: 'pt' | 'en'
+) {
+  // --- 1. Persist to Supabase ---
+  if (supabase) {
+    try {
+      const { error } = await supabase.from('leads').upsert(
+        {
+          session_id: sessionId,
+          name: leadInfo.name || null,
+          contact: leadInfo.contact,
+          sector: leadInfo.sector || null,
+          challenge: leadInfo.challenge || null,
+          lang,
+        },
+        { onConflict: 'session_id', ignoreDuplicates: false }
+      );
+      if (error) {
+        console.error('Supabase Lead Upsert Error:', error.message);
+      }
+    } catch (err) {
+      console.error('Failed to save lead to Supabase:', err);
+    }
+  } else {
+    console.log(`[Lead Simulation] Name: ${leadInfo.name} | Contact: ${leadInfo.contact} | Sector: ${leadInfo.sector}`);
+  }
+
+  // --- 2. Send notification email via Resend ---
+  const resendApiKey = process.env.RESEND_API_KEY;
+  if (!resendApiKey) {
+    console.log('[Lead Notification Simulation] Would send email for lead:', leadInfo.contact);
+    return;
+  }
+
+  try {
+    const emailBody = `
+      <h2 style="color:#6366f1;">🎯 Novo Lead — NUELL Chat</h2>
+      <table cellpadding="8" style="border-collapse:collapse;font-family:sans-serif;font-size:15px;">
+        <tr><td><strong>Nome</strong></td><td>${leadInfo.name || '—'}</td></tr>
+        <tr><td><strong>Contacto</strong></td><td>${leadInfo.contact}</td></tr>
+        <tr><td><strong>Setor</strong></td><td>${leadInfo.sector || '—'}</td></tr>
+        <tr><td><strong>Problema</strong></td><td>${leadInfo.challenge || '—'}</td></tr>
+        <tr><td><strong>Sessão</strong></td><td style="font-size:12px;color:#888;">${sessionId || '—'}</td></tr>
+        <tr><td><strong>Língua</strong></td><td>${lang}</td></tr>
+        <tr><td><strong>Data</strong></td><td>${new Date().toLocaleString('pt-PT', { timeZone: 'Europe/Lisbon' })}</td></tr>
+      </table>
+      <br/>
+      <a href="https://calendly.com/nuelltech/30min" style="background:#6366f1;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;font-family:sans-serif;">
+        Ver Calendly →
+      </a>
+    `;
+
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${resendApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: 'NUELL <leads@nuelltech.com>',
+        to: ['nuno.miguel@nuelltech.com'],
+        subject: `🎯 Novo Lead: ${leadInfo.name || leadInfo.contact} (${leadInfo.sector || 'setor desconhecido'})`,
+        html: emailBody,
+      }),
+    });
+
+    if (!res.ok) {
+      const body = await res.text();
+      console.error('Resend API error:', res.status, body);
+    }
+  } catch (err) {
+    console.error('Failed to send lead notification email:', err);
+  }
+}
+
 export async function POST(request: Request) {
   try {
     const { message, turn, lang, leadInfo, sessionId, history } = await (request.json() as Promise<{
@@ -323,6 +411,7 @@ ${knowledgeBase}
     let reply = response.content[0].type === 'text' ? response.content[0].text : '';
 
     // Robust parser to extract lead details from user messages at any turn
+    const contactWasMissing = !leadInfo.contact;
     const updatedInfo = { ...leadInfo };
     if (!updatedInfo.sector && turn === 1) {
       updatedInfo.sector = message;
@@ -383,6 +472,13 @@ ${knowledgeBase}
           updatedInfo.name = 'Cliente';
         }
       }
+    }
+
+    // Fire-and-forget: persist lead + notify when contact is captured for the first time
+    if (contactWasMissing && updatedInfo.contact) {
+      saveLeadAndNotify(sessionId, updatedInfo, lang).catch((err) =>
+        console.error('saveLeadAndNotify failed:', err)
+      );
     }
 
     await saveChatLog(sessionId, 'nuell', reply);
