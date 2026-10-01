@@ -287,6 +287,13 @@ export default function NuellWidget({ lang }: NuellWidgetProps) {
   const buildOpeningMessage = (challenge: string, sector: string, isPt: boolean): string => {
     const t = challenge.toLowerCase();
 
+    // AI Agents / Autonomous systems
+    if (/agente|agent|autonom|ia agêntica|multi-agent|assistente autónomo/i.test(t)) {
+      return isPt
+        ? 'Agentes de IA, entendido. Que tarefa ou processo em concreto quer que o agente execute, e que software utilizam hoje?'
+        : 'AI Agents, noted. What specific task or process do you want the agent to handle, and what software do you use today?';
+    }
+
     // OCR / invoices / supplier prices
     if (/fatura|invoice|fornecedor|supplier|ocr|pdf|leitura|preço|aumentos?|cobr/i.test(t)) {
       return isPt

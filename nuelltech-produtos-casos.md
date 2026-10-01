@@ -91,3 +91,35 @@ Este documento detalha os produtos SaaS e os desenvolvimentos de engenharia à m
   * *Sync em tempo real:* Atualizações automáticas do estado da rota quando o motorista confirma a entrega no telemóvel com um clique.
 * **O Resultado:** O processo tornou-se **100% auditável e livre de erros** de escrita humana. A administração **poupou cerca de 10 horas semanais** em conferência manual de caixa e pagamentos.
 * **Resultado em linguagem de negócio:** "A administração fechou o dia em 10 minutos em vez de 2 horas — e passou a saber exactamente o que cada motorista entregou, quando e a quem."
+
+---
+
+## 3. Agentes de IA e Automação Agêntica (Sistemas Autónomos Empresariais)
+
+> [!IMPORTANT]
+> **Posicionamento Nuelltech em Agentes de IA:**
+> Um Agente de IA na Nuelltech NÃO é um chatbot genérico ou um "wrapper" de ChatGPT. É um fluxo autónomo especializado, com ferramentas (APIs, leitura OCR, bases de dados, ERPs), regras de negócio determinísticas e supervisão humana, desenhado para executar tarefas operacionais ponta a ponta.
+
+### 3.1 Frases de alerta (o visitante está à procura de agentes se disser):
+* "Quero criar um agente de IA para a minha empresa"
+* "Vocês desenvolvem agentes autónomos / multi-agentes?"
+* "Preciso de um agente para atender clientes / fazer triagem"
+* "Quero um agente que leia documentos e lance no ERP"
+* Qualquer menção a: agentes de IA, AI agents, agentic workflows, agentes autónomos, assistente autónomo
+
+### 3.2 Os 4 Modelos de Agentes Especializados Nuelltech:
+1. **Agente de Triagem e Qualificação (Lead & Customer Agent):**
+   * *O que faz:* Atende visitantes ou clientes 24/7, compreende a dor e o setor, consulta agendas e encaminha para o humano certo ou agenda reuniões (o próprio **NUELL** no site é a prova viva disto).
+2. **Agente de Conciliação e Operações (Backoffice & OCR Agent):**
+   * *O que faz:* Recebe faturas/documentos PDF por email/upload, extrai dados via OCR, valida preços contra a base de dados do ERP e gera alertas de divergência ou minutas de lançamento.
+3. **Agente de Inventário e Compras (Supply Chain Agent):**
+   * *O que faz:* Vigia níveis de stock 24/7, calcula a velocidade de escoamento e sugere automaticamente as encomendas aos fornecedores antes de haver roturas ou produtos a expirar.
+4. **Agente de Treino Comercial por Voz (Sales Roleplay Agent):**
+   * *O que faz:* Interage por voz com comerciais, simulando clientes difíceis em setores específicos, avaliando o pitch e a capacidade de lidar com objeções em tempo real.
+
+### 3.3 Como o NUELL deve conduzir quando perguntam por Agentes:
+1. **Entender o problema primeiro:** Perguntar qual é a tarefa ou processo exato que quer que o agente execute.
+2. **Verificar a base existente:** Perguntar se já existe software, ERP ou base de dados onde o agente vai operar, ou se é um fluxo a começar do zero.
+3. **Dar uma abordagem breve:** Explicar em 1-2 frases como a arquitetura agêntica da Nuelltech resolve isso (com ferramentas ligadas e regras seguras).
+4. **Objetivo — Propor a Reunião:** Propor o **Diagnóstico Gratuito de 30 min** para mapear as ferramentas, regras e integrações que o agente vai precisar.
+
