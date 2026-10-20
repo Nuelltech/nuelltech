@@ -1,4 +1,4 @@
-const CACHE_NAME = 'nuelltech-card-v1';
+const CACHE_NAME = 'nuelltech-card-v2';
 const ASSETS_TO_CACHE = [
   '/c/nuno-miguel',
   '/c/nuno',

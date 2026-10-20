@@ -16,8 +16,24 @@ import {
   Building2,
   MapPin,
   Globe,
+  Camera,
+  Loader2,
+  UserPlus,
 } from 'lucide-react';
 import { EmployeeData, generateVCardString } from '@/data/employees';
+
+interface ScannedContact {
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  role: string;
+  company: string;
+  email: string;
+  phone: string;
+  website: string;
+  address: string;
+  notes: string;
+}
 
 interface VirtualBusinessCardProps {
   employee: EmployeeData;
@@ -38,16 +54,27 @@ export default function VirtualBusinessCard({ employee }: VirtualBusinessCardPro
   const [showIosInstallModal, setShowIosInstallModal] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
 
+  // Physical Business Card Scanner State
+  const [showScannerModal, setShowScannerModal] = useState(false);
+  const [isScanning, setIsScanning] = useState(false);
+  const [scanError, setScanError] = useState<string | null>(null);
+  const [scannedPreview, setScannedPreview] = useState<string | null>(null);
+  const [scannedContact, setScannedContact] = useState<ScannedContact | null>(null);
+  const [savedScannedVcf, setSavedScannedVcf] = useState(false);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const gyroActiveRef = useRef(false);
 
-  // Register Service Worker for Offline caching & PWA
+  // Register Service Worker for Offline caching & PWA + auto-update check
   useEffect(() => {
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
       navigator.serviceWorker
         .register('/sw.js')
-        .then(() => {
+        .then((reg) => {
           setIsOfflineReady(true);
+          // Check for updates in background every time the app opens
+          reg.update().catch(() => {});
         })
         .catch((err) => {
           console.warn('Falha no registo do ServiceWorker:', err);
@@ -254,6 +281,129 @@ export default function VirtualBusinessCard({ employee }: VirtualBusinessCardPro
     }
   };
 
+  // Compress photo in browser before sending to Claude Vision (max 1400px JPEG 85%)
+  const compressImageToBase64 = (file: File): Promise<{ base64: string; mimeType: string }> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const MAX_DIM = 1400;
+          let width = img.width;
+          let height = img.height;
+          if (width > height && width > MAX_DIM) {
+            height = Math.round((height * MAX_DIM) / width);
+            width = MAX_DIM;
+          } else if (height > MAX_DIM) {
+            width = Math.round((width * MAX_DIM) / height);
+            height = MAX_DIM;
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            reject(new Error('Canvas indisponível'));
+            return;
+          }
+          ctx.drawImage(img, 0, 0, width, height);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+          resolve({ base64: dataUrl, mimeType: 'image/jpeg' });
+        };
+        img.onerror = () => reject(new Error('Falha ao carregar imagem'));
+        img.src = e.target?.result as string;
+      };
+      reader.onerror = () => reject(new Error('Falha ao ler ficheiro'));
+      reader.readAsDataURL(file);
+    });
+  };
+
+  // Handle photo captured from camera or selected from gallery
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setShowScannerModal(true);
+    setIsScanning(true);
+    setScanError(null);
+    setScannedContact(null);
+    setSavedScannedVcf(false);
+
+    try {
+      const { base64, mimeType } = await compressImageToBase64(file);
+      setScannedPreview(base64);
+
+      const response = await fetch('/api/scan-card', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          imageBase64: base64,
+          mimeType,
+          scannedBy: employee.slug,
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok || !data.contact) {
+        throw new Error(data.error || 'Erro ao analisar o cartão.');
+      }
+
+      setScannedContact(data.contact);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Erro inesperado ao ler cartão.';
+      setScanError(msg);
+    } finally {
+      setIsScanning(false);
+      // Reset input so user can scan another card right away
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  // Generate and download .vcf for the scanned physical card
+  const handleSaveScannedToPhone = () => {
+    if (!scannedContact) return;
+    const c = scannedContact;
+    const fullName = c.fullName || `${c.firstName} ${c.lastName}`.trim() || 'Contacto Cartão';
+    const firstName = c.firstName || fullName.split(' ')[0] || '';
+    const lastName = c.lastName || fullName.split(' ').slice(1).join(' ') || '';
+
+    const vcardLines = [
+      'BEGIN:VCARD',
+      'VERSION:3.0',
+      `N;CHARSET=UTF-8:${lastName};${firstName};;;`,
+      `FN;CHARSET=UTF-8:${fullName}`,
+      c.company ? `ORG;CHARSET=UTF-8:${c.company}` : '',
+      c.role ? `TITLE;CHARSET=UTF-8:${c.role}` : '',
+      c.phone ? `TEL;TYPE=CELL,VOICE:${c.phone}` : '',
+      c.email ? `EMAIL;TYPE=WORK,INTERNET:${c.email}` : '',
+      c.website ? `URL:${c.website}` : '',
+      c.address ? `ADR;TYPE=WORK;CHARSET=UTF-8:;;${c.address};;;;` : '',
+      c.notes ? `NOTE;CHARSET=UTF-8:${c.notes}` : '',
+      'END:VCARD',
+    ]
+      .filter(Boolean)
+      .join('\r\n');
+
+    const blob = new Blob([vcardLines], { type: 'text/vcard;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    const safeName = fullName
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-zA-Z0-9_-]/g, '_');
+
+    link.href = url;
+    link.setAttribute('download', `${safeName || 'contacto'}.vcf`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    setSavedScannedVcf(true);
+  };
+
   // QR Code payload
   const qrCodePayload =
     qrMode === 'vcard'
@@ -264,43 +414,64 @@ export default function VirtualBusinessCard({ employee }: VirtualBusinessCardPro
 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen w-full bg-slate-950 text-white overflow-hidden select-none px-4 py-6 font-sans">
+      {/* Hidden Camera Input for Physical Business Card Scanning */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        onChange={handleFileChange}
+        className="hidden"
+      />
+
       {/* Dynamic ambient background glow */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-tr from-cyan-600/20 via-indigo-600/20 to-purple-600/20 blur-[100px] pointer-events-none rounded-full" />
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2 w-80 h-80 bg-blue-600/10 blur-[90px] pointer-events-none rounded-full" />
 
-      {/* Top action bar: iOS Gyroscope activation, Offline indicator & Add to Home Screen */}
-      <div className="relative z-30 w-full max-w-[360px] flex items-center justify-between mb-4 px-1 text-xs gap-2">
+      {/* Top action bar: iOS Gyroscope activation, Scanner, Add to Home Screen & Share */}
+      <div className="relative z-30 w-full max-w-[360px] flex items-center justify-between mb-4 px-1 text-xs gap-1.5">
         {needsIosPermission && !isIosPermissionGranted ? (
           <button
             onClick={requestIosPermission}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 hover:bg-indigo-500/30 transition shadow-sm active:scale-95"
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 hover:bg-indigo-500/30 transition shadow-sm active:scale-95 text-[11px]"
           >
             <Sparkles className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
-            <span>Ativar Efeito 3D</span>
+            <span>3D</span>
           </button>
         ) : (
           <div className="flex items-center gap-1.5 text-slate-400">
             <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-            <span className="text-[11px] font-medium tracking-wide uppercase text-slate-300">
-              {isOfflineReady ? 'Offline Ready' : 'Cartão Digital'}
+            <span className="text-[10px] font-medium tracking-wide uppercase text-slate-300">
+              {isOfflineReady ? 'Offline Ready' : 'Digital ID'}
             </span>
           </div>
         )}
 
         <div className="flex items-center gap-1.5">
+          {/* Physical Card Scanner Button */}
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/35 text-emerald-300 hover:bg-emerald-500/25 transition active:scale-95 text-[11px] font-medium cursor-pointer shadow-sm"
+            title="Tirar foto a um cartão físico e guardar contacto no telemóvel"
+          >
+            <Camera className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Ler Cartão</span>
+          </button>
+
           {!isInstalled && (
             <button
               onClick={handleInstallApp}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/25 transition active:scale-95 text-[11px] font-medium"
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/25 transition active:scale-95 text-[11px] font-medium cursor-pointer"
               title="Adicionar ao Ecrã Principal do Telemóvel"
             >
-              <span>+ App Ecrã</span>
+              <span>+ App</span>
             </button>
           )}
 
           <button
             onClick={handleShare}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10 hover:text-white transition active:scale-95 text-[11px]"
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10 hover:text-white transition active:scale-95 text-[11px] cursor-pointer"
           >
             {copiedLink ? (
               <>
@@ -316,6 +487,165 @@ export default function VirtualBusinessCard({ employee }: VirtualBusinessCardPro
           </button>
         </div>
       </div>
+
+      {/* Physical Card Scanner Modal */}
+      {showScannerModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in overflow-y-auto">
+          <div className="w-full max-w-sm rounded-3xl bg-slate-900 border border-white/20 p-5 shadow-2xl relative text-left my-auto max-h-[90vh] overflow-y-auto">
+            <button
+              onClick={() => setShowScannerModal(false)}
+              className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-slate-300 hover:text-white transition cursor-pointer"
+            >
+              ✕
+            </button>
+
+            <div className="flex items-center gap-2.5 mb-4">
+              <div className="w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                <Camera className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="font-bold text-sm text-white">Leitor IA de Cartões</h4>
+                <p className="text-[11px] text-slate-400">Extrai e guarda direto na agenda do telemóvel</p>
+              </div>
+            </div>
+
+            {scannedPreview && (
+              <div className="mb-3 rounded-2xl overflow-hidden border border-white/10 bg-slate-950 max-h-32 flex items-center justify-center">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={scannedPreview} alt="Cartão digitalizado" className="w-full h-32 object-cover" />
+              </div>
+            )}
+
+            {isScanning && (
+              <div className="py-8 flex flex-col items-center justify-center text-center gap-3">
+                <Loader2 className="w-8 h-8 text-cyan-400 animate-spin" />
+                <p className="text-xs font-medium text-slate-200">A ler dados do cartão com IA...</p>
+                <p className="text-[11px] text-slate-400">Isto demora apenas 2 a 3 segundos</p>
+              </div>
+            )}
+
+            {scanError && !isScanning && (
+              <div className="space-y-3">
+                <div className="p-3 rounded-2xl bg-red-500/10 border border-red-500/30 text-xs text-red-300">
+                  {scanError}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="w-full py-2.5 rounded-2xl bg-white/10 hover:bg-white/15 text-xs font-semibold text-white transition cursor-pointer"
+                >
+                  Tentar Nova Fotografia
+                </button>
+              </div>
+            )}
+
+            {scannedContact && !isScanning && (
+              <div className="space-y-2.5 text-xs">
+                <div>
+                  <label className="block text-[10px] uppercase tracking-wider text-slate-400 mb-1">Nome Completo</label>
+                  <input
+                    type="text"
+                    value={scannedContact.fullName}
+                    onChange={(e) => setScannedContact({ ...scannedContact, fullName: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/15 text-white text-xs focus:outline-none focus:border-cyan-400"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="block text-[10px] uppercase tracking-wider text-slate-400 mb-1">Empresa</label>
+                    <input
+                      type="text"
+                      value={scannedContact.company}
+                      onChange={(e) => setScannedContact({ ...scannedContact, company: e.target.value })}
+                      className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/15 text-white text-xs focus:outline-none focus:border-cyan-400"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] uppercase tracking-wider text-slate-400 mb-1">Cargo</label>
+                    <input
+                      type="text"
+                      value={scannedContact.role}
+                      onChange={(e) => setScannedContact({ ...scannedContact, role: e.target.value })}
+                      className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/15 text-white text-xs focus:outline-none focus:border-cyan-400"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="block text-[10px] uppercase tracking-wider text-slate-400 mb-1">Telefone</label>
+                    <input
+                      type="tel"
+                      value={scannedContact.phone}
+                      onChange={(e) => setScannedContact({ ...scannedContact, phone: e.target.value })}
+                      className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/15 text-white text-xs focus:outline-none focus:border-cyan-400"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] uppercase tracking-wider text-slate-400 mb-1">Email</label>
+                    <input
+                      type="email"
+                      value={scannedContact.email}
+                      onChange={(e) => setScannedContact({ ...scannedContact, email: e.target.value })}
+                      className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/15 text-white text-xs focus:outline-none focus:border-cyan-400"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] uppercase tracking-wider text-slate-400 mb-1">Website</label>
+                  <input
+                    type="text"
+                    value={scannedContact.website}
+                    onChange={(e) => setScannedContact({ ...scannedContact, website: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/15 text-white text-xs focus:outline-none focus:border-cyan-400"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] uppercase tracking-wider text-slate-400 mb-1">Nota (Opcional)</label>
+                  <input
+                    type="text"
+                    placeholder="Ex: Reunião Porto, interessado em IA..."
+                    value={scannedContact.notes}
+                    onChange={(e) => setScannedContact({ ...scannedContact, notes: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/15 text-white text-xs focus:outline-none focus:border-cyan-400"
+                  />
+                </div>
+
+                <div className="pt-2 flex flex-col gap-2">
+                  <button
+                    type="button"
+                    onClick={handleSaveScannedToPhone}
+                    className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-emerald-400 to-cyan-500 text-slate-950 font-bold text-xs uppercase tracking-wide flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 cursor-pointer transition active:scale-95"
+                  >
+                    {savedScannedVcf ? (
+                      <>
+                        <Check className="w-4 h-4" />
+                        <span>Aberto nos Contactos!</span>
+                      </>
+                    ) : (
+                      <>
+                        <UserPlus className="w-4 h-4" />
+                        <span>Guardar Contacto no Telemóvel</span>
+                      </>
+                    )}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="w-full py-2 rounded-xl bg-white/5 hover:bg-white/10 text-[11px] text-slate-300 transition cursor-pointer text-center"
+                  >
+                    Ler Outro Cartão
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* iOS & Mobile Add to Home Screen Instructions Modal */}
       {showIosInstallModal && (
