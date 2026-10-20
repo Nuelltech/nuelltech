@@ -1,4 +1,4 @@
-const CACHE_NAME = 'nuelltech-card-v2';
+const CACHE_NAME = 'nuelltech-card-v3';
 const ASSETS_TO_CACHE = [
   '/c/nuno-miguel',
   '/c/nuno',
@@ -36,8 +36,8 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Ignorar pedidos que não sejam GET
-  if (event.request.method !== 'GET') return;
+  // Ignorar pedidos que não sejam GET ou que sejam rotas de API (/api/*)
+  if (event.request.method !== 'GET' || event.request.url.includes('/api/')) return;
 
   // Estratégia: Network First com fallback instantâneo para Cache
   event.respondWith(

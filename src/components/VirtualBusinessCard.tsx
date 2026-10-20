@@ -214,27 +214,87 @@ export default function VirtualBusinessCard({ employee }: VirtualBusinessCardPro
     }
   };
 
-  // Client-side vCard download
+  // Helper to open native Contacts app directly on Android (via Intent) or iOS (via inline vCard stream)
+  const openNativeContactsApp = (contact: {
+    fullName: string;
+    firstName?: string;
+    lastName?: string;
+    company?: string;
+    role?: string;
+    phone?: string;
+    email?: string;
+    website?: string;
+    address?: string;
+    notes?: string;
+  }) => {
+    const params = new URLSearchParams();
+    if (contact.fullName) params.set('fullName', contact.fullName);
+    if (contact.firstName) params.set('firstName', contact.firstName);
+    if (contact.lastName) params.set('lastName', contact.lastName);
+    if (contact.company) params.set('company', contact.company);
+    if (contact.role) params.set('role', contact.role);
+    if (contact.phone) params.set('phone', contact.phone);
+    if (contact.email) params.set('email', contact.email);
+    if (contact.website) params.set('website', contact.website);
+    if (contact.address) params.set('address', contact.address);
+    if (contact.notes) params.set('notes', contact.notes);
+
+    const vcardStreamUrl = `${window.location.origin}/api/vcard/custom?${params.toString()}`;
+    const isAndroid = typeof navigator !== 'undefined' && /Android/i.test(navigator.userAgent);
+
+    if (isAndroid) {
+      // On Android: launch the native Contacts app directly via Android Intent (zero files downloaded!)
+      const encodeIntentVal = (val: string) => encodeURIComponent(val).replace(/;/g, '%3B');
+      const notesCombined = [
+        contact.notes,
+        contact.website ? `Web: ${contact.website}` : '',
+        contact.address ? `Morada: ${contact.address}` : '',
+      ]
+        .filter(Boolean)
+        .join(' | ');
+
+      const intentParts = [
+        'intent:#Intent',
+        'action=android.intent.action.INSERT',
+        'type=vnd.android.cursor.dir/contact',
+        contact.fullName ? `S.name=${encodeIntentVal(contact.fullName)}` : '',
+        contact.phone ? `S.phone=${encodeIntentVal(contact.phone)}` : '',
+        contact.email ? `S.email=${encodeIntentVal(contact.email)}` : '',
+        contact.company ? `S.company=${encodeIntentVal(contact.company)}` : '',
+        contact.role ? `S.job_title=${encodeIntentVal(contact.role)}` : '',
+        notesCombined ? `S.notes=${encodeIntentVal(notesCombined)}` : '',
+        `S.browser_fallback_url=${encodeURIComponent(vcardStreamUrl)}`,
+        'end',
+      ]
+        .filter(Boolean)
+        .join(';');
+
+      window.location.href = intentParts;
+    } else {
+      // On iOS / Safari / Desktop: navigate directly to server vCard stream (no 'download' attribute)
+      // iOS intercepts text/x-vcard and opens the native Contact sheet immediately.
+      window.location.href = vcardStreamUrl;
+    }
+  };
+
+  // Direct native contact save for the employee's own card
   const handleDownloadVCard = () => {
     setIsDownloading(true);
     try {
-      const vcardContent = generateVCardString(employee);
-      const blob = new Blob([vcardContent], { type: 'text/vcard;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      const safeFileName = `${employee.firstName}_${employee.lastName}.vcf`
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .replace(/\s+/g, '_');
-
-      link.href = url;
-      link.setAttribute('download', safeFileName);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+      openNativeContactsApp({
+        fullName: employee.fullName || `${employee.firstName} ${employee.lastName}`,
+        firstName: employee.firstName,
+        lastName: employee.lastName,
+        company: employee.company,
+        role: employee.role,
+        phone: employee.phone,
+        email: employee.email,
+        website: employee.website,
+        address: employee.location,
+        notes: employee.bio,
+      });
     } catch (err) {
-      console.error('Erro ao transferir vCard:', err);
+      console.error('Erro ao abrir contactos:', err);
     } finally {
       setTimeout(() => setIsDownloading(false), 1200);
     }
@@ -361,45 +421,24 @@ export default function VirtualBusinessCard({ employee }: VirtualBusinessCardPro
     }
   };
 
-  // Generate and download .vcf for the scanned physical card
+  // Open phone's native Contacts screen directly with all extracted fields pre-filled
   const handleSaveScannedToPhone = () => {
     if (!scannedContact) return;
     const c = scannedContact;
     const fullName = c.fullName || `${c.firstName} ${c.lastName}`.trim() || 'Contacto Cartão';
-    const firstName = c.firstName || fullName.split(' ')[0] || '';
-    const lastName = c.lastName || fullName.split(' ').slice(1).join(' ') || '';
 
-    const vcardLines = [
-      'BEGIN:VCARD',
-      'VERSION:3.0',
-      `N;CHARSET=UTF-8:${lastName};${firstName};;;`,
-      `FN;CHARSET=UTF-8:${fullName}`,
-      c.company ? `ORG;CHARSET=UTF-8:${c.company}` : '',
-      c.role ? `TITLE;CHARSET=UTF-8:${c.role}` : '',
-      c.phone ? `TEL;TYPE=CELL,VOICE:${c.phone}` : '',
-      c.email ? `EMAIL;TYPE=WORK,INTERNET:${c.email}` : '',
-      c.website ? `URL:${c.website}` : '',
-      c.address ? `ADR;TYPE=WORK;CHARSET=UTF-8:;;${c.address};;;;` : '',
-      c.notes ? `NOTE;CHARSET=UTF-8:${c.notes}` : '',
-      'END:VCARD',
-    ]
-      .filter(Boolean)
-      .join('\r\n');
-
-    const blob = new Blob([vcardLines], { type: 'text/vcard;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    const safeName = fullName
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^a-zA-Z0-9_-]/g, '_');
-
-    link.href = url;
-    link.setAttribute('download', `${safeName || 'contacto'}.vcf`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    openNativeContactsApp({
+      fullName,
+      firstName: c.firstName,
+      lastName: c.lastName,
+      company: c.company,
+      role: c.role,
+      phone: c.phone,
+      email: c.email,
+      website: c.website,
+      address: c.address,
+      notes: c.notes,
+    });
 
     setSavedScannedVcf(true);
   };
