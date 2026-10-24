@@ -564,7 +564,7 @@ How would you like to proceed?
   };
 
   return (
-    <div className="fixed bottom-4 right-4 left-4 sm:left-auto sm:right-6 sm:bottom-6 z-50 flex flex-col items-end gap-3 select-none">
+    <div className="fixed bottom-4 right-4 left-4 sm:left-auto sm:right-6 sm:bottom-6 z-50 flex flex-col items-end gap-3 select-none print:hidden">
       
       {/* 1. TEXT BUBBLE (Scroll updates) */}
       {!isOpen && bubbleText && (

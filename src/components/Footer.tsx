@@ -88,6 +88,9 @@ export default function Footer({ lang, dict }: FooterProps) {
             <Link href={`/${lang}/laboratorio`} className="hover:text-brand-ink transition">
               {dict.nav.lab}
             </Link>
+            <Link href={`/${lang}/apresentacao`} className="hover:text-brand-ink transition">
+              {lang === 'pt' ? 'Apresentação Corporativa' : 'Corporate Presentation'}
+            </Link>
           </nav>
         </div>
 
