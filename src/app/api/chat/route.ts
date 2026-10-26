@@ -165,10 +165,11 @@ async function saveLeadAndNotify(
 
 export async function POST(request: Request) {
   try {
-    const { message, turn, lang, leadInfo, sessionId, history } = await (request.json() as Promise<{
+    const { message, turn, lang, source, leadInfo, sessionId, history } = await (request.json() as Promise<{
       message: string;
       turn: number;
       lang: 'pt' | 'en';
+      source?: 'default' | 'presentation';
       leadInfo: { sector: string; challenge: string; name: string; contact: string };
       sessionId?: string;
       history?: Array<{ sender: 'user' | 'nuell'; text: string }>;
@@ -213,8 +214,13 @@ export async function POST(request: Request) {
       const updatedInfo = { ...leadInfo };
       const textLower = message.toLowerCase();
 
-      // Check if user is asking a free-form question by detecting keywords
-      if (textLower.includes('fatura') || textLower.includes('ocr') || textLower.includes('leitura') || textLower.includes('invoice') || textLower.includes('documento')) {
+      if (source === 'presentation' && turn === 1) {
+        updatedInfo.sector = message;
+        updatedInfo.challenge = message;
+        reply = pt
+          ? `Compreendido! Na área de ${message}, a automação de processos repetitivos liberta de imediato horas valiosas da equipa e reduz erros operacionais.\n\nNa Nuelltech desenhamos pilotos rápidos e iterativos. O melhor ponto de partida é analisarmos a sua operação numa sessão de Diagnóstico Gratuito de 30 minutos com a nossa equipa de engenharia:\n\n👉 [Agendar Diagnóstico Gratuito](https://calendly.com/nuelltech/30min)\n\nOu se preferir, indique o seu Nome e Contacto (email ou telefone) para falarmos sem compromisso.`
+          : `Understood! In ${message}, process automation immediately frees up critical hours and prevents operational mistakes.\n\nAt Nuelltech, we deliver fast, iterative pilots. The best next step is to explore your workflows in a Free 30-minute Diagnosis session with our engineering team:\n\n👉 [Schedule Free Diagnosis](https://calendly.com/nuelltech/30min)\n\nAlternatively, please leave your Name and Contact (email or phone) and we will reach out directly.`;
+      } else if (textLower.includes('fatura') || textLower.includes('ocr') || textLower.includes('leitura') || textLower.includes('invoice') || textLower.includes('documento')) {
         reply = pt
           ? `O nosso leitor de OCR extrai automaticamente todos os dados de faturas em segundos, identificando discrepâncias de preço. Pode ver uma demonstração interativa com dados de exemplo aqui: [sandbox:ocr:🔍 Ver Demo OCR]\n\nSe quiser ver isto ligado ao seu ERP, qual é o seu Nome e Contacto para falarmos sem compromisso?`
           : `Our OCR reader automatically extracts invoice data in seconds, detecting price deviations. View an interactive demonstration with preset sample data here: [sandbox:ocr:🔍 View OCR Demo]\n\nTo see this connected to your ERP, what is your Name and Contact so we can chat?`;
@@ -259,8 +265,26 @@ export async function POST(request: Request) {
     // 2. REAL CLAUDE CALL
     const anthropic = new Anthropic({ apiKey });
 
-    const systemPrompt = `You are NUELL, the AI Assistant of Nuelltech — an AI and automation engineering firm based in Vila Real, Portugal.
+    const isFromPresentation = source === 'presentation';
 
+    const presentationGuidance = isFromPresentation ? `
+VISITOR CONTEXT — CORPORATE PRESENTATION DECK:
+- The visitor is reading Nuelltech's Corporate Presentation (Pitch Deck).
+- The presentation covers:
+  1. Nuelltech Pedigree & Background: Founder Nuno Rogério Miguel with 15+ years in international tier-1 retail systems (Oracle Retail - Tesco, Morrisons, Ahold, Sonae, Despar, Dubai Duty Free, Mercal), bringing this enterprise discipline to SMEs.
+  2. The 4-Phase Methodology: Diagnóstico (Diagnosis) -> Desenho da Solução (Solution Design) -> Testes com Volume (Testing under volume) -> Formação e Acompanhamento (Team Training & Continuous Support).
+  3. Case Studies: Website 24/7 lead qualification & daily summaries, Restaurant invoice reading & live margin protection, Pharmacy expiring stock prediction, Pharmacy payables/invoice validation, Gym & fitness member churn prediction.
+  4. Agility & Fast Pilots: Fast iteration to minimum viable pilot to prove measurable ROI before scaling investment.
+- The visitor was greeted with: "${pt ? 'Olá! Sou o Nuell. Estou aqui para ajudar a canalizar a solução de IA e automação ideal para a sua empresa. Para começarmos: qual é a sua área de negócio e que processo ou tarefa gostaria de começar a automatizar?' : 'Hello! I\'m Nuell. I\'m here to help identify and guide the right AI & automation solution for your business. To get started: what is your industry or line of business, and what process would you like to start automating?'}"
+- When they answer with their business area and process/task:
+  1. Acknowledge and validate their sector and automation goal directly.
+  2. Connect it in 1-2 sharp sentences to a proven Nuelltech approach or similar case (e.g., OCR invoice reading, automated data reconciliation, predictive analysis, or autonomous agents).
+  3. Drive them straight to the Free 30-minute Diagnosis session with Nuno Rogério Miguel (include Calendly: https://calendly.com/nuelltech/30min) or offer to take their Name and Contact.
+  4. DO NOT use [scroll:...] actions because the presentation page does not have homepage demo sections.
+` : '';
+
+    const systemPrompt = `You are NUELL, the AI Assistant of Nuelltech — an AI and automation engineering firm based in Vila Real, Portugal.
+${presentationGuidance}
 YOUR SINGLE CORE OBJECTIVE:
 Lead the visitor to schedule a Free 30-minute Diagnosis Meeting (or leave their Name and Contact) by quickly understanding their problem and demonstrating Nuelltech's competence with a brief solution approach.
 

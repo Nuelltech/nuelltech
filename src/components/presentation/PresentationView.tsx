@@ -189,7 +189,7 @@ export default function PresentationView({ lang }: PresentationViewProps) {
         {/* ========================================================= */}
         {/* PÁGINA 1: CAPA */}
         {/* ========================================================= */}
-        <article className="a4-page bg-[#0B1320] text-white relative shadow-2xl rounded-2xl lg:rounded-none overflow-hidden p-6 sm:p-10 md:p-14 lg:p-16 flex flex-col justify-between min-h-[500px] sm:min-h-[600px] lg:min-h-[297mm]">
+        <article id="presentation-page-1" className="a4-page bg-[#0B1320] text-white relative shadow-2xl rounded-2xl lg:rounded-none overflow-hidden p-6 sm:p-10 md:p-14 lg:p-16 flex flex-col justify-between min-h-[500px] sm:min-h-[600px] lg:min-h-[297mm]">
           <div className="flex flex-col items-center flex-grow justify-center py-10 sm:py-16 lg:py-0 lg:-mt-16 text-center">
             {/* Logótipo Branco */}
             <img
@@ -230,7 +230,7 @@ export default function PresentationView({ lang }: PresentationViewProps) {
         {/* ========================================================= */}
         {/* PÁGINA 2: SOBRE & SERVIÇOS */}
         {/* ========================================================= */}
-        <article className="a4-page bg-white text-slate-900 relative shadow-2xl rounded-2xl lg:rounded-none overflow-hidden p-6 sm:p-10 md:p-14 lg:p-16 flex flex-col justify-between">
+        <article id="presentation-page-2" className="a4-page bg-white text-slate-900 relative shadow-2xl rounded-2xl lg:rounded-none overflow-hidden p-6 sm:p-10 md:p-14 lg:p-16 flex flex-col justify-between">
           <header className="mb-6 sm:mb-8 lg:mb-10 border-b-2 border-[#0B1320] pb-4 sm:pb-5 flex justify-between items-end">
             <div>
               <img src="/logo.png" alt="Nuelltech" className="h-10 sm:h-12 lg:h-14 w-auto mb-2 sm:mb-3 object-contain" />
@@ -403,7 +403,7 @@ export default function PresentationView({ lang }: PresentationViewProps) {
         {/* ========================================================= */}
         {/* PÁGINA 3: PROJETOS (CASOS PRÁTICOS) */}
         {/* ========================================================= */}
-        <article className="a4-page bg-white text-slate-900 relative shadow-2xl rounded-2xl lg:rounded-none overflow-hidden p-6 sm:p-10 md:p-14 lg:px-16 lg:py-10 flex flex-col justify-between">
+        <article id="presentation-page-3" className="a4-page bg-white text-slate-900 relative shadow-2xl rounded-2xl lg:rounded-none overflow-hidden p-6 sm:p-10 md:p-14 lg:px-16 lg:py-10 flex flex-col justify-between">
           <header className="mb-4 sm:mb-5 border-b-2 border-[#0B1320] pb-3 flex justify-between items-end">
             <div>
               <img src="/logo.png" alt="Nuelltech" className="h-10 sm:h-12 w-auto mb-2 object-contain" />
@@ -498,7 +498,7 @@ export default function PresentationView({ lang }: PresentationViewProps) {
         {/* ========================================================= */}
         {/* PÁGINA 4: DIFERENCIAÇÃO & CTA */}
         {/* ========================================================= */}
-        <article className="a4-page bg-white text-slate-900 relative shadow-2xl rounded-2xl lg:rounded-none overflow-hidden p-6 sm:p-10 md:p-14 lg:p-16 flex flex-col justify-between">
+        <article id="presentation-page-4" className="a4-page bg-white text-slate-900 relative shadow-2xl rounded-2xl lg:rounded-none overflow-hidden p-6 sm:p-10 md:p-14 lg:p-16 flex flex-col justify-between">
           <header className="mb-6 sm:mb-10 lg:mb-14 border-b-2 border-[#0B1320] pb-4 sm:pb-5 flex justify-between items-end">
             <div>
               <img src="/logo.png" alt="Nuelltech" className="h-10 sm:h-12 lg:h-14 w-auto mb-2 sm:mb-3 object-contain" />
@@ -621,7 +621,7 @@ export default function PresentationView({ lang }: PresentationViewProps) {
       </main>
 
       {/* Assistente Nuell Interativo Flutuante (oculto automaticamente na impressão) */}
-      <NuellWidget lang={lang} />
+      <NuellWidget lang={lang} source="presentation" />
     </div>
   );
 }

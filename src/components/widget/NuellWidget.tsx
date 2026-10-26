@@ -5,12 +5,29 @@ import { Send, X, Calendar } from 'lucide-react';
 
 interface NuellWidgetProps {
   lang: 'pt' | 'en';
+  source?: 'default' | 'presentation';
 }
 
 interface Message {
   sender: 'nuell' | 'user';
   text: string;
 }
+
+// Presentation deck scroll messages
+const presentationMessages: Record<'pt' | 'en', Record<string, string>> = {
+  pt: {
+    'presentation-page-1': 'Olá! Quer saber como a IA se pode aplicar ao seu negócio? Fale comigo ou role a página para ver a apresentação.',
+    'presentation-page-2': 'Aplicamos a disciplina de grandes sistemas à escala de PMEs. Qual é o processo que a sua equipa mais precisa de automatizar?',
+    'presentation-page-3': 'Identifica-se com algum destes casos ou tem um desafio diferente no seu setor? Diga-me qual é a sua área.',
+    'presentation-page-4': 'Quer preparar a sua conversa de diagnóstico com o Nuno? Posso adiantar-lhe como desenhamos um primeiro piloto.',
+  },
+  en: {
+    'presentation-page-1': 'Hello! Curious how AI can be tailored to your business? Chat with me or scroll down to explore the deck.',
+    'presentation-page-2': 'We apply enterprise-grade discipline to the SME scale. Which process does your team need to automate first?',
+    'presentation-page-3': 'Do any of these case studies resonate with your operations? Tell me your industry and let\'s explore it.',
+    'presentation-page-4': 'Ready to prep your diagnostic session with Nuno? I can walk you through how we structure a fast first pilot.',
+  },
+};
 
 // Default section messages moved outside component to avoid dependency changes
 const defaultMessages: Record<string, Record<string, string>> = {
@@ -97,12 +114,23 @@ const extractContact = (text: string) => {
   return null;
 };
 
-export default function NuellWidget({ lang }: NuellWidgetProps) {
+export default function NuellWidget({ lang, source }: NuellWidgetProps) {
   const pt = lang === 'pt';
+  const [isPresentation, setIsPresentation] = useState(source === 'presentation');
+
+  useEffect(() => {
+    if (source === 'presentation') {
+      setIsPresentation(true);
+    } else if (typeof window !== 'undefined') {
+      const isPresPath = window.location.pathname.includes('/apresentacao') || window.location.pathname.includes('/presentation');
+      if (isPresPath) setIsPresentation(true);
+    }
+  }, [source]);
+
   const [isOpen, setIsOpen] = useState(false);
   const [bubbleText, setBubbleText] = useState('');
   const [isFading, setIsFading] = useState(false);
-  const [activeSection, setActiveSection] = useState('hero');
+  const [activeSection, setActiveSection] = useState(source === 'presentation' ? 'presentation-page-1' : 'hero');
 
   // Conversational state
   const [messages, setMessages] = useState<Message[]>([]);
@@ -232,9 +260,15 @@ export default function NuellWidget({ lang }: NuellWidgetProps) {
   // 1. SCROLL TRACKING
   useEffect(() => {
     const handleScroll = () => {
-      const sections = document.querySelectorAll('section[id], div[id="ocr"], div[id="bi"], div[id="excel"], div[id="api"]');
+      const selector = isPresentation
+        ? 'article[id^="presentation-page-"]'
+        : 'section[id], div[id="ocr"], div[id="bi"], div[id="excel"], div[id="api"]';
+
+      const sections = document.querySelectorAll(selector);
+      if (sections.length === 0) return;
+
       const viewportCenter = window.innerHeight / 2;
-      let closestSectionId = 'hero';
+      let closestSectionId = isPresentation ? 'presentation-page-1' : 'hero';
       let closestDistance = Infinity;
 
       sections.forEach((section) => {
@@ -262,7 +296,7 @@ export default function NuellWidget({ lang }: NuellWidgetProps) {
     window.addEventListener('scroll', handleScroll);
     handleScroll(); // initial check
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [activeSection]);
+  }, [activeSection, isPresentation]);
 
   // 2. UPDATE BUBBLE MESSAGE BASE ON ACTIVE SECTION & CUSTOMIZATION
   useEffect(() => {
@@ -271,14 +305,16 @@ export default function NuellWidget({ lang }: NuellWidgetProps) {
     // Only update if it is the first time visiting this section (latest entry in visitedSections)
     if (visitedSections[visitedSections.length - 1] === activeSection) {
       let text = '';
-      if (customMessages && customMessages[activeSection]) {
+      if (isPresentation) {
+        text = presentationMessages[lang][activeSection] || presentationMessages[lang]['presentation-page-1'];
+      } else if (customMessages && customMessages[activeSection]) {
         text = customMessages[activeSection];
       } else {
         text = defaultMessages[lang][activeSection] || defaultMessages[lang]['hero'];
       }
       updateBubbleMessage(text);
     }
-  }, [activeSection, customMessages, lang, isOpen, visitedSections]);
+  }, [activeSection, customMessages, lang, isOpen, visitedSections, isPresentation]);
 
   // 3. INITIAL CHAT MESSAGE WHEN OPENED
   // Detects the topic from the user's first message and asks ONE open context question.
@@ -352,6 +388,17 @@ export default function NuellWidget({ lang }: NuellWidgetProps) {
   useEffect(() => {
     if (isOpen && messages.length === 0) {
       const timer = setTimeout(() => {
+        if (isPresentation) {
+          const presentationGreeting = pt
+            ? 'Olá! Sou o Nuell. Estou aqui para ajudar a canalizar a solução de IA e automação ideal para a sua empresa.\n\nPara começarmos: **qual é a sua área de negócio e que processo ou tarefa gostaria de começar a automatizar?**'
+            : 'Hello! I\'m Nuell. I\'m here to help identify and guide the right AI & automation solution for your business.\n\nTo get started: **what is your industry or line of business, and what process would you like to start automating?**';
+
+          setMessages([{ sender: 'nuell', text: presentationGreeting }]);
+          setIsTyping(false);
+          setTurnCount(1);
+          return;
+        }
+
         const sector = leadInfo.sector;
         const challenge = leadInfo.challenge;
         if (sector || challenge) {
@@ -380,7 +427,7 @@ export default function NuellWidget({ lang }: NuellWidgetProps) {
       return () => clearTimeout(timer);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, messages.length, leadInfo.sector, leadInfo.challenge, pt]);
+  }, [isOpen, messages.length, leadInfo.sector, leadInfo.challenge, pt, isPresentation]);
 
   // 3.5. LOG CONVERSATION IN REAL-TIME TO BACKEND / GOOGLE SHEETS
   useEffect(() => {
@@ -462,6 +509,7 @@ export default function NuellWidget({ lang }: NuellWidgetProps) {
           message: userText,
           turn: currentTurn,
           lang,
+          source: isPresentation ? 'presentation' : 'default',
           leadInfo: currentLeadInfo,
           history: messages, // Send full conversation history for context
           sessionId: isExcluded ? '' : (localStorage.getItem('nuell_session_id') || ''),
@@ -503,8 +551,14 @@ export default function NuellWidget({ lang }: NuellWidgetProps) {
       const updatedInfo = updatedInfoArg || { ...leadInfo };
       const textLower = userText.toLowerCase();
 
-      // Check if user is asking a free-form question by detecting keywords
-      if (textLower.includes('fatura') || textLower.includes('ocr') || textLower.includes('leitura') || textLower.includes('invoice') || textLower.includes('documento')) {
+      if (isPresentation && currentTurn === 1) {
+        updatedInfo.sector = userText;
+        updatedInfo.challenge = userText;
+        setLeadInfo(updatedInfo);
+        reply = pt
+          ? `Compreendido! Na área de ${userText}, a automação de processos repetitivos liberta de imediato horas valiosas da equipa e reduz erros operacionais.\n\nNa Nuelltech desenhamos pilotos rápidos e iterativos. O melhor ponto de partida é analisarmos a sua operação numa sessão de Diagnóstico Gratuito de 30 minutos com a nossa equipa de engenharia:\n\n👉 [Agendar Diagnóstico Gratuito](https://calendly.com/nuelltech/30min)\n\nOu se preferir, indique o seu Nome e Contacto (email ou telefone) para falarmos sem compromisso.`
+          : `Understood! In ${userText}, process automation immediately frees up critical hours and prevents operational mistakes.\n\nAt Nuelltech, we deliver fast, iterative pilots. The best next step is to explore your workflows in a Free 30-minute Diagnosis session with our engineering team:\n\n👉 [Schedule Free Diagnosis](https://calendly.com/nuelltech/30min)\n\nAlternatively, please leave your Name and Contact (email or phone) and we will reach out directly.`;
+      } else if (textLower.includes('fatura') || textLower.includes('ocr') || textLower.includes('leitura') || textLower.includes('invoice') || textLower.includes('documento')) {
         reply = pt
           ? `O nosso leitor de OCR extrai automaticamente todos os dados de faturas em segundos, identificando discrepâncias de preço. Pode ver uma demonstração interativa com dados de exemplo aqui: [sandbox:ocr:🔍 Ver Demo OCR]\n\nSe quiser ver isto ligado ao seu ERP, qual é o seu Nome e Contacto para falarmos sem compromisso?`
           : `Our OCR reader automatically extracts invoice data in seconds, detecting price deviations. View an interactive demonstration with preset sample data here: [sandbox:ocr:🔍 View OCR Demo]\n\nTo see this connected to your ERP, what is your Name and Contact so we can chat?`;
