@@ -59,20 +59,57 @@ Este documento detalha os produtos SaaS e os desenvolvimentos de engenharia à m
 > [!IMPORTANT]
 > **BI Pharma** e **Plataforma de Logística** NÃO são produtos prontos a vender com preço fixo. São exemplos de projetos à medida desenvolvidos para clientes específicos. O call-to-action correto ao falar deles é propor o agendamento de um **diagnóstico gratuito** para desenhar uma solução personalizada.
 
-### 2.1 BI Pharma (Setor de Saúde / Farmácias / Clínicas)
+### 1.4 Motor de Leitura e Auditoria de Faturas (OCR Inteligente & Gestão de Compras)
+* **O que é:** Um sistema transversal de extração, auditoria e conciliação de faturas de fornecedores com IA e visão computacional.
+* **Frases de alerta (o visitante tem este problema se disser):**
+  * "Perdemos 10 a 15 horas por semana a introduzir faturas à mão no ERP"
+  * "Os fornecedores sobem os preços unitários e nós só reparamos quando já pagámos"
+  * "Temos notas de crédito perdidas ou por abater"
+  * "As faturas vêm em papel, foto no WhatsApp ou PDF no email e é um caos para conferir"
+  * "Queremos conferir se o que a fatura cobra bate certo com a guia de entrega e a nota de encomenda"
+  * Qualquer menção a: OCR, faturas, fornecedores, aumento de preço, notas de crédito, conferência, Primavera, PHC, Sage
+* **O que faz:**
+  * **Extração instantânea multiformato:** Lê faturas em foto (tirada com o telemóvel), PDF digitalizado, scan ou anexo de email, extraindo cabeçalho, NIF, número de fatura, datas, linhas de artigos, quantidades, preços unitários e taxas de IVA.
+  * **Deteção proativa de aumentos de preço:** Compara o preço unitário da fatura com a última compra ou tabela acordada. Se o produto aumentou (ex: azeite subiu 8% ou medicamento subiu 12%), alerta a gerência antes do pagamento da fatura.
+  * **Conferência tripla automatizada:** Reconcilia Nota de Encomenda vs Guia de Transporte vs Fatura, detetando faltas de entrega ou cobranças indevidas.
+  * **Gestão de notas de crédito e duplicados:** Sinaliza faturas já pagas ou duplicadas e notas de crédito pendentes de desconto.
+  * **Alimentação direta do ERP:** Integra com softwares de gestão (Primavera, PHC, Sage, SAP, etc.), gerando o rascunho de lançamento pronto a validar.
+* **Resultado em linguagem de negócio:** "A equipa deixa de digitar faturas manualmente, poupa mais de 10 horas por semana e a empresa nunca mais paga um aumento de fornecedor sem se aperceber."
+* **Ação interativa:** `[sandbox:ocr:🔍 Ver Demo OCR]`
+
+---
+
+## 2. Engenharia à Medida (Casos de Estudo Reais)
+
+> [!IMPORTANT]
+> **BI Pharma** e **Plataforma de Logística** NÃO são produtos prontos a vender com preço fixo. São exemplos de projetos à medida desenvolvidos para clientes específicos. O call-to-action correto ao falar deles é propor o agendamento de um **diagnóstico gratuito** para desenhar uma solução personalizada.
+
+### 2.1 BI Pharma (Setor Farmacêutico / Clínicas / Saúde)
 * **Frases de alerta (o visitante tem este problema se disser):**
   * "Tenho medicamentos a expirar e só noto quando estou a fazer inventário"
   * "Não sei quais são os produtos/tratamentos com mais margem real"
+  * "Temos centenas de faturas de distribuidores (Alliance Healthcare, Cooprofar, Plural) e os prazos de pagamento a 30, 45 ou 60 dias são difíceis de controlar"
+  * "Não sabemos se há notas de crédito pendentes por abater nos distribuidores"
   * "O stock de consumíveis é sempre uma surpresa — ora falta, ora sobra"
-  * "Não consigo prever quando vou ficar sem um produto crítico"
-  * Qualquer menção a: validade, expiração, SKU, consumíveis clínicos, stock de farmácia
-* **O Desafio do Cliente:** Uma farmácia independente perdia milhares de euros anualmente com medicamentos que expiravam no armazém sem serem vendidos, e debatia-se com a falta de cruzamento entre o stock real e o histórico homólogo de vendas.
-* **A Solução Nuelltech:**
-  * Desenvolvemos um motor de reconciliação de bases de dados que cruza o inventário físico com o histórico de vendas.
-  * O sistema prevê a velocidade de escoamento e gera alertas automáticos para SKUs (produtos) com alto risco de expiração nos meses seguintes.
-  * Sugere automaticamente campanhas sazonais de venda cruzada baseadas no calendário civil (ex: promover protetor solar em junho ou antigripais em dezembro) para escoar stock em risco.
-* **O Resultado:** No primeiro trimestre após o lançamento, a farmácia redirecionou com sucesso **320 SKUs de alto risco** para campanhas ativas, recuperando margens que seriam dadas como perda absoluta.
-* **Resultado em linguagem de negócio:** "O gerente sabe com meses de antecedência quais os produtos em risco de expirar — e activa campanhas antes de se tornar prejuízo certo."
+  * "Quero perguntar em linguagem normal quanto tenho a pagar a fornecedores esta semana"
+  * Qualquer menção a: farmácia, validade, expiração de lote, SKU, distribuidor farmacêutico, prazos de pagamento, Alliance, Plural, Cooprofar, Sifarma, Glintt
+* **O Desafio do Cliente:** Uma farmácia debatia-se com dois gargalos críticos:
+  1. *Inventário:* Milhares de euros perdidos anualmente com medicamentos a caducar no armazém por falta de cruzamento entre o stock real e o histórico homólogo de vendas.
+  2. *Contas e Faturas de Fornecedores:* Volume massivo de faturas de distribuidores com prazos díspares (30, 45, 60 dias), notas de crédito dispersas e dificuldade em ter uma visão diária da tesouraria real.
+* **A Solução Nuelltech (2 Módulos Integrados):**
+  * **Módulo 1 — Reconciliação Preditiva de Stock & Validades:**
+    * Cruza o inventário físico com a velocidade real de venda.
+    * Prevê o escoamento e gera alertas automáticos com meses de antecedência para lotes em risco de caducidade.
+    * Sugere campanhas sazonais inteligentes de venda cruzada baseadas no histórico (ex: dermocosmética e protetores solares antes do verão, antigripais no outono/inverno).
+  * **Módulo 2 — Contas, Faturas & Tesouraria Inteligente:**
+    * A IA lê e regista automaticamente todas as faturas de distribuidores, mapeando datas de vencimento e valores pendentes.
+    * Deteta desvios: notas de crédito por abater, rasuras, valores divergentes do acordado ou faturas em duplicado.
+    * Assistente de consulta em linguagem normal: o diretor da farmácia pode perguntar por chat *"Quanto temos a pagar até sexta-feira?"* ou *"Qual o valor de notas de crédito pendentes com a Alliance?"* e receber a resposta imediata fundamentada nas faturas originais.
+* **O Resultado:**
+  * No 1º trimestre, **320 SKUs de alto risco** foram redirecionados para campanhas ativas, recuperando milhares de euros em stock que seria dado como perda absoluta.
+  * O controlo de tesouraria passou a ser **100% automatizado**, eliminando o risco de faturas duplicadas e garantindo o abate rigoroso de todas as notas de crédito.
+* **Resultado em linguagem de negócio:** "O gestor da farmácia sabe com meses de antecedência o que vai expirar para escoar a tempo, tem controlo total dos pagamentos a 30/45/60 dias e pode perguntar em português sobre as contas da farmácia."
+* **Ação interativa:** `[sandbox:bi:📊 Ver Demo Stock]`
 
 ### 2.2 Plataforma de Logística (Setor de Distribuição / Logística / Hotelaria operacional)
 * **Frases de alerta (o visitante tem este problema se disser):**
@@ -101,25 +138,38 @@ Este documento detalha os produtos SaaS e os desenvolvimentos de engenharia à m
 > Um Agente de IA na Nuelltech NÃO é um chatbot genérico ou um "wrapper" de ChatGPT. É um fluxo autónomo especializado, com ferramentas (APIs, leitura OCR, bases de dados, ERPs), regras de negócio determinísticas e supervisão humana, desenhado para executar tarefas operacionais ponta a ponta.
 
 ### 3.1 Frases de alerta (o visitante está à procura de agentes se disser):
-* "Quero criar um agente de IA para a minha empresa"
+* "Quero um agente no meu site / loja online para atender e vender 24/7"
+* "Os clientes abandonam o carrinho de compras com dúvidas simples"
+* "Não sei o que está a acontecer no meu site ou quem são os visitantes mais promissores"
+* "Quero criar um agente de IA para a minha empresa que ligue ao ERP ou ao catálogo"
 * "Vocês desenvolvem agentes autónomos / multi-agentes?"
-* "Preciso de um agente para atender clientes / fazer triagem"
+* "Preciso de um agente para atender clientes, fazer triagem e marcar reuniões"
 * "Quero um agente que leia documentos e lance no ERP"
-* Qualquer menção a: agentes de IA, AI agents, agentic workflows, agentes autónomos, assistente autónomo
+* Qualquer menção a: agente para site, ecommerce, loja online, Shopify, WooCommerce, qualificação de leads, triagem, agentes de IA, AI agents, agentic workflows, assistente autónomo
 
-### 3.2 Os 4 Modelos de Agentes Especializados Nuelltech:
-1. **Agente de Triagem e Qualificação (Lead & Customer Agent):**
-   * *O que faz:* Atende visitantes ou clientes 24/7, compreende a dor e o setor, consulta agendas e encaminha para o humano certo ou agenda reuniões (o próprio **NUELL** no site é a prova viva disto).
-2. **Agente de Conciliação e Operações (Backoffice & OCR Agent):**
-   * *O que faz:* Recebe faturas/documentos PDF por email/upload, extrai dados via OCR, valida preços contra a base de dados do ERP e gera alertas de divergência ou minutas de lançamento.
-3. **Agente de Inventário e Compras (Supply Chain Agent):**
-   * *O que faz:* Vigia níveis de stock 24/7, calcula a velocidade de escoamento e sugere automaticamente as encomendas aos fornecedores antes de haver roturas ou produtos a expirar.
-4. **Agente de Treino Comercial por Voz (Sales Roleplay Agent):**
-   * *O que faz:* Interage por voz com comerciais, simulando clientes difíceis em setores específicos, avaliando o pitch e a capacidade de lidar com objeções em tempo real.
+### 3.2 Os Modelos de Agentes Especializados Nuelltech:
 
-### 3.3 Como o NUELL deve conduzir quando perguntam por Agentes:
-1. **Entender o problema primeiro:** Perguntar qual é a tarefa ou processo exato que quer que o agente execute.
-2. **Verificar a base existente:** Perguntar se já existe software, ERP ou base de dados onde o agente vai operar, ou se é um fluxo a começar do zero.
-3. **Dar uma abordagem breve:** Explicar em 1-2 frases como a arquitetura agêntica da Nuelltech resolve isso (com ferramentas ligadas e regras seguras).
-4. **Objetivo — Propor a Reunião:** Propor o **Diagnóstico Gratuito de 30 min** para mapear as ferramentas, regras e integrações que o agente vai precisar.
+#### A) Agente para Webpages e E-commerce (Sales, Lead Qualification & Catalog Agent):
+* **O que faz:**
+  * **Atendimento Comercial 24/7:** Treinado no catálogo de produtos, serviços, preçário e documentação oficial da empresa. Responde a dúvidas complexas sobre compatibilidade, especificações técnicas, prazos de entrega e políticas de devolução.
+  * **Qualificação Ativa de Leads & Agendamento:** Identifica a intenção de compra real, recolhe dados de contacto de forma natural e agenda reuniões de diagnóstico ou demonstrações diretamente na conversa (exatamente como o próprio **NUELL** faz).
+  * **Apoio ao Checkout & Recuperação de Vendas:** Intervém quando o visitante hesita no carrinho ou página de pagamento, tirando dúvidas sobre métodos de pagamento ou portes para evitar abandonos.
+  * **Relatório Executivo Diário por Email:** Todas as manhãs, a gerência ou equipa comercial recebe por email um resumo em português com o que aconteceu no site: número de conversas, dúvidas mais frequentes, produtos mais procurados e a lista de leads quentes para contacto imediato.
+  * **Integração:** Liga-se a Shopify, WooCommerce, Magento ou sites à medida via APIs e webhooks seguros.
+* **Resultado em linguagem de negócio:** "A loja ou site nunca dorme: atende os clientes com rigor a qualquer hora, converte visitantes em reuniões e o gestor recebe todos os dias um resumo com o que está a funcionar e o que fazer a seguir."
+
+#### B) Agente de Conciliação e Operações (Backoffice & OCR Agent):
+* **O que faz:** Recebe faturas/documentos PDF por email/upload, extrai dados via OCR, valida preços contra a base de dados do ERP e gera alertas de divergência ou minutas de lançamento.
+
+#### C) Agente de Inventário e Compras (Supply Chain Agent):
+* **O que faz:** Vigia níveis de stock 24/7, calcula a velocidade de escoamento e sugere automaticamente as encomendas aos fornecedores antes de haver roturas ou produtos a expirar.
+
+#### D) Agente de Treino Comercial por Voz (Sales Roleplay Agent):
+* **O que faz:** Interage por voz com comerciais, simulando clientes difíceis em setores específicos, avaliando o pitch e a capacidade de lidar com objeções em tempo real.
+
+### 3.3 Como o NUELL deve conduzir quando perguntam por Agentes ou E-commerce:
+1. **Entender o objetivo primeiro:** Perguntar qual é a tarefa ou processo exato que quer que o agente execute (ex: qualificar leads no site, tirar dúvidas de catálogo em ecommerce, reconciliar faturas no ERP).
+2. **Verificar a plataforma existente:** Perguntar se já existe loja/site (ex: Shopify, WooCommerce, site à medida) ou ERP onde o agente vai operar.
+3. **Dar uma abordagem breve:** Explicar em 1-2 frases como a arquitetura agêntica da Nuelltech resolve isso (com ferramentas ligadas e regras seguras, sem inventar dados).
+4. **Objetivo — Propor a Reunião:** Propor o **Diagnóstico Gratuito de 30 min** para desenhar o fluxo do agente adaptado ao caso específico da empresa.
 

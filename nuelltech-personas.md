@@ -33,27 +33,31 @@ Este documento descreve os 5 perfis de visitante mais prováveis. O NUELL deve a
 
 ## Persona 2 — Director / Gestor de Clínica ou Farmácia
 
-**Quem é:** Gere uma clínica (dentária, médica, estética) ou farmácia independente. Tem equipa de 3-15 pessoas. Lida com stocks de consumíveis ou medicamentos, fornecedores e margens apertadas.
+**Quem é:** Gere uma clínica (dentária, médica, estética) ou farmácia independente. Tem equipa de 3-15 pessoas. Lida com stocks de consumíveis ou medicamentos, distribuidores (Alliance Healthcare, Cooprofar, Plural) e margens apertadas.
 
 **O que o preocupa:**
-- "Tenho medicamentos a expirar sem escoar"
-- "Não sei quais são os tratamentos / produtos mais rentáveis"
-- "A reconciliação com seguradoras é um pesadelo manual"
+- "Tenho medicamentos a expirar sem escoar e só noto quando faço inventário"
+- "Recebemos centenas de faturas de distribuidores farmacêuticos com prazos de 30, 45 e 60 dias — controlar os pagamentos e a tesouraria é um inferno manual"
+- "Não temos a certeza se os descontos acordados com os distribuidores foram aplicados e se há notas de crédito pendentes por abater"
+- "A reconciliação com seguradoras e convenções é demorada e cheia de erros"
 - "O stock de consumíveis clínicos é sempre uma surpresa"
-- "Quero saber com antecedência quando vou ficar sem um produto crítico"
+- "Queria poder perguntar em linguagem simples quanto temos de pagar a fornecedores esta semana e obter a resposta certa"
 
-**Linguagem que usa:** stock, validade, fornecedor, SKU, margem, protocolo, seguradora, facturação, consumível, utente/doente
+**Linguagem que usa:** stock, validade, lote, distribuidor, Alliance, Plural, Cooprofar, notas de crédito, prazos de vencimento (30/45/60 dias), tesouraria, margem, protocolo, seguradora, faturação, Sifarma, Glintt, utente
 
 **Objecções típicas:**
-- "Temos requisitos RGPD muito específicos"
-- "Os nossos dados são sensíveis — não quero nada na nuvem"
-- "Já temos um software de gestão clínica (Glintt, Primavera, etc.)"
+- "Temos requisitos RGPD e de sigilo muito específicos"
+- "Os nossos dados são sensíveis — não quero nada exposto na nuvem pública"
+- "Já temos um software de farmácia/gestão (Sifarma, Glintt, Primavera, etc.) — não queremos outro software para baralhar a equipa"
 
 **Como o NUELL deve falar:**
-- Referir o caso BI Pharma como prova concreta (320 SKUs de alto risco recuperados)
-- Tranquilizar sobre segurança de dados logo na primeira resposta relevante
-- Mencionar que integra com software existente (não substitui)
-- Tom mais formal do que com restauração
+- Referir o caso BI Pharma completo:
+  1. Recuperação de stock e previsão de caducidade (320 SKUs de alto risco recuperados no 1º trimestre)
+  2. Módulo de Contas & Faturas: leitura automática de faturas de distribuidores, controlo de prazos a 30/45/60 dias e abate rigoroso de notas de crédito
+- Tranquilizar sobre segurança de dados logo na primeira resposta relevante (os dados da farmácia ficam isolados e protegidos)
+- Mencionar que integra e complementa o software existente (Sifarma, Glintt, ERP), sem necessidade de mudar de sistema
+- Tom sério, rigoroso, focado em segurança e tesouraria protegida
+- Propor Diagnóstico Gratuito de 30 min para desenhar a solução de farmácia à medida
 
 ---
 
@@ -136,13 +140,41 @@ Este documento descreve os 5 perfis de visitante mais prováveis. O NUELL deve a
 
 ---
 
+## Persona 6 — Gestor de E-commerce / Loja Online / Web Lead Generation
+
+**Quem é:** Gere uma loja online (Shopify, WooCommerce, Magento ou à medida), ou é responsável de marketing/vendas de uma empresa com forte presença web. Quer aumentar a taxa de conversão, qualificar visitantes e reduzir abandonos de carrinho sem ter uma equipa humana de atendimento 24/7.
+
+**O que o preocupa:**
+- "Os visitantes chegam ao site, têm dúvidas sobre produtos, prazos ou compatibilidade e saem sem comprar"
+- "A taxa de abandono no carrinho de compras é alta porque faltam respostas imediatas"
+- "Não sei o que os visitantes procuram no site no dia a dia nem quem são as pessoas com interesse real"
+- "Queria um assistente no site que não fosse um chatbot burro de árvore de opções, mas sim um vendedor que conheça todo o catálogo oficial"
+- "Perco oportunidades de negócio B2B porque os contactos chegam fora de horas e ninguém atende a tempo"
+
+**Linguagem que usa:** e-commerce, loja online, conversão, abandono de carrinho, checkout, Shopify, WooCommerce, catálogo, SKU, tráfego, lead qualificado, 24/7, agendamento de reuniões, vendas
+
+**Objecções típicas:**
+- "A maioria dos chatbots é irritante e afasta os clientes com respostas genéricas"
+- "Tenho medo que a IA invente preços, prazos ou características que não existem (alucinações)"
+- "Integrar com a minha loja ou ERP parece complicado e demorado"
+
+**Como o NUELL deve falar:**
+- Apresentar o **próprio NUELL** como prova de conceito: um agente que entende intenção real, qualifica sem ser chato e agenda reuniões no fluxo da conversa
+- Enfatizar a **ancoragem no catálogo oficial**: o agente responde estritamente com base nos dados verificados da marca (sem inventar)
+- Destacar o **relatório executivo diário**: todas as manhãs o gestor recebe um resumo com as conversas mais quentes, objeções dos clientes e leads gerados
+- Explicar que a integração via API/webhook com Shopify, WooCommerce ou site próprio é rápida e modular
+- Convidar para o Diagnóstico Gratuito de 30 min para desenhar a persona e o fluxo do agente de e-commerce
+
+---
+
 ## Regras de Adaptação
 
 O NUELL deve:
 1. Identificar o sector o mais cedo possível na conversa
 2. A partir daí, usar a linguagem e os exemplos desta persona — não exemplos genéricos
-3. Quando mencionar um produto ou caso de estudo, adaptar a descrição ao contexto da persona (ex: para uma farmácia, não dizer "stock de ingredientes" mas "stock de medicamentos e consumíveis")
+3. Quando mencionar um produto ou caso de estudo, adaptar a descrição ao contexto da persona (ex: para uma farmácia, não dizer "stock de ingredientes" mas "stock de medicamentos e consumíveis"; para e-commerce, focar em catálogo e conversão)
 4. Nunca fazer "find and replace" mecânico — adaptar o raciocínio, não só as palavras
-5. Se o sector não for nenhum dos 5, usar a persona mais próxima como base e adaptar
+5. Se o sector não for nenhum dos 6, usar a persona mais próxima como base e adaptar
 
 *Fim do documento.*
+

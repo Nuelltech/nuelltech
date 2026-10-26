@@ -9,16 +9,19 @@ function getRelevantKnowledgeFiles(message: string): string[] {
 
   const sandboxKeywords = [
     'sandbox', 'demo', 'demonstração', 'teste', 'testar', 'experimentar',
-    'ocr', 'ler fatura', 'leitura', 'bi', 'dash', 'excel', 'planilha', 'modernizar', 'api', 'erp', 'sincronizar',
+    'ocr', 'ler fatura', 'leitura', 'fatura', 'faturas', 'invoice', 'invoices',
+    'bi', 'dash', 'excel', 'planilha', 'modernizar', 'api', 'erp', 'sincronizar',
     'simulador', 'inventario', 'stock'
   ];
   
   const productKeywords = [
     'rcm', 'auditor', 'margem', 'receita', 'pos', 'venda', 'vendas',
-    'pharma', 'farmacia', 'medicamento', 'validade',
+    'pharma', 'farmacia', 'medicamento', 'validade', 'lote', 'caducar', 'alliance', 'plural', 'cooprofar', 'sifarma', 'glintt', 'tesouraria',
+    'contas', 'fornecedor', 'fornecedores', 'aumento de preço', 'nota de credito', 'duplicad',
     'logistica', 'entregas', 'distribuição', 'motorista', 'rota', 'quebra',
     'simulador', 'voz',
-    'agente', 'agentes', 'agent', 'agents', 'agentic', 'autonomo', 'assistente'
+    'agente', 'agentes', 'agent', 'agents', 'agentic', 'autonomo', 'assistente',
+    'ecommerce', 'e-commerce', 'loja online', 'loja', 'shopify', 'woocommerce', 'magento', 'catalogo', 'checkout', 'carrinho', 'site', 'website'
   ];
 
   const faqKeywords = [
@@ -220,10 +223,18 @@ export async function POST(request: Request) {
         reply = pt
           ? `Compreendido! Na área de ${message}, a automação de processos repetitivos liberta de imediato horas valiosas da equipa e reduz erros operacionais.\n\nNa Nuelltech desenhamos pilotos rápidos e iterativos. O melhor ponto de partida é analisarmos a sua operação numa sessão de Diagnóstico Gratuito de 30 minutos com a nossa equipa de engenharia:\n\n👉 [Agendar Diagnóstico Gratuito](https://calendly.com/nuelltech/30min)\n\nOu se preferir, indique o seu Nome e Contacto (email ou telefone) para falarmos sem compromisso.`
           : `Understood! In ${message}, process automation immediately frees up critical hours and prevents operational mistakes.\n\nAt Nuelltech, we deliver fast, iterative pilots. The best next step is to explore your workflows in a Free 30-minute Diagnosis session with our engineering team:\n\n👉 [Schedule Free Diagnosis](https://calendly.com/nuelltech/30min)\n\nAlternatively, please leave your Name and Contact (email or phone) and we will reach out directly.`;
-      } else if (textLower.includes('fatura') || textLower.includes('ocr') || textLower.includes('leitura') || textLower.includes('invoice') || textLower.includes('documento')) {
+      } else if (textLower.includes('ecommerce') || textLower.includes('e-commerce') || textLower.includes('loja online') || textLower.includes('shopify') || textLower.includes('woocommerce') || textLower.includes('carrinho') || textLower.includes('checkout') || (textLower.includes('site') && textLower.includes('vender'))) {
         reply = pt
-          ? `O nosso leitor de OCR extrai automaticamente todos os dados de faturas em segundos, identificando discrepâncias de preço. Pode ver uma demonstração interativa com dados de exemplo aqui: [sandbox:ocr:🔍 Ver Demo OCR]\n\nSe quiser ver isto ligado ao seu ERP, qual é o seu Nome e Contacto para falarmos sem compromisso?`
-          : `Our OCR reader automatically extracts invoice data in seconds, detecting price deviations. View an interactive demonstration with preset sample data here: [sandbox:ocr:🔍 View OCR Demo]\n\nTo see this connected to your ERP, what is your Name and Contact so we can chat?`;
+          ? `O nosso Agente de E-commerce e Webpages atende visitantes 24/7 treinado no catálogo oficial da sua marca, tira dúvidas de compatibilidade/produtos, apoia o checkout para evitar abandonos e agenda reuniões de negócio diretamente na conversa. Todas as manhãs, a sua equipa recebe por email um resumo das conversas mais promissoras.\n\nQual a plataforma da sua loja (Shopify, WooCommerce, site à medida) e qual o seu Nome e Contacto para desenharmos uma demonstração?`
+          : `Our E-commerce & Webpage Agent serves visitors 24/7 trained on your official catalog, answers product questions, prevents checkout drops, and books meetings right in the chat. Every morning, your leadership receives an executive summary of top leads.\n\nWhat platform do you use (Shopify, WooCommerce, custom) and what is your Name and Contact so we can map out a pilot?`;
+      } else if (textLower.includes('pharma') || textLower.includes('farmacia') || textLower.includes('medicamento') || textLower.includes('distribuidor') || textLower.includes('alliance') || textLower.includes('cooprofar') || textLower.includes('plural') || textLower.includes('sifarma')) {
+        reply = pt
+          ? `O BI Pharma resolve dois problemas centrais nas farmácias: prevê medicamentos e lotes em risco de expirar com meses de antecedência para escoamento ativo (recuperámos 320 SKUs num caso real), e faz a gestão e leitura de faturas de distribuidores com prazos de 30/45/60 dias e controlo de notas de crédito pendentes.\n\nQual o software de farmácia que utilizam (ex: Sifarma, Glintt) e qual o seu Nome e Contacto para vermos o vosso caso?`
+          : `BI Pharma tackles two critical pharmacy bottlenecks: predicting lot expirations months ahead for proactive clearance (we recovered 320 SKUs in a real case), and automating distributor invoices, 30/45/60-day payment terms, and credit note deductions.\n\nWhich pharmacy software do you run (e.g. Sifarma, Glintt) and what is your Name and Contact to review your setup?`;
+      } else if (textLower.includes('fatura') || textLower.includes('ocr') || textLower.includes('leitura') || textLower.includes('invoice') || textLower.includes('documento') || textLower.includes('nota de credito') || textLower.includes('aumento de preço')) {
+        reply = pt
+          ? `O nosso motor de IA lê faturas (em foto, scan ou PDF), extrai artigos, quantidades e preços unitários, e avisa imediatamente quando um fornecedor aumentou o preço face ao histórico antes de pagar. Também valida notas de crédito e integra diretamente no ERP (Primavera, PHC, Sage), eliminando mais de 10h semanais de digitação manual.\n\nPode testar uma amostra aqui: [sandbox:ocr:🔍 Ver Demo OCR]\n\nQual o vosso ERP atual e qual o melhor Contacto para agendarmos uma demonstração com os vossos documentos?`
+          : `Our AI invoice engine extracts line items, quantities, and unit prices from photos, scans, or PDFs, instantly alerting you if a supplier increased prices before payment. It also reconciles credit notes and syncs with your ERP (Primavera, PHC, Sage), saving over 10 hours a week.\n\nTry a sample here: [sandbox:ocr:🔍 View OCR Demo]\n\nWhat is your current ERP and contact info to schedule a tailored demo?`;
       } else if (textLower.includes('stock') || textLower.includes('inventario') || textLower.includes('validade') || textLower.includes('bi') || textLower.includes('perda') || textLower.includes('quebra')) {
         reply = pt
           ? `O nosso reconciliador preditivo cruza o stock com a velocidade de venda para alertar sobre perdas e sugerir campanhas de escoamento. Veja uma simulação interativa com dados predefinidos aqui: [sandbox:bi:📊 Ver Demo Stock]\n\nQual o seu melhor Contacto para agendarmos uma demonstração detalhada?`
@@ -359,10 +370,20 @@ Visitor: "O F&B do hotel está a perder dinheiro mas não consigo perceber onde 
 NUELL: "No hotel, o F&B é o centro de custo mais opaco — compras de fornecedores, consumos internos, eventos, bar, restaurante. Tudo misturado. O que tem actualmente para acompanhar os custos do F&B — é manual, tem algum sistema, ou é uma mistura?"
 → (Listen, then bridge to RCM / custom engineering depending on complexity.)
 
-[RETALHO]
-Visitor: "Tenho produtos parados há meses e só dou conta quando faço inventário."
-NUELL: "Rotação de stock baixa é capital preso. E o problema é que sem visibilidade em tempo real, quando percebe já acumulou semanas de custo. No seu caso é uma loja física, online, ou os dois?"
-→ (Listen, then show the Predictive BI demo or propose custom engineering.)
+[E-COMMERCE & WEBPAGES]
+Visitor: "Quero um assistente na minha loja online para ajudar os clientes e evitar que desistam no checkout."
+NUELL: "O maior problema dos chatbots tradicionais é responderem com opções rígidas que irritam o cliente. O que construímos é um agente treinado estritamente no catálogo oficial da sua marca, que tira dúvidas reais de produto, ajuda a fechar no checkout e ainda lhe envia todas as manhãs um resumo das conversas mais quentes. A sua loja está em Shopify, WooCommerce ou noutra plataforma?"
+→ (Listen, then propose the 30-min diagnosis meeting to map the catalog and agent rules.)
+
+[FARMÁCIAS — FATURAS DE DISTRIBUIDORES E CONTAS]
+Visitor: "Temos centenas de faturas da Alliance e da Plural com prazos diferentes e notas de crédito perdidas."
+NUELL: "Esse é o segundo grande módulo que construímos no caso do BI Pharma. A IA lê e regista as faturas dos distribuidores, mapeia prazos de 30, 45 e 60 dias, e assinala notas de crédito por abater antes do pagamento. O diretor pode inclusivamente perguntar em linguagem natural quanto tem a pagar até ao fim do mês. Que software de farmácia usam hoje — Sifarma, Glintt, ou outro?"
+→ (Listen, then propose the 30-min diagnosis meeting to review the setup.)
+
+[FATURAS & AUDITORIA DE PREÇOS / COMPRAS]
+Visitor: "Perdemos horas a passar faturas à mão e não sabemos se os fornecedores aumentaram os preços."
+NUELL: "A digitação manual consome 10 a 15 horas por semana, mas o custo invisível maior são os aumentos silenciosos de fornecedores. O nosso motor lê a fatura (em foto ou PDF) e avisa de imediato se o preço unitário de um artigo subiu face ao histórico antes de pagar, integrando direto no ERP. Que software de gestão utilizam atualmente — Primavera, PHC, Sage?"
+→ (Listen, then show the OCR demo [sandbox:ocr:🔍 Ver Demo OCR] and drive to the 30-min diagnosis meeting.)
 
 ---
 
