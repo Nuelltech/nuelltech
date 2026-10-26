@@ -1,8 +1,9 @@
-const CACHE_NAME = 'nuelltech-card-v3';
+const CACHE_NAME = 'nuelltech-card-v4';
 const ASSETS_TO_CACHE = [
   '/c/nuno-miguel',
   '/c/nuno',
   '/c',
+  '/pt/apresentacao',
   '/logo-tight.png',
   '/team/nuno-miguel.jpg',
   '/icons/apple-touch-icon.png',

@@ -19,6 +19,9 @@ import {
   Camera,
   Loader2,
   UserPlus,
+  FileText,
+  Send,
+  Copy,
 } from 'lucide-react';
 import { EmployeeData, generateVCardString } from '@/data/employees';
 
@@ -41,13 +44,14 @@ interface VirtualBusinessCardProps {
 
 export default function VirtualBusinessCard({ employee }: VirtualBusinessCardProps) {
   const [isFlipped, setIsFlipped] = useState(false);
-  const [qrMode, setQrMode] = useState<'vcard' | 'url'>('vcard');
+  const [qrMode, setQrMode] = useState<'vcard' | 'presentation' | 'url'>('presentation');
   const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0, glareX: 50, glareY: 50 });
   const [hasGyroscope, setHasGyroscope] = useState(false);
   const [needsIosPermission, setNeedsIosPermission] = useState(false);
   const [isIosPermissionGranted, setIsIosPermissionGranted] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
+  const [copiedPresentation, setCopiedPresentation] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [isOfflineReady, setIsOfflineReady] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
@@ -320,6 +324,32 @@ export default function VirtualBusinessCard({ employee }: VirtualBusinessCardPro
     }
   };
 
+  // Quick Share for Nuelltech Presentation (Option 2)
+  const presentationUrl = typeof window !== 'undefined' 
+    ? `${window.location.origin}/pt/apresentacao` 
+    : 'https://nuelltech.com/pt/apresentacao';
+
+  const handleSharePresentation = async (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    const shareText = 'Olá! Partilho a apresentação executiva da Nuelltech com os nossos casos práticos de IA e automação para PMEs:';
+    
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Apresentação Corporativa — Nuelltech',
+          text: shareText,
+          url: presentationUrl,
+        });
+      } catch {
+        // User cancelled or share failed
+      }
+    } else if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      await navigator.clipboard.writeText(`${shareText} ${presentationUrl}`);
+      setCopiedPresentation(true);
+      setTimeout(() => setCopiedPresentation(false), 2000);
+    }
+  };
+
   // WhatsApp link format
   const whatsappText = encodeURIComponent(
     `Olá ${employee.firstName}, encontrei o teu contacto através do teu cartão virtual Nuelltech.`
@@ -447,6 +477,8 @@ export default function VirtualBusinessCard({ employee }: VirtualBusinessCardPro
   const qrCodePayload =
     qrMode === 'vcard'
       ? generateVCardString(employee)
+      : qrMode === 'presentation'
+      ? presentationUrl
       : typeof window !== 'undefined'
       ? window.location.href
       : employee.cardUrl;
@@ -671,6 +703,21 @@ export default function VirtualBusinessCard({ employee }: VirtualBusinessCardPro
                       </>
                     )}
                   </button>
+
+                  {/* Option 5: Follow-up instantâneo por WhatsApp com Apresentação */}
+                  {scannedContact.phone && (
+                    <a
+                      href={`https://wa.me/${scannedContact.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(
+                        `Olá ${scannedContact.firstName || scannedContact.fullName.split(' ')[0] || ''}! Foi um gosto conversar hoje. Como falámos, partilho a apresentação executiva da Nuelltech com os nossos casos práticos de IA e automação para PMEs: ${presentationUrl}`
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full py-2.5 px-3 rounded-2xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 font-semibold text-xs flex items-center justify-center gap-2 transition active:scale-95 text-center cursor-pointer"
+                    >
+                      <MessageSquare className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>Enviar Apresentação por WhatsApp</span>
+                    </a>
+                  )}
 
                   <button
                     type="button"
@@ -910,11 +957,43 @@ export default function VirtualBusinessCard({ employee }: VirtualBusinessCardPro
 
               {/* Front Footer CTA */}
               <div className="relative z-10 flex flex-col items-center gap-2">
+                {/* Option 3: Apresentação da Empresa (Destaque Principal) */}
+                <div className="w-full flex items-center gap-1.5">
+                  <a
+                    href="/pt/apresentacao"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 py-2.5 px-3.5 rounded-2xl bg-gradient-to-r from-orange-500/20 via-amber-500/20 to-orange-500/10 hover:from-orange-500/30 hover:to-amber-500/20 border border-orange-500/40 text-orange-200 font-bold text-xs flex items-center justify-between transition active:scale-[0.98] shadow-md group cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2">
+                      <FileText className="w-4 h-4 text-orange-400 group-hover:scale-110 transition shrink-0" />
+                      <span className="tracking-tight text-white">Apresentação Nuelltech</span>
+                    </div>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-orange-500 text-slate-950 font-extrabold uppercase tracking-wider shrink-0">
+                      Deck
+                    </span>
+                  </a>
+
+                  {/* Option 2: Botão rápido de partilha da apresentação */}
+                  <button
+                    type="button"
+                    onClick={handleSharePresentation}
+                    title="Partilhar Apresentação por WhatsApp ou Redes"
+                    className="py-2.5 px-3 rounded-2xl bg-white/[0.08] hover:bg-white/[0.15] border border-white/15 text-slate-200 transition active:scale-95 flex items-center justify-center shrink-0 cursor-pointer"
+                  >
+                    {copiedPresentation ? (
+                      <Check className="w-4 h-4 text-emerald-400 animate-bounce" />
+                    ) : (
+                      <Send className="w-4 h-4 text-orange-400" />
+                    )}
+                  </button>
+                </div>
+
                 <button
                   type="button"
                   onClick={handleDownloadVCard}
                   disabled={isDownloading}
-                  className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-cyan-500 via-indigo-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-slate-950 font-bold text-xs tracking-wide uppercase flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/25 transition active:scale-[0.98] disabled:opacity-75 cursor-pointer"
+                  className="w-full py-2.5 px-4 rounded-2xl bg-gradient-to-r from-cyan-500 via-indigo-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-slate-950 font-bold text-xs tracking-wide uppercase flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/25 transition active:scale-[0.98] disabled:opacity-75 cursor-pointer"
                 >
                   {isDownloading ? (
                     <>
@@ -1003,7 +1082,9 @@ export default function VirtualBusinessCard({ employee }: VirtualBusinessCardPro
                 </div>
 
                 <p className="text-[11px] text-slate-300 mt-3 text-center px-4 font-medium">
-                  {qrMode === 'vcard'
+                  {qrMode === 'presentation'
+                    ? 'Abre a Apresentação Executiva da Nuelltech (casos reais e ROI).'
+                    : qrMode === 'vcard'
                     ? 'Grava o contacto na agenda do telemóvel (offline).'
                     : 'Abre o link web do cartão digital 3D.'}
                 </p>
@@ -1011,21 +1092,35 @@ export default function VirtualBusinessCard({ employee }: VirtualBusinessCardPro
 
               {/* Mode Toggle & Direct Link */}
               <div className="relative z-30 flex flex-col gap-2">
-                {/* Segmented Control */}
-                <div className="grid grid-cols-2 p-1 rounded-2xl bg-white/5 border border-white/10 text-xs font-semibold">
+                {/* 3-way Segmented Control (Option 1) */}
+                <div className="grid grid-cols-3 p-1 rounded-2xl bg-white/5 border border-white/10 text-[11px] font-semibold gap-1">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setQrMode('presentation');
+                    }}
+                    className={`py-2 px-1 rounded-xl transition flex items-center justify-center gap-1 cursor-pointer truncate ${
+                      qrMode === 'presentation'
+                        ? 'bg-gradient-to-r from-orange-500 to-amber-600 text-white shadow-md font-bold'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    <span>Apresentação</span>
+                  </button>
                   <button
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
                       setQrMode('vcard');
                     }}
-                    className={`py-2 rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer ${
+                    className={`py-2 px-1 rounded-xl transition flex items-center justify-center gap-1 cursor-pointer truncate ${
                       qrMode === 'vcard'
-                        ? 'bg-gradient-to-r from-cyan-500 to-indigo-600 text-white shadow-md'
+                        ? 'bg-gradient-to-r from-cyan-500 to-indigo-600 text-white shadow-md font-bold'
                         : 'text-slate-400 hover:text-white'
                     }`}
                   >
-                    <span>Gravar Contacto</span>
+                    <span>Contacto</span>
                   </button>
                   <button
                     type="button"
@@ -1033,13 +1128,13 @@ export default function VirtualBusinessCard({ employee }: VirtualBusinessCardPro
                       e.stopPropagation();
                       setQrMode('url');
                     }}
-                    className={`py-2 rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer ${
+                    className={`py-2 px-1 rounded-xl transition flex items-center justify-center gap-1 cursor-pointer truncate ${
                       qrMode === 'url'
-                        ? 'bg-gradient-to-r from-cyan-500 to-indigo-600 text-white shadow-md'
+                        ? 'bg-gradient-to-r from-cyan-500 to-indigo-600 text-white shadow-md font-bold'
                         : 'text-slate-400 hover:text-white'
                     }`}
                   >
-                    <span>Abrir Link Web</span>
+                    <span>Cartão Web</span>
                   </button>
                 </div>
 
