@@ -22,6 +22,8 @@ import {
   FileText,
   Send,
   Copy,
+  HeartPulse,
+  X,
 } from 'lucide-react';
 import { EmployeeData, generateVCardString } from '@/data/employees';
 
@@ -324,30 +326,102 @@ export default function VirtualBusinessCard({ employee }: VirtualBusinessCardPro
     }
   };
 
+  // Document Selection & Presentation Modal State
+  const [showPresentationModal, setShowPresentationModal] = useState(false);
+  const [presentationRecipient, setPresentationRecipient] = useState<{ name?: string; phone?: string } | null>(null);
+  const [copiedPresMsgId, setCopiedPresMsgId] = useState<string | null>(null);
+
+  interface PresentationOption {
+    id: string;
+    title: string;
+    subtitle: string;
+    badge: string;
+    badgeColor: string;
+    path: string;
+    fullUrl: string;
+    icon: 'health' | 'corporate';
+    getMessage: (recipientName?: string) => string;
+  }
+
+  const availablePresentations: PresentationOption[] = [
+    {
+      id: 'saude',
+      title: 'Inteligência Ativa na Saúde',
+      subtitle: 'BI Pharma • Casos práticos em farmácias, clínicas e unidades de saúde',
+      badge: 'Saúde & Farmácias',
+      badgeColor: 'bg-teal-500/20 text-teal-300 border-teal-500/40',
+      path: '/pt/saude',
+      fullUrl: 'https://nuelltech.com/pt/saude',
+      icon: 'health',
+      getMessage: (name?: string) => {
+        const greeting = name ? `Olá ${name}!` : 'Olá!';
+        return `${greeting} Partilho a apresentação executiva da Nuelltech sobre Inteligência Ativa na Saúde (BI Pharma), com os fluxos práticos de otimização de stock e gestão: https://nuelltech.com/pt/saude`;
+      },
+    },
+    {
+      id: 'corporativa',
+      title: 'Apresentação Corporativa Nuelltech',
+      subtitle: 'Visão geral • Automação e IA aplicada a PMEs (restauração, faturas, stocks)',
+      badge: 'Geral PMEs',
+      badgeColor: 'bg-orange-500/20 text-orange-300 border-orange-500/40',
+      path: '/pt/apresentacao',
+      fullUrl: 'https://nuelltech.com/pt/apresentacao',
+      icon: 'corporate',
+      getMessage: (name?: string) => {
+        const greeting = name ? `Olá ${name}!` : 'Olá!';
+        return `${greeting} Partilho a apresentação executiva da Nuelltech com os nossos casos práticos de IA e automação para PMEs: https://nuelltech.com/pt/apresentacao`;
+      },
+    },
+  ];
+
+  // Quick Share via Personal WhatsApp (using native scheme with web fallback)
+  const handleSendViaPersonalWhatsApp = (pres: PresentationOption, targetPhone?: string) => {
+    const rawPhone = targetPhone || presentationRecipient?.phone || '';
+    const cleanPhone = rawPhone.replace(/[^0-9]/g, '');
+    const message = pres.getMessage(presentationRecipient?.name);
+    const encodedText = encodeURIComponent(message);
+
+    if (cleanPhone) {
+      // Protocolo direto whatsapp:// para invocar o WhatsApp Messenger pessoal
+      const nativeScheme = `whatsapp://send?phone=${cleanPhone}&text=${encodedText}`;
+      const webFallback = `https://wa.me/${cleanPhone}?text=${encodedText}`;
+
+      window.location.href = nativeScheme;
+      setTimeout(() => {
+        window.open(webFallback, '_blank');
+      }, 1200);
+    } else {
+      const nativeShare = `whatsapp://send?text=${encodedText}`;
+      const webShare = `https://api.whatsapp.com/send?text=${encodedText}`;
+      window.location.href = nativeShare;
+      setTimeout(() => {
+        window.open(webShare, '_blank');
+      }, 1200);
+    }
+  };
+
+  const handleCopyPresMessage = async (pres: PresentationOption) => {
+    const message = pres.getMessage(presentationRecipient?.name);
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      await navigator.clipboard.writeText(message);
+      setCopiedPresMsgId(pres.id);
+      setTimeout(() => setCopiedPresMsgId(null), 2000);
+    }
+  };
+
+  const handleOpenDocModal = (recipient?: { name?: string; phone?: string }) => {
+    setPresentationRecipient(recipient || null);
+    setShowPresentationModal(true);
+  };
+
   // Quick Share for Nuelltech Presentation (Option 2)
   const presentationUrl = typeof window !== 'undefined' 
-    ? `${window.location.origin}/pt/apresentacao` 
-    : 'https://nuelltech.com/pt/apresentacao';
+    ? `${window.location.origin}/pt/saude` 
+    : 'https://nuelltech.com/pt/saude';
 
-  const handleSharePresentation = async (e?: React.MouseEvent) => {
+  const handleSharePresentation = (e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
-    const shareText = 'Olá! Partilho a apresentação executiva da Nuelltech com os nossos casos práticos de IA e automação para PMEs:';
-    
-    if (typeof navigator !== 'undefined' && navigator.share) {
-      try {
-        await navigator.share({
-          title: 'Apresentação Corporativa — Nuelltech',
-          text: shareText,
-          url: presentationUrl,
-        });
-      } catch {
-        // User cancelled or share failed
-      }
-    } else if (typeof navigator !== 'undefined' && navigator.clipboard) {
-      await navigator.clipboard.writeText(`${shareText} ${presentationUrl}`);
-      setCopiedPresentation(true);
-      setTimeout(() => setCopiedPresentation(false), 2000);
-    }
+    handleOpenDocModal();
   };
 
   // WhatsApp link format
@@ -704,19 +778,19 @@ export default function VirtualBusinessCard({ employee }: VirtualBusinessCardPro
                     )}
                   </button>
 
-                  {/* Option 5: Follow-up instantâneo por WhatsApp com Apresentação */}
+                  {/* Option 5: Follow-up instantâneo por WhatsApp com Escolha de Documento */}
                   {scannedContact.phone && (
-                    <a
-                      href={`https://wa.me/${scannedContact.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(
-                        `Olá ${scannedContact.firstName || scannedContact.fullName.split(' ')[0] || ''}! Foi um gosto conversar hoje. Como falámos, partilho a apresentação executiva da Nuelltech com os nossos casos práticos de IA e automação para PMEs: ${presentationUrl}`
-                      )}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full py-2.5 px-3 rounded-2xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 font-semibold text-xs flex items-center justify-center gap-2 transition active:scale-95 text-center cursor-pointer"
+                    <button
+                      type="button"
+                      onClick={() => handleOpenDocModal({
+                        name: scannedContact.firstName || scannedContact.fullName.split(' ')[0],
+                        phone: scannedContact.phone,
+                      })}
+                      className="w-full py-2.5 px-3 rounded-2xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 font-semibold text-xs flex items-center justify-center gap-2 transition active:scale-95 text-center cursor-pointer shadow-sm"
                     >
                       <MessageSquare className="w-3.5 h-3.5 text-emerald-400" />
-                      <span>Enviar Apresentação por WhatsApp</span>
-                    </a>
+                      <span>Escolher e Enviar Apresentação por WhatsApp</span>
+                    </button>
                   )}
 
                   <button
@@ -957,35 +1031,30 @@ export default function VirtualBusinessCard({ employee }: VirtualBusinessCardPro
 
               {/* Front Footer CTA */}
               <div className="relative z-10 flex flex-col items-center gap-2">
-                {/* Option 3: Apresentação da Empresa (Destaque Principal) */}
+                {/* Option 3: Apresentação da Empresa (Destaque Principal com Modal de Seleção) */}
                 <div className="w-full flex items-center gap-1.5">
-                  <a
-                    href="/pt/apresentacao"
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button
+                    type="button"
+                    onClick={() => handleOpenDocModal()}
                     className="flex-1 py-2.5 px-3.5 rounded-2xl bg-gradient-to-r from-orange-500/20 via-amber-500/20 to-orange-500/10 hover:from-orange-500/30 hover:to-amber-500/20 border border-orange-500/40 text-orange-200 font-bold text-xs flex items-center justify-between transition active:scale-[0.98] shadow-md group cursor-pointer"
                   >
                     <div className="flex items-center gap-2">
                       <FileText className="w-4 h-4 text-orange-400 group-hover:scale-110 transition shrink-0" />
-                      <span className="tracking-tight text-white">Apresentação Nuelltech</span>
+                      <span className="tracking-tight text-white">Apresentações Nuelltech</span>
                     </div>
                     <span className="text-[10px] px-2 py-0.5 rounded-full bg-orange-500 text-slate-950 font-extrabold uppercase tracking-wider shrink-0">
-                      Deck
+                      Ver / Enviar
                     </span>
-                  </a>
+                  </button>
 
                   {/* Option 2: Botão rápido de partilha da apresentação */}
                   <button
                     type="button"
-                    onClick={handleSharePresentation}
-                    title="Partilhar Apresentação por WhatsApp ou Redes"
+                    onClick={() => handleOpenDocModal()}
+                    title="Partilhar Apresentações por WhatsApp ou Redes"
                     className="py-2.5 px-3 rounded-2xl bg-white/[0.08] hover:bg-white/[0.15] border border-white/15 text-slate-200 transition active:scale-95 flex items-center justify-center shrink-0 cursor-pointer"
                   >
-                    {copiedPresentation ? (
-                      <Check className="w-4 h-4 text-emerald-400 animate-bounce" />
-                    ) : (
-                      <Send className="w-4 h-4 text-orange-400" />
-                    )}
+                    <Send className="w-4 h-4 text-orange-400" />
                   </button>
                 </div>
 
@@ -1154,6 +1223,135 @@ export default function VirtualBusinessCard({ employee }: VirtualBusinessCardPro
         <Sparkles className="w-3 h-3 text-cyan-500/70" />
         <span>Mova o telemóvel ou o rato para interagir em 3D</span>
       </p>
+
+      {/* Modal de Escolha de Documento / Apresentação */}
+      {showPresentationModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
+          <div className="w-full max-w-md rounded-3xl bg-slate-900 border border-white/20 p-5 sm:p-6 shadow-2xl relative text-left">
+            <button
+              onClick={() => setShowPresentationModal(false)}
+              className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-slate-300 hover:text-white transition cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <div className="flex items-center gap-2.5 mb-1">
+              <div className="w-8 h-8 rounded-xl bg-orange-500/20 text-orange-400 flex items-center justify-center">
+                <FileText className="w-4 h-4" />
+              </div>
+              <h3 className="text-base sm:text-lg font-bold text-white tracking-tight">
+                Apresentações Nuelltech
+              </h3>
+            </div>
+
+            <p className="text-xs text-slate-400 mb-4">
+              {presentationRecipient?.name ? (
+                <>
+                  Enviar documento para <strong className="text-white">{presentationRecipient.name}</strong>
+                  {presentationRecipient.phone && (
+                    <span className="text-slate-300 font-mono text-[11px] block mt-0.5">
+                      ({presentationRecipient.phone})
+                    </span>
+                  )}
+                </>
+              ) : (
+                'Escolha o documento que pretende partilhar ou visualizar:'
+              )}
+            </p>
+
+            {/* Lista de Apresentações Disponíveis */}
+            <div className="space-y-3 mb-5 max-h-[60vh] overflow-y-auto pr-1">
+              {availablePresentations.map((pres) => (
+                <div
+                  key={pres.id}
+                  className="p-3.5 rounded-2xl bg-white/[0.04] hover:bg-white/[0.07] border border-white/10 transition flex flex-col gap-2.5"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-start gap-2.5">
+                      <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${
+                        pres.icon === 'health' ? 'bg-teal-500/20 text-teal-400' : 'bg-orange-500/20 text-orange-400'
+                      }`}>
+                        {pres.icon === 'health' ? <HeartPulse className="w-4 h-4" /> : <FileText className="w-4 h-4" />}
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h4 className="text-xs sm:text-sm font-bold text-white leading-snug">
+                            {pres.title}
+                          </h4>
+                        </div>
+                        <p className="text-[11px] text-slate-400 leading-relaxed mt-0.5">
+                          {pres.subtitle}
+                        </p>
+                      </div>
+                    </div>
+                    <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border uppercase tracking-wider flex-shrink-0 ${pres.badgeColor}`}>
+                      {pres.badge}
+                    </span>
+                  </div>
+
+                  {/* Ações para cada documento */}
+                  <div className="grid grid-cols-3 gap-1.5 pt-1 border-t border-white/5">
+                    {/* Botão Enviar por WhatsApp Pessoal */}
+                    <button
+                      type="button"
+                      onClick={() => handleSendViaPersonalWhatsApp(pres)}
+                      className="col-span-2 py-2 px-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-[11px] flex items-center justify-center gap-1.5 transition active:scale-95 shadow-sm cursor-pointer"
+                      title="Envia através do WhatsApp Pessoal com a mensagem personalizada"
+                    >
+                      <MessageSquare className="w-3.5 h-3.5" />
+                      <span>WhatsApp Pessoal</span>
+                    </button>
+
+                    {/* Botão Copiar Mensagem / Link */}
+                    <button
+                      type="button"
+                      onClick={() => handleCopyPresMessage(pres)}
+                      className="py-2 px-2 rounded-xl bg-white/10 hover:bg-white/15 text-slate-200 text-[11px] font-medium flex items-center justify-center gap-1 transition active:scale-95 cursor-pointer"
+                      title="Copiar mensagem e link"
+                    >
+                      {copiedPresMsgId === pres.id ? (
+                        <>
+                          <Check className="w-3 h-3 text-emerald-400 animate-bounce" />
+                          <span className="text-emerald-400 text-[10px]">Copiado</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3 h-3" />
+                          <span>Copiar</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Link direto para abrir */}
+                  <div className="flex items-center justify-end">
+                    <a
+                      href={pres.path}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[10px] text-slate-400 hover:text-cyan-400 flex items-center gap-1 transition"
+                    >
+                      <span>Abrir no browser</span>
+                      <ExternalLink className="w-2.5 h-2.5" />
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="pt-2 border-t border-white/10 flex items-center justify-between text-[11px] text-slate-400">
+              <span>Remetente: <strong className="text-slate-200">+351 966 665 571</strong></span>
+              <button
+                type="button"
+                onClick={() => setShowPresentationModal(false)}
+                className="text-slate-400 hover:text-white transition cursor-pointer"
+              >
+                Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
