@@ -33,6 +33,49 @@ export default function SaudePresentation({ lang }: SaudePresentationProps) {
     setCurrentSlide((prev) => (prev > 0 ? prev - 1 : prev));
   }, []);
 
+  // Analytics dwell time tracking for the presentation
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (localStorage.getItem('nuell_exclude_analytics') === 'true') return;
+
+    const startTime = Date.now();
+
+    const reportPresentationTime = () => {
+      const duration = Math.round((Date.now() - startTime) / 1000);
+      if (duration < 3) return; // Only log meaningful visits (3s+)
+
+      let sessionId = localStorage.getItem('nuell_session_id');
+      if (!sessionId) {
+        sessionId = 'ns_' + Math.random().toString(36).substring(2, 15) + '_' + Date.now();
+        localStorage.setItem('nuell_session_id', sessionId);
+      }
+
+      fetch('/api/analytics', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sessionId,
+          type: 'dwell',
+          sectionId: 'apresentacao-saude',
+          duration,
+        }),
+        keepalive: true,
+      }).catch(() => {});
+    };
+
+    const handleVisibility = () => {
+      if (document.visibilityState === 'hidden') {
+        reportPresentationTime();
+      }
+    };
+
+    window.addEventListener('visibilitychange', handleVisibility);
+    return () => {
+      reportPresentationTime();
+      window.removeEventListener('visibilitychange', handleVisibility);
+    };
+  }, []);
+
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -124,6 +167,7 @@ export default function SaudePresentation({ lang }: SaudePresentationProps) {
       <div className="absolute top-6 sm:top-8 right-6 sm:right-10 z-50">
         <button
           onClick={toggleFullscreen}
+          data-analytics-id="btn-fullscreen-apresentacao-saude"
           aria-label="Alternar ecrã inteiro"
           className={`p-2.5 rounded-full border transition-all ${
             isDarkSlide 
@@ -816,6 +860,7 @@ export default function SaudePresentation({ lang }: SaudePresentationProps) {
             href="https://calendly.com/nuelltech/30min?month=2026-11" 
             target="_blank" 
             rel="noopener noreferrer"
+            data-analytics-id="cta-agendar-apresentacao-saude"
             className="group relative inline-flex items-center justify-center px-8 sm:px-10 py-4 sm:py-5 font-bold text-white bg-[#14b8a6] rounded-full overflow-hidden transition-all duration-300 hover:bg-teal-400 hover:scale-105 shadow-[0_10px_40px_-10px_rgba(20,184,166,0.7)]"
           >
             <span className="mr-3 font-sans text-base sm:text-lg tracking-wide uppercase">
