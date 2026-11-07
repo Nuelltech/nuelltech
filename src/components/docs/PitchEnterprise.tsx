@@ -23,69 +23,19 @@ import {
   Ship,
   Store,
   Factory,
-  HeartPulse,
-  Workflow,
-  TrendingUp,
-  Layers,
-  ChevronRight
+  HeartPulse
 } from 'lucide-react';
 
-const SECTORS_DATA = [
-  {
-    id: 'banca',
-    title: 'Banca & Seguros',
-    icon: Landmark,
-    category: 'Capital & Risco Sistémico',
-    inputData: 'Dossiês de Crédito • Balanços • Regulação',
-    aiAction: 'Auditoria preditiva e cálculo dinâmico de risco de crédito',
-    outputDecision: 'Ajuste de limites e mitigação imediata de incumprimento',
-    metric: '-65% Tempo de Análise'
-  },
-  {
-    id: 'logistica',
-    title: 'Logística & Portos',
-    icon: Ship,
-    category: 'Cadeia de Suprimentos & Cais',
-    inputData: 'Manifestos de Carga • Tempos de Cais • Alfândegas',
-    aiAction: 'Previsão de congestionamento e cálculo de custos de demurrage',
-    outputDecision: 'Desembaraço prioritário e realocação de frotas',
-    metric: 'Zero Custos Evitáveis'
-  },
-  {
-    id: 'retalho',
-    title: 'Distribuição & Retalho',
-    icon: Store,
-    category: 'Volume & Margens de Venda',
-    inputData: 'Vendas ERP • Níveis de Stock • Caducidades',
-    aiAction: 'Deteção de produtos estagnados e veto a compras redundantes',
-    outputDecision: 'Plano de escoamento agressivo e congelamento de compras',
-    metric: '+22% Liquidez Libertada'
-  },
-  {
-    id: 'industria',
-    title: 'Indústria & Manufatura',
-    icon: Factory,
-    category: 'Produção & Manutenção',
-    inputData: 'Ordens de Fabrico • Matéria-Prima • Sensores OEE',
-    aiAction: 'Balanceamento de linhas e antecipação de quebras mecânicas',
-    outputDecision: 'Reprogramação de turnos e encomendas just-in-time',
-    metric: '-40% Tempos Mortos'
-  },
-  {
-    id: 'saude',
-    title: 'Saúde & Farmácias',
-    icon: HeartPulse,
-    category: 'Conformidade Crítica & Lotes',
-    inputData: 'Lotes Sifarma/ERP • Prazos de Validade • Receituário',
-    aiAction: 'Priorização de artigos em risco e sugestão de dispensas',
-    outputDecision: 'Microtarefas guiadas para as equipas operacionais de balcão',
-    metric: 'Zero Perdas de Validade'
-  }
+const SECTORS = [
+  { title: 'Banca & Seguros', icon: Landmark },
+  { title: 'Logística & Portos', icon: Ship },
+  { title: 'Distribuição & Retalho', icon: Store },
+  { title: 'Indústria & Manufatura', icon: Factory },
+  { title: 'Saúde & Farmácias', icon: HeartPulse }
 ];
 
 export default function PitchEnterprise() {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [selectedSector, setSelectedSector] = useState(2);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef<number | null>(null);
@@ -915,8 +865,8 @@ export default function PitchEnterprise() {
           currentSlide === 9 ? 'opacity-100 pointer-events-auto z-10' : 'opacity-0 pointer-events-none z-0'
         } bg-white text-[#131b2f]`}
       >
-        <div className="max-w-7xl mx-auto w-full flex flex-col justify-center items-center px-2 sm:px-4 text-center my-0 md:my-auto py-4 sm:py-8 md:py-10">
-          <div className="mb-4 sm:mb-6">
+        <div className="max-w-7xl mx-auto w-full flex flex-col justify-center items-center px-2 sm:px-6 text-center my-0 md:my-auto py-4 sm:py-8 md:py-10">
+          <div className="mb-6 sm:mb-10">
             <span className="text-teal-600 font-bold tracking-widest uppercase text-xs mb-2 block">
               Escala & Expansão
             </span>
@@ -928,161 +878,73 @@ export default function PitchEnterprise() {
             </p>
           </div>
           
-          {/* Arquitetura de Fluxo Multisetorial */}
-          <div className="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4 lg:gap-6 items-stretch relative">
+          {/* Desenho de Fluxo Limpo e Executivo */}
+          <div className="flex flex-col md:flex-row items-center justify-between w-full max-w-5xl relative gap-6 md:gap-0">
             
-            {/* COLUNA 1: Os 5 Setores Estratégicos (4 Colunas) */}
-            <div className="lg:col-span-4 flex flex-col justify-between space-y-2">
-              <div className="text-left flex items-center justify-between px-1 mb-0.5">
-                <span className="text-[10px] sm:text-[11px] font-mono uppercase tracking-wider text-slate-500 font-semibold flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-teal-500"></span>
-                  1. Setores de Capital Intensivo
+            {/* Bloco 1: Os 5 Setores */}
+            <div className="flex flex-col space-y-2.5 w-full md:w-1/3 relative z-10">
+              {SECTORS.map((sector) => {
+                const IconComponent = sector.icon;
+                return (
+                  <div
+                    key={sector.title}
+                    className="bg-white border border-slate-200/90 py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl shadow-sm flex items-center gap-3 text-left hover:border-teal-400 hover:shadow-md transition-all group relative"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-teal-50 border border-teal-100 flex items-center justify-center text-teal-600 group-hover:bg-teal-500 group-hover:text-white transition-colors flex-shrink-0">
+                      <IconComponent className="w-4 h-4" />
+                    </div>
+                    <span className="font-serif font-bold text-xs sm:text-sm text-[#131b2f]">
+                      {sector.title}
+                    </span>
+                    {/* Conector subtil à direita em desktop */}
+                    <div className="hidden md:block absolute -right-1.5 top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-teal-500 border-2 border-white"></div>
+                  </div>
+                );
+              })}
+            </div>
+            
+            {/* Bloco 2: Linha de Fluxo + Nó Central Motor IA */}
+            <div className="flex-1 flex justify-center items-center relative px-4 md:px-8 my-2 md:my-0 w-full">
+              {/* Linha horizontal contínua de fluxo no desktop */}
+              <div className="hidden md:block absolute w-full h-[2px] bg-gradient-to-r from-teal-300 via-teal-500 to-teal-300 top-1/2 left-0 -translate-y-1/2 z-0"></div>
+              
+              {/* Seta vertical no mobile */}
+              <div className="md:hidden flex flex-col items-center my-1 text-teal-500">
+                <ArrowDown className="w-5 h-5 animate-bounce" />
+              </div>
+
+              <div className="bg-[#131b2f] text-white p-5 sm:p-6 rounded-full border-[5px] border-[#14b8a6] shadow-[0_0_35px_rgba(20,184,166,0.35)] flex flex-col items-center justify-center w-36 h-36 sm:w-40 sm:h-40 relative z-10 transform hover:scale-105 transition-transform">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-teal-500/20 flex items-center justify-center mb-1 text-teal-400">
+                  <Cpu className="w-5 h-5 sm:w-6 sm:h-6" />
+                </div>
+                <span className="font-serif font-bold text-sm sm:text-base tracking-wider uppercase">
+                  Motor IA
                 </span>
-                <span className="text-[9px] sm:text-[10px] text-teal-600 font-mono">Clique para simular</span>
-              </div>
-
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-1 gap-1.5 sm:gap-2">
-                {SECTORS_DATA.map((sector, idx) => {
-                  const IconComponent = sector.icon;
-                  const isSelected = selectedSector === idx;
-                  const isLastOdd = idx === 4;
-                  return (
-                    <button
-                      key={sector.id}
-                      onClick={() => setSelectedSector(idx)}
-                      className={`w-full text-left p-2 sm:p-2.5 lg:p-3 rounded-xl transition-all duration-300 border flex items-center justify-between group cursor-pointer ${
-                        isLastOdd ? 'col-span-2 sm:col-span-1 lg:col-span-1' : ''
-                      } ${
-                        isSelected
-                          ? 'bg-[#131b2f] text-white border-teal-500 shadow-lg shadow-teal-500/10 scale-[1.01]'
-                          : 'bg-slate-50 text-slate-700 border-slate-200/80 hover:bg-slate-100 hover:border-slate-300'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-                        <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center transition-colors flex-shrink-0 ${
-                          isSelected 
-                            ? 'bg-teal-500 text-white' 
-                            : 'bg-white text-slate-600 border border-slate-200 group-hover:text-teal-600'
-                        }`}>
-                          <IconComponent className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                        </div>
-                        <div className="min-w-0">
-                          <div className={`font-serif font-bold text-xs sm:text-sm truncate ${isSelected ? 'text-white' : 'text-[#131b2f]'}`}>
-                            {sector.title}
-                          </div>
-                          <div className={`text-[9px] sm:text-[10px] truncate ${isSelected ? 'text-teal-300' : 'text-slate-500'}`}>
-                            {sector.category}
-                          </div>
-                        </div>
-                      </div>
-                      <ChevronRight className={`w-4 h-4 hidden lg:block transition-transform flex-shrink-0 ${
-                        isSelected ? 'text-teal-400 translate-x-1' : 'text-slate-300 group-hover:text-slate-400'
-                      }`} />
-                    </button>
-                  );
-                })}
+                <span className="text-[9px] font-mono uppercase tracking-widest text-teal-400 mt-0.5">
+                  Nuelltech Core
+                </span>
               </div>
             </div>
 
-            {/* COLUNA 2: Motor Nuelltech AI Core (4 Colunas) */}
-            <div className="lg:col-span-4 bg-gradient-to-br from-[#0c1322] via-[#131b2f] to-[#0f172a] text-white rounded-xl sm:rounded-2xl border border-slate-700/80 p-4 sm:p-5 shadow-2xl flex flex-col justify-between relative overflow-hidden text-left">
-              <div 
-                className="absolute inset-0 opacity-10 pointer-events-none" 
-                style={{ backgroundImage: 'radial-gradient(#14b8a6 1.5px, transparent 1.5px)', backgroundSize: '16px 16px' }}
-              />
-              <div className="absolute -top-12 -right-12 w-36 h-36 bg-teal-500/20 rounded-full blur-2xl pointer-events-none" />
-
-              <div className="relative z-10">
-                <div className="flex items-center justify-between pb-2.5 sm:pb-3 mb-3 sm:mb-4 border-b border-slate-800">
-                  <span className="text-[10px] sm:text-[11px] font-mono uppercase tracking-wider text-teal-400 font-semibold flex items-center gap-1.5">
-                    <Workflow className="w-3.5 h-3.5" />
-                    2. Nuelltech AI Core
-                  </span>
-                  <span className="text-[9px] sm:text-[10px] font-mono text-slate-400 px-1.5 sm:px-2 py-0.5 rounded bg-slate-800 border border-slate-700">
-                    Governação
-                  </span>
-                </div>
-
-                <div className="mb-3 sm:mb-4">
-                  <div className="text-[9px] sm:text-[10px] font-mono uppercase tracking-widest text-slate-400 mb-1">
-                    Ingestão Nativa ({SECTORS_DATA[selectedSector].title})
-                  </div>
-                  <div className="bg-slate-900/90 border border-slate-800 p-2 sm:p-2.5 rounded-lg text-[11px] sm:text-xs font-mono text-teal-300">
-                    {SECTORS_DATA[selectedSector].inputData}
-                  </div>
-                </div>
-
-                <div className="space-y-1.5 sm:space-y-2 mb-3 sm:mb-4">
-                  <div className="text-[9px] sm:text-[10px] font-mono uppercase tracking-widest text-slate-400">
-                    Processamento Neuronal
-                  </div>
-                  <div className="bg-teal-950/40 border border-teal-500/40 p-2.5 sm:p-3 rounded-lg text-xs text-slate-200 space-y-1 sm:space-y-1.5">
-                    <div className="flex items-start gap-1.5 sm:gap-2">
-                      <Zap className="w-3.5 h-3.5 text-teal-400 flex-shrink-0 mt-0.5" />
-                      <span className="font-medium text-white text-[11px] sm:text-xs">{SECTORS_DATA[selectedSector].aiAction}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] text-teal-300 pt-1 border-t border-teal-500/20">
-                      <CheckCircle2 className="w-3 h-3 text-teal-400 flex-shrink-0" />
-                      <span>Filtro de Políticas Internas & Conformidade</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="relative z-10 pt-2.5 sm:pt-3 border-t border-slate-800 flex items-center justify-between text-[9px] sm:text-[10px] font-mono text-slate-400">
-                <span>Latência: &lt;1.2s</span>
-                <span className="text-teal-400 font-semibold">Zero Alucinações</span>
-              </div>
+            {/* Seta vertical no mobile entre Motor IA e Decisão */}
+            <div className="md:hidden flex flex-col items-center -my-1 text-teal-500">
+              <ArrowDown className="w-5 h-5 animate-bounce" />
             </div>
-
-            {/* COLUNA 3: Governação Humana & Ação em Cascata (4 Colunas) */}
-            <div className="lg:col-span-4 bg-gradient-to-br from-teal-600 via-teal-700 to-[#0d9488] text-white rounded-xl sm:rounded-2xl p-4 sm:p-5 shadow-2xl flex flex-col justify-between text-left relative overflow-hidden">
-              <div>
-                <div className="flex items-center justify-between pb-2.5 sm:pb-3 mb-3 sm:mb-4 border-b border-teal-500/40">
-                  <span className="text-[10px] sm:text-[11px] font-mono uppercase tracking-wider text-teal-100 font-semibold flex items-center gap-1.5">
-                    <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-teal-200" />
-                    3. Decisão Humana Soberana
-                  </span>
-                  <span className="text-[9px] sm:text-[10px] font-mono uppercase bg-black/20 text-white px-2 py-0.5 rounded-full border border-white/20">
-                    100% Controlo
-                  </span>
+            
+            {/* Bloco 3: Decisão Humana */}
+            <div className="w-full md:w-1/3 flex flex-col items-center relative z-10">
+              <div className="bg-gradient-to-br from-teal-600 to-[#0d9488] text-white p-5 sm:p-7 rounded-2xl shadow-xl border border-teal-500/50 text-center w-full transform hover:-translate-y-1 transition-transform relative overflow-hidden">
+                <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-white/20 backdrop-blur-md mx-auto mb-3 flex items-center justify-center text-white shadow-sm">
+                  <ShieldCheck className="w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
-
-                <div className="mb-3 sm:mb-4">
-                  <div className="text-[9px] sm:text-[10px] font-mono uppercase tracking-widest text-teal-100 mb-1">
-                    Cenário Executivo Proposto
-                  </div>
-                  <div className="bg-black/25 border border-white/20 p-2.5 sm:p-3 rounded-xl">
-                    <div className="font-serif font-bold text-xs sm:text-sm text-white mb-1">
-                      {SECTORS_DATA[selectedSector].outputDecision}
-                    </div>
-                    <div className="inline-block mt-0.5 px-2 py-0.5 rounded-full bg-teal-400/20 text-teal-100 border border-teal-300/30 text-[10px] sm:text-xs font-mono font-semibold">
-                      Impacto: {SECTORS_DATA[selectedSector].metric}
-                    </div>
-                  </div>
+                <h3 className="font-serif font-bold text-lg sm:text-xl mb-2 text-white">Decisão Humana</h3>
+                <p className="text-xs sm:text-sm font-light text-teal-50 leading-relaxed mb-3">
+                  Validação executiva de Risco e Compliance, com ajuste rigoroso à realidade operacional da sua organização.
+                </p>
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-black/20 border border-white/20 text-[10px] font-mono text-teal-100">
+                  <span className="w-1.5 h-1.5 rounded-full bg-teal-300"></span>
+                  Governação 100% Humana
                 </div>
-
-                <div className="space-y-1 sm:space-y-1.5">
-                  <div className="text-[9px] sm:text-[10px] font-mono uppercase tracking-widest text-teal-100">
-                    Disparo Automático Multidepartamental
-                  </div>
-                  <div className="grid grid-cols-3 gap-1 sm:gap-1.5 text-center text-[9px] sm:text-[10px] font-mono text-white">
-                    <div className="bg-white/10 rounded-lg py-1 px-1 border border-white/15">
-                      ERP Core
-                    </div>
-                    <div className="bg-white/10 rounded-lg py-1 px-1 border border-white/15">
-                      WMS / Cais
-                    </div>
-                    <div className="bg-white/10 rounded-lg py-1 px-1 border border-white/15">
-                      App Terreno
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-2.5 sm:pt-3 border-t border-teal-500/40 flex items-center justify-between text-[10px] sm:text-[11px] text-teal-100">
-                <span className="font-light">Validação com 1-Clique</span>
-                <span className="font-mono font-semibold">Tempo Real</span>
               </div>
             </div>
 
