@@ -33,12 +33,14 @@ export function middleware(request: NextRequest) {
 
   if (pathnameHasLocale) return;
 
-  // Redirect folder root visits (/docs or /docs/estrategia) straight to homepage
+  // Redirect folder root visits (/docs, /docs/estrategia, /docs/pitch) straight to homepage
   if (
     pathname === '/docs' ||
     pathname === '/docs/' ||
     pathname === '/docs/estrategia' ||
-    pathname === '/docs/estrategia/'
+    pathname === '/docs/estrategia/' ||
+    pathname === '/docs/pitch' ||
+    pathname === '/docs/pitch/'
   ) {
     request.nextUrl.pathname = '/';
     return NextResponse.redirect(request.nextUrl);

@@ -345,6 +345,20 @@ export default function VirtualBusinessCard({ employee }: VirtualBusinessCardPro
 
   const availablePresentations: PresentationOption[] = [
     {
+      id: 'enterprise',
+      title: 'Pitch Deck Enterprise',
+      subtitle: 'Inteligência Institucional • Otimização multi-departamento e apoio à decisão',
+      badge: 'Enterprise',
+      badgeColor: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40',
+      path: '/docs/pitch/enterprise',
+      fullUrl: 'https://nuelltech.com/docs/pitch/enterprise',
+      icon: 'strategy',
+      getMessage: (name?: string) => {
+        const greeting = name ? `Olá ${name}!` : 'Olá!';
+        return `${greeting} Partilho a apresentação executiva da Nuelltech (Pitch Deck Enterprise) sobre Inteligência Institucional e otimização de processos: https://nuelltech.com/docs/pitch/enterprise`;
+      },
+    },
+    {
       id: 'angola',
       title: 'Memorando Estratégico Angola',
       subtitle: 'Plano de Abordagem ao Mercado Angolano • Otimização Institucional através de IA',
