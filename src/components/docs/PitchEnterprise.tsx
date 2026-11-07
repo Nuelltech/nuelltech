@@ -8,7 +8,17 @@ import {
   ArrowRight,
   TrendingDown,
   Megaphone,
-  Ban
+  Ban,
+  Database,
+  Cpu,
+  ShieldCheck,
+  CheckCircle2,
+  ArrowDown,
+  Activity,
+  Sparkles,
+  Boxes,
+  Users,
+  Zap
 } from 'lucide-react';
 
 export default function PitchEnterprise() {
@@ -345,25 +355,143 @@ export default function PitchEnterprise() {
           </div>
           
           <div className="relative mx-auto flex items-center justify-center w-full h-full">
-            <div className="w-full h-96 bg-slate-50 rounded-3xl border border-slate-200 flex flex-col justify-between p-6 sm:p-8 relative shadow-inner overflow-hidden">
-              <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(#14b8a6 2px, transparent 2px)', backgroundSize: '20px 20px' }}></div>
-              <div className="flex justify-between relative z-10 w-full sm:w-4/5 mx-auto gap-2">
-                <div className="bg-white px-3 sm:px-4 py-2 rounded-lg shadow text-xs font-semibold border-t-2 border-teal-500 text-slate-600 text-center">Vendas (ERP)</div>
-                <div className="bg-white px-3 sm:px-4 py-2 rounded-lg shadow text-xs font-semibold border-t-2 border-teal-500 text-slate-600 text-center">Stocks / Logística</div>
-                <div className="bg-white px-3 sm:px-4 py-2 rounded-lg shadow text-xs font-semibold border-t-2 border-teal-500 text-slate-600 text-center">CRM</div>
-              </div>
-              <div className="flex flex-col items-center justify-center relative z-10 my-4">
-                <div className="h-8 border-l-2 border-dashed border-teal-300 mb-2"></div>
-                <div className="bg-[#131b2f] text-white w-20 h-20 sm:w-24 sm:h-24 rounded-full shadow-lg border-4 border-teal-400 flex items-center justify-center flex-col">
-                  <span className="font-serif font-bold text-xl sm:text-2xl">IA</span>
+            <div className="w-full max-w-xl bg-gradient-to-br from-[#0c1322] via-[#131b2f] to-[#0f172a] rounded-3xl border border-slate-700/80 p-5 sm:p-7 relative shadow-2xl overflow-hidden text-white">
+              {/* Background ambient lighting & grid */}
+              <div 
+                className="absolute inset-0 opacity-15 pointer-events-none" 
+                style={{ backgroundImage: 'radial-gradient(#14b8a6 1.5px, transparent 1.5px)', backgroundSize: '18px 18px' }}
+              />
+              <div className="absolute -top-20 -right-20 w-56 h-56 bg-teal-500/15 rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute -bottom-20 -left-20 w-56 h-56 bg-cyan-500/15 rounded-full blur-3xl pointer-events-none" />
+
+              {/* Technical Top Bar */}
+              <div className="flex items-center justify-between pb-4 mb-5 border-b border-slate-800 relative z-10">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-teal-400 animate-ping" />
+                  <span className="text-[11px] font-mono uppercase tracking-wider text-teal-400 font-semibold">
+                    Pipeline de Inteligência Ativa
+                  </span>
                 </div>
-                <div className="h-8 border-l-2 border-dashed border-teal-300 mt-2"></div>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-teal-500/10 border border-teal-500/30 text-[10px] font-mono text-slate-300">
+                  <Activity className="w-3 h-3 text-teal-400" />
+                  Tempo Real
+                </span>
               </div>
-              <div className="bg-teal-600 text-white w-full rounded-xl p-4 shadow-lg flex items-center justify-center relative z-10">
-                <svg className="w-6 h-6 mr-3 text-teal-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-                <span className="font-serif font-bold text-base sm:text-lg">Validação & Decisão Executiva</span>
+
+              {/* Tier 1: Ingestion Sources */}
+              <div className="relative z-10 mb-3">
+                <div className="text-[10px] font-mono uppercase tracking-widest text-slate-400 mb-2 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-teal-500"></span>
+                  Fontes de Dados (Conectores Diretos)
+                </div>
+                <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                  <div className="bg-slate-900/80 border border-slate-800 hover:border-teal-500/50 transition-colors p-3 rounded-xl flex flex-col items-center text-center shadow-sm">
+                    <div className="w-8 h-8 rounded-lg bg-teal-500/15 border border-teal-500/30 flex items-center justify-center text-teal-400 mb-1.5">
+                      <Database className="w-4 h-4" />
+                    </div>
+                    <span className="font-semibold text-xs text-white">Vendas (ERP)</span>
+                    <span className="text-[10px] text-slate-400 mt-0.5 leading-tight">Faturação & Margens</span>
+                  </div>
+
+                  <div className="bg-slate-900/80 border border-slate-800 hover:border-teal-500/50 transition-colors p-3 rounded-xl flex flex-col items-center text-center shadow-sm">
+                    <div className="w-8 h-8 rounded-lg bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-400 mb-1.5">
+                      <Boxes className="w-4 h-4" />
+                    </div>
+                    <span className="font-semibold text-xs text-white">Stocks & WMS</span>
+                    <span className="text-[10px] text-slate-400 mt-0.5 leading-tight">Lotes & Validades</span>
+                  </div>
+
+                  <div className="bg-slate-900/80 border border-slate-800 hover:border-teal-500/50 transition-colors p-3 rounded-xl flex flex-col items-center text-center shadow-sm">
+                    <div className="w-8 h-8 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mb-1.5">
+                      <Users className="w-4 h-4" />
+                    </div>
+                    <span className="font-semibold text-xs text-white">CRM & Procura</span>
+                    <span className="text-[10px] text-slate-400 mt-0.5 leading-tight">Rotatividade Real</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Dynamic Connecting Lines into Engine */}
+              <div className="relative z-10 flex flex-col items-center my-1">
+                <div className="w-full flex items-center justify-center relative py-1">
+                  <div className="h-4 border-l-2 border-dashed border-teal-500/50"></div>
+                  <span className="absolute bg-[#0f172a] px-2.5 py-0.5 rounded-full border border-teal-500/30 text-[9px] font-mono text-teal-300 uppercase tracking-wider">
+                    Ingestão & Cruzamento Contínuo
+                  </span>
+                </div>
+              </div>
+
+              {/* Tier 2: Nuelltech AI Core Engine */}
+              <div className="relative z-10 my-2">
+                <div className="bg-gradient-to-r from-teal-950/60 via-slate-900/90 to-teal-950/60 border border-teal-500/50 rounded-2xl p-4 shadow-[0_0_25px_rgba(20,184,166,0.2)] relative overflow-hidden">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-lg bg-teal-500 text-white flex items-center justify-center shadow-md">
+                        <Cpu className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="font-serif font-bold text-sm text-white tracking-wide flex items-center gap-1.5">
+                          Motor Nuelltech AI Core
+                          <Sparkles className="w-3.5 h-3.5 text-teal-400" />
+                        </div>
+                        <div className="text-[10px] text-teal-300 font-mono">Dedução Económica & Previsão</div>
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-mono text-slate-400 border border-slate-700 px-2 py-0.5 rounded bg-slate-800/80">
+                      Zero Alucinações
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 mt-2 pt-2 border-t border-slate-800/80 text-[11px] text-slate-300 font-light">
+                    <div className="flex items-center gap-1.5">
+                      <CheckCircle2 className="w-3 h-3 text-teal-400 flex-shrink-0" />
+                      <span>Deteção de Anomalias & Risco</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <CheckCircle2 className="w-3 h-3 text-teal-400 flex-shrink-0" />
+                      <span>Simulação de Cenários de Caixa</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Connecting line to decision */}
+              <div className="relative z-10 flex flex-col items-center my-1">
+                <div className="w-full flex items-center justify-center relative py-1">
+                  <div className="h-4 border-l-2 border-dashed border-teal-500/50"></div>
+                  <span className="absolute bg-[#0f172a] px-2.5 py-0.5 rounded-full border border-teal-500/30 text-[9px] font-mono text-teal-300 uppercase tracking-wider">
+                    Proposta Estratégica
+                  </span>
+                </div>
+              </div>
+
+              {/* Tier 3: Human Executive Validation Cockpit */}
+              <div className="relative z-10 mt-1">
+                <div className="bg-gradient-to-r from-teal-600 to-[#0d9488] rounded-xl p-3.5 sm:p-4 shadow-lg text-white">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <ShieldCheck className="w-5 h-5 text-teal-100 flex-shrink-0" />
+                      <span className="font-serif font-bold text-sm sm:text-base">
+                        Validação & Decisão Executiva
+                      </span>
+                    </div>
+                    <span className="text-[10px] font-mono uppercase tracking-wider bg-white/20 px-2 py-0.5 rounded-full text-white font-medium">
+                      Humano no Controlo
+                    </span>
+                  </div>
+                  <p className="text-xs text-teal-50 font-light mb-2.5 leading-relaxed">
+                    A máquina calcula e recomenda os melhores cenários; a liderança valida com 1 clique e dispara a execução direta.
+                  </p>
+                  
+                  {/* Downstream branches */}
+                  <div className="flex items-center justify-between pt-2 border-t border-teal-400/40 text-[10px] font-mono text-teal-100 gap-1">
+                    <span className="truncate">→ Veto a Compras</span>
+                    <span>•</span>
+                    <span className="truncate">→ Ajuste Stock</span>
+                    <span>•</span>
+                    <span className="truncate">→ Tarefas Equipa</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
