@@ -18,7 +18,7 @@ export default function PitchEnterprise() {
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
 
-  const totalSlides = 9;
+  const totalSlides = 11;
 
   const nextSlide = useCallback(() => {
     setCurrentSlide((prev) => (prev < totalSlides - 1 ? prev + 1 : prev));
@@ -83,7 +83,7 @@ export default function PitchEnterprise() {
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
 
-  const isDarkSlide = [0, 2, 4, 8].includes(currentSlide);
+  const isDarkSlide = [0, 4, 8, 10].includes(currentSlide);
 
   return (
     <div 
@@ -545,11 +545,180 @@ export default function PitchEnterprise() {
       </section>
 
       {/* ======================================================== */}
-      {/* SLIDE 8: Aplicabilidade no Tecido Empresarial (White - GENÉRICO) */}
+      {/* SLIDE 8: Orquestração Silenciosa (Slate-50) */}
+      {/* ======================================================== */}
+      <section 
+        className={`absolute inset-0 w-full h-full flex flex-col justify-center px-6 sm:px-12 md:px-20 transition-opacity duration-700 overflow-y-auto ${
+          currentSlide === 7 ? 'opacity-100 pointer-events-auto z-10' : 'opacity-0 pointer-events-none z-0'
+        } bg-slate-50 text-[#131b2f]`}
+      >
+        <div className="max-w-6xl mx-auto w-full text-center mb-12 sm:mb-16 px-4 sm:px-8 my-auto py-16">
+          <span className="text-teal-600 font-bold tracking-widest uppercase text-xs mb-4 block">
+            Orquestração Silenciosa
+          </span>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold mb-6 tracking-wide text-[#131b2f]">
+            Visão Adaptativa & Impacto
+          </h2>
+          <p className="text-base sm:text-lg text-slate-600 max-w-3xl mx-auto font-light">
+            O BI Pharma ramifica a sua decisão de forma automática, garantindo que nenhum departamento fica desfasado.
+          </p>
+
+          <div className="max-w-6xl mx-auto w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 text-center mt-12">
+            <div className="bg-white p-6 sm:p-8 rounded-2xl border-t-2 border-teal-500 shadow-sm relative text-left">
+              <h3 className="font-serif font-bold text-[#131b2f] mb-3 text-lg">
+                Decisão Gestão
+              </h3>
+              <p className="text-sm text-slate-500 font-light">
+                Administração aprova plano proposto pelo Copilot.
+              </p>
+            </div>
+
+            <div className="bg-white p-6 sm:p-8 rounded-2xl border-t-2 border-[#e11d48] shadow-sm relative text-left mt-0 sm:mt-6">
+              <div className="hidden lg:block absolute -top-6 left-1/2 w-[1px] h-6 bg-[#e11d48] opacity-50"></div>
+              <h3 className="font-serif font-bold text-[#131b2f] mb-3 text-lg">
+                Compras
+              </h3>
+              <p className="text-sm text-slate-500 font-light">
+                Bloqueio automático de encomendas redundantes.
+              </p>
+            </div>
+
+            <div className="bg-white p-6 sm:p-8 rounded-2xl border-t-2 border-[#e11d48] shadow-sm relative text-left mt-0 sm:mt-6">
+              <div className="hidden lg:block absolute -top-6 left-1/2 w-[1px] h-6 bg-[#e11d48] opacity-50"></div>
+              <h3 className="font-serif font-bold text-[#131b2f] mb-3 text-lg">
+                Inventário
+              </h3>
+              <p className="text-sm text-slate-500 font-light">
+                Ajuste de mínimos e parametrização de stocks.
+              </p>
+            </div>
+
+            <div className="bg-white p-6 sm:p-8 rounded-2xl border-t-2 border-[#e11d48] shadow-sm relative text-left mt-0 sm:mt-6">
+              <div className="hidden lg:block absolute -top-6 left-1/2 w-[1px] h-6 bg-[#e11d48] opacity-50"></div>
+              <h3 className="font-serif font-bold text-[#131b2f] mb-3 text-lg">
+                App Terreno
+              </h3>
+              <p className="text-sm text-slate-500 font-light">
+                Tarefas operacionais e promos enviadas para a equipa.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ======================================================== */}
+      {/* SLIDE 9: Ação no Terreno com Telemóvel Android e Vídeo 3 (Navy) */}
       {/* ======================================================== */}
       <section 
         className={`absolute inset-0 w-full h-full flex flex-col justify-center px-4 sm:px-8 md:px-16 transition-opacity duration-700 overflow-y-auto ${
-          currentSlide === 7 ? 'opacity-100 pointer-events-auto z-10' : 'opacity-0 pointer-events-none z-0'
+          currentSlide === 8 ? 'opacity-100 pointer-events-auto z-10' : 'opacity-0 pointer-events-none z-0'
+        } bg-[#131b2f] text-white`}
+      >
+        <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center px-4 sm:px-8 my-auto py-16">
+          <div className="lg:pr-12">
+            <span className="text-teal-500 font-bold tracking-widest uppercase text-xs mb-4 block">
+              A Última Milha
+            </span>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold mb-6 tracking-wide text-white">
+              Execução Direta no Balcão
+            </h2>
+            <p className="text-base sm:text-lg font-light text-slate-300 mb-8 sm:mb-12 border-l-2 border-teal-500 pl-6 leading-relaxed">
+              A IA não fica confinada à gestão. O sistema distribui microtarefas guiadas diretamente para os telemóveis das equipas operacionais.
+            </p>
+            <ul className="space-y-6 sm:space-y-8 text-slate-300 font-light">
+              <li className="flex items-start">
+                <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center mt-1 mr-4 flex-shrink-0 text-teal-400">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-lg font-serif font-bold text-white mb-1">
+                    Priorização Automática
+                  </h3>
+                  <p className="text-sm leading-relaxed text-slate-400">
+                    Tarefas de risco organizadas por categorias de urgência: Validades a expirar e Ruturas de stock inadiáveis.
+                  </p>
+                </div>
+              </li>
+
+              <li className="flex items-start">
+                <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center mt-1 mr-4 flex-shrink-0 text-teal-400">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-lg font-serif font-bold text-white mb-1">
+                    Ação Específica e Guiada
+                  </h3>
+                  <p className="text-sm leading-relaxed text-slate-400">
+                    Instruções claras e diretas, como &ldquo;Separar fisicamente da prateleira&rdquo; ou colocar em destaque imediato.
+                  </p>
+                </div>
+              </li>
+
+              <li className="flex items-start">
+                <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center mt-1 mr-4 flex-shrink-0 text-teal-400">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08-.402-2.599-1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-lg font-serif font-bold text-white mb-1">
+                    Motivação Financeira (Gamification)
+                  </h3>
+                  <p className="text-sm leading-relaxed text-slate-400">
+                    A equipa visualiza no topo da App os Euros poupados em tempo real pelas suas ações diárias.
+                  </p>
+                </div>
+              </li>
+            </ul>
+          </div>
+          
+          {/* MOCKUP EXATO DO CÓDIGO ORIGINAL COM NOTCH E BOTÕES ANDROID */}
+          <div className="relative mx-auto flex items-center justify-center">
+            <div className="absolute inset-0 bg-teal-500 blur-3xl opacity-20 transform scale-90"></div>
+            <div 
+              className="relative w-[375px] h-[600px] bg-black border-[12px] border-slate-800 overflow-hidden flex flex-col shadow-2xl rounded-[2.5rem]"
+              style={{ boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255,255,255,0.1)' }}
+            >
+              {/* Phone Notch conforme original */}
+              <div 
+                className="absolute top-0 left-1/2 -translate-x-1/2 w-[40%] h-[24px] bg-[#0f172a] rounded-b-2xl z-20"
+              />
+
+              {/* Video container com pb-12 e h-[calc(100%+3rem)] conforme original */}
+              <div className="flex-1 w-full relative flex items-center justify-center bg-black pb-12 overflow-hidden">
+                <video 
+                  src="/videos/saude/mobile_balcao.mp4" 
+                  autoPlay 
+                  loop 
+                  muted 
+                  playsInline 
+                  className="absolute top-0 left-0 w-full h-[calc(100%+3rem)] object-contain"
+                />
+              </div>
+
+              {/* Botões Android inferiores conforme o código original */}
+              <div className="absolute bottom-0 left-0 right-0 h-12 bg-black flex items-center justify-around px-10 z-30 border-t border-slate-900">
+                <svg className="w-6 h-6 text-slate-400 opacity-80" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/>
+                </svg>
+                <div className="w-4 h-4 rounded-full border-[2.5px] border-slate-400 opacity-80"></div>
+                <div className="w-4 h-4 border-[2.5px] border-slate-400 rounded-sm opacity-80"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ======================================================== */}
+      {/* SLIDE 10: Aplicabilidade no Tecido Empresarial (White - GENÉRICO) */}
+      {/* ======================================================== */}
+      <section 
+        className={`absolute inset-0 w-full h-full flex flex-col justify-center px-4 sm:px-8 md:px-16 transition-opacity duration-700 overflow-y-auto ${
+          currentSlide === 9 ? 'opacity-100 pointer-events-auto z-10' : 'opacity-0 pointer-events-none z-0'
         } bg-white text-[#131b2f]`}
       >
         <div className="max-w-7xl mx-auto w-full flex flex-col justify-center items-center px-4 sm:px-8 text-center my-auto py-12" style={{ minHeight: '85vh' }}>
@@ -611,11 +780,11 @@ export default function PitchEnterprise() {
       </section>
 
       {/* ======================================================== */}
-      {/* SLIDE 9: Sessão de Diagnóstico Executivo (Dark Navy - GENÉRICO) */}
+      {/* SLIDE 11: Sessão de Diagnóstico Executivo (Dark Navy - GENÉRICO) */}
       {/* ======================================================== */}
       <section 
         className={`absolute inset-0 w-full h-full flex flex-col justify-center items-center px-6 sm:px-12 md:px-20 transition-opacity duration-700 overflow-y-auto ${
-          currentSlide === 8 ? 'opacity-100 pointer-events-auto z-10' : 'opacity-0 pointer-events-none z-0'
+          currentSlide === 10 ? 'opacity-100 pointer-events-auto z-10' : 'opacity-0 pointer-events-none z-0'
         } bg-[#131b2f] text-white text-center relative overflow-hidden`}
       >
         <div className="max-w-4xl mx-auto w-full px-8 relative z-10 flex flex-col items-center justify-center my-auto py-20">
