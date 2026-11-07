@@ -266,7 +266,7 @@ export default function PitchEnterprise() {
                 <h3 className="text-xl sm:text-2xl font-serif font-bold text-slate-500">O que NÃO fazemos</h3>
               </div>
               <p className="text-slate-500 font-light leading-relaxed text-sm sm:text-base">
-                Não criamos apenas &ldquo;chatbots genéricos&rdquo; de atendimento ao cliente ou geradores de imagens para marketing. O mercado está saturado de promessas superficiais que não tocam no núcleo do negócio.
+                Não criamos apenas chatbots genéricos de atendimento ao cliente ou geradores de imagens para marketing. A nossa intervenção atua estritamente na resolução de estrangulamentos operacionais e logísticos.
               </p>
             </div>
 
