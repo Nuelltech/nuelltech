@@ -197,11 +197,11 @@ export default function PitchEnterprise() {
       {/* SLIDE 1: Capa (Dark Navy) */}
       {/* ======================================================== */}
       <section 
-        className={`absolute inset-0 w-full h-full flex flex-col justify-start md:justify-center px-4 sm:px-8 md:px-16 transition-opacity duration-700 overflow-y-auto overflow-x-hidden pt-20 pb-28 md:py-16 ${
+        className={`absolute inset-0 w-full h-full flex flex-col justify-start px-4 sm:px-8 md:px-16 transition-opacity duration-700 overflow-y-auto overflow-x-hidden pt-24 sm:pt-28 pb-24 sm:pb-28 ${
           currentSlide === 0 ? 'opacity-100 pointer-events-auto z-10' : 'opacity-0 pointer-events-none z-0'
         } bg-[#131b2f] text-white`}
       >
-        <div className="max-w-6xl mx-auto w-full px-2 sm:px-6 my-0 md:my-auto py-4 sm:py-8 md:py-12">
+        <div className="max-w-6xl mx-auto w-full px-2 sm:px-6 my-auto py-2 sm:py-6">
           <div className="w-12 h-[3px] bg-[#14b8a6] mb-6 sm:mb-8" />
           <span className="text-[#14b8a6] font-bold tracking-widest uppercase text-xs sm:text-sm mb-3 sm:mb-4 block">
             Governação & Eficiência Operacional
@@ -219,11 +219,11 @@ export default function PitchEnterprise() {
       {/* SLIDE 2: O Paradigma Atual / A Dor (White) */}
       {/* ======================================================== */}
       <section 
-        className={`absolute inset-0 w-full h-full flex flex-col justify-start md:justify-center px-4 sm:px-8 md:px-16 transition-opacity duration-700 overflow-y-auto overflow-x-hidden pt-20 pb-28 md:py-16 ${
+        className={`absolute inset-0 w-full h-full flex flex-col justify-start px-4 sm:px-8 md:px-16 transition-opacity duration-700 overflow-y-auto overflow-x-hidden pt-24 sm:pt-28 pb-24 sm:pb-28 ${
           currentSlide === 1 ? 'opacity-100 pointer-events-auto z-10' : 'opacity-0 pointer-events-none z-0'
         } bg-white text-[#131b2f]`}
       >
-        <div className="max-w-6xl mx-auto w-full px-2 sm:px-6 my-0 md:my-auto py-4 sm:py-8 md:py-12">
+        <div className="max-w-6xl mx-auto w-full px-2 sm:px-6 my-auto py-2 sm:py-6">
           <span className="text-teal-600 font-bold tracking-widest uppercase text-xs mb-3 sm:mb-4 block">
             O Paradigma Atual
           </span>
@@ -269,11 +269,11 @@ export default function PitchEnterprise() {
       {/* SLIDE 3: Posicionamento da Nuelltech (Slate-50) */}
       {/* ======================================================== */}
       <section 
-        className={`absolute inset-0 w-full h-full flex flex-col justify-start md:justify-center px-4 sm:px-8 md:px-16 transition-opacity duration-700 overflow-y-auto overflow-x-hidden pt-20 pb-28 md:py-16 ${
+        className={`absolute inset-0 w-full h-full flex flex-col justify-start px-4 sm:px-8 md:px-16 transition-opacity duration-700 overflow-y-auto overflow-x-hidden pt-24 sm:pt-28 pb-24 sm:pb-28 ${
           currentSlide === 2 ? 'opacity-100 pointer-events-auto z-10' : 'opacity-0 pointer-events-none z-0'
         } bg-slate-50 text-[#131b2f]`}
       >
-        <div className="max-w-6xl mx-auto w-full px-2 sm:px-6 my-0 md:my-auto py-4 sm:py-8 md:py-12">
+        <div className="max-w-6xl mx-auto w-full px-2 sm:px-6 my-auto py-2 sm:py-6">
           <span className="text-teal-600 font-bold tracking-widest uppercase text-xs mb-3 sm:mb-4 block">
             Posicionamento Nuelltech
           </span>
@@ -317,11 +317,11 @@ export default function PitchEnterprise() {
       {/* SLIDE 4: Valor no Terreno / Decisão (White) */}
       {/* ======================================================== */}
       <section 
-        className={`absolute inset-0 w-full h-full flex flex-col justify-start md:justify-center px-4 sm:px-8 md:px-16 transition-opacity duration-700 overflow-y-auto overflow-x-hidden pt-20 pb-28 md:py-16 ${
+        className={`absolute inset-0 w-full h-full flex flex-col justify-start px-4 sm:px-8 md:px-16 transition-opacity duration-700 overflow-y-auto overflow-x-hidden pt-24 sm:pt-28 pb-24 sm:pb-28 ${
           currentSlide === 3 ? 'opacity-100 pointer-events-auto z-10' : 'opacity-0 pointer-events-none z-0'
         } bg-white text-[#131b2f]`}
       >
-        <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center px-2 sm:px-6 my-0 md:my-auto py-4 sm:py-8 md:py-12">
+        <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center px-2 sm:px-6 my-auto py-2 sm:py-6">
           <div className="lg:pr-12">
             <span className="text-teal-500 font-bold tracking-widest uppercase text-xs mb-3 sm:mb-4 block">
               Valor no Terreno
@@ -518,11 +518,11 @@ export default function PitchEnterprise() {
       {/* SLIDE 5: Transição: A Prova de Conceito (Dark Navy) */}
       {/* ======================================================== */}
       <section 
-        className={`absolute inset-0 w-full h-full flex flex-col justify-start md:justify-center items-center px-4 sm:px-8 md:px-16 transition-opacity duration-700 overflow-y-auto overflow-x-hidden pt-20 pb-28 md:py-16 ${
+        className={`absolute inset-0 w-full h-full flex flex-col justify-start items-center px-4 sm:px-8 md:px-16 transition-opacity duration-700 overflow-y-auto overflow-x-hidden pt-24 sm:pt-28 pb-24 sm:pb-28 ${
           currentSlide === 4 ? 'opacity-100 pointer-events-auto z-10' : 'opacity-0 pointer-events-none z-0'
         } bg-[#131b2f] text-white text-center`}
       >
-        <div className="max-w-5xl mx-auto w-full px-2 sm:px-6 my-0 md:my-auto py-4 sm:py-8 md:py-12 flex flex-col items-center justify-center">
+        <div className="max-w-5xl mx-auto w-full px-2 sm:px-6 my-auto py-2 sm:py-6 flex flex-col items-center justify-center">
           <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full bg-[#14b8a6] mb-4 sm:mb-6 flex items-center justify-center shadow-[0_0_30px_rgba(20,184,166,0.3)] transform hover:scale-105 transition-transform">
             <svg className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
@@ -547,11 +547,11 @@ export default function PitchEnterprise() {
       {/* SLIDE 6: Gestão Conversa Copilot - Vídeo (White) */}
       {/* ======================================================== */}
       <section 
-        className={`absolute inset-0 w-full h-full flex flex-col justify-start md:justify-center px-4 sm:px-8 md:px-16 transition-opacity duration-700 overflow-y-auto overflow-x-hidden pt-20 pb-28 md:py-16 ${
+        className={`absolute inset-0 w-full h-full flex flex-col justify-start px-4 sm:px-8 md:px-16 transition-opacity duration-700 overflow-y-auto overflow-x-hidden pt-24 sm:pt-28 pb-24 sm:pb-28 ${
           currentSlide === 5 ? 'opacity-100 pointer-events-auto z-10' : 'opacity-0 pointer-events-none z-0'
         } bg-white text-[#131b2f]`}
       >
-        <div className="max-w-[90rem] mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-center px-2 sm:px-6 my-0 md:my-auto py-4 sm:py-8 md:py-12">
+        <div className="max-w-[90rem] mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-center px-2 sm:px-6 my-auto py-2 sm:py-6">
           <div className="lg:col-span-5">
             <span className="text-teal-600 font-bold tracking-widest uppercase text-xs mb-3 sm:mb-4 block">
               Evolução do Interface
@@ -624,57 +624,57 @@ export default function PitchEnterprise() {
       {/* SLIDE 7: Da Decisão à "Folha de Ações" - Vídeo 16:9 (White) */}
       {/* ======================================================== */}
       <section 
-        className={`absolute inset-0 w-full h-full flex flex-col justify-start md:justify-center px-4 sm:px-8 md:px-16 transition-opacity duration-700 overflow-y-auto overflow-x-hidden pt-20 pb-28 md:py-16 ${
+        className={`absolute inset-0 w-full h-full flex flex-col justify-start px-4 sm:px-8 md:px-16 transition-opacity duration-700 overflow-y-auto overflow-x-hidden pt-24 sm:pt-28 pb-24 sm:pb-28 ${
           currentSlide === 6 ? 'opacity-100 pointer-events-auto z-10' : 'opacity-0 pointer-events-none z-0'
         } bg-white text-[#131b2f]`}
       >
-        <div className="max-w-7xl mx-auto w-full px-2 sm:px-6 flex flex-col justify-between my-0 md:my-auto py-4 sm:py-8 md:py-12">
-          <div className="text-center mb-4 sm:mb-6">
-            <span className="text-teal-600 font-bold tracking-widest uppercase text-xs mb-2 sm:mb-3 block">
+        <div className="max-w-6xl mx-auto w-full px-2 sm:px-6 flex flex-col justify-between my-auto py-2 sm:py-6">
+          <div className="text-center mb-3 sm:mb-5">
+            <span className="text-teal-600 font-bold tracking-widest uppercase text-xs mb-1.5 sm:mb-2 block">
               Fluxo Multidepartamental
             </span>
-            <h2 className="text-2xl sm:text-4xl md:text-[3rem] font-serif font-bold mb-2 sm:mb-3 tracking-wide text-[#131b2f]">
+            <h2 className="text-2xl sm:text-4xl md:text-[2.75rem] font-serif font-bold mb-1.5 sm:mb-2 tracking-wide text-[#131b2f]">
               Da Decisão à &ldquo;Folha de Ações&rdquo;
             </h2>
-            <p className="text-sm sm:text-base md:text-lg text-slate-600 font-light max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xs sm:text-sm md:text-base text-slate-600 font-light max-w-3xl mx-auto leading-relaxed">
               A aprovação do gestor transforma-se imediatamente em tarefas para as equipas operacionais, bloqueando compras erradas e focando no escoamento.
             </p>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6 mb-4 sm:mb-6 z-10">
-            <div className="bg-white border-t-[4px] border-[#e11d48] p-4 sm:p-6 rounded-b-xl shadow-lg flex flex-col items-start border border-slate-100">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-red-50 rounded-full flex items-center justify-center mb-2 sm:mb-4 text-[#e11d48]">
-                <Ban className="w-4 h-4 sm:w-5 sm:h-5" />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-5 mb-3 sm:mb-5 z-10">
+            <div className="bg-white border-t-[4px] border-[#e11d48] p-3 sm:p-5 rounded-b-xl shadow-lg flex flex-col items-start border border-slate-100">
+              <div className="w-7 h-7 sm:w-9 sm:h-9 bg-red-50 rounded-full flex items-center justify-center mb-2 sm:mb-3 text-[#e11d48]">
+                <Ban className="w-3.5 h-3.5 sm:w-4.5 sm:h-4.5" />
               </div>
-              <h3 className="font-serif font-bold text-base sm:text-xl text-[#131b2f] mb-1 sm:mb-2">O que NÃO encomendar</h3>
+              <h3 className="font-serif font-bold text-sm sm:text-lg text-[#131b2f] mb-1">O que NÃO encomendar</h3>
               <p className="text-slate-500 font-light leading-relaxed text-xs">
                 Bloqueio inteligente de compras aos fornecedores, justificado ativamente pelo sistema.
               </p>
             </div>
 
-            <div className="bg-white border-t-[4px] border-amber-500 p-4 sm:p-6 rounded-b-xl shadow-lg flex flex-col items-start border border-slate-100">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-amber-50 rounded-full flex items-center justify-center mb-2 sm:mb-4 text-amber-500">
-                <TrendingDown className="w-4 h-4 sm:w-5 sm:h-5" />
+            <div className="bg-white border-t-[4px] border-amber-500 p-3 sm:p-5 rounded-b-xl shadow-lg flex flex-col items-start border border-slate-100">
+              <div className="w-7 h-7 sm:w-9 sm:h-9 bg-amber-50 rounded-full flex items-center justify-center mb-2 sm:mb-3 text-amber-500">
+                <TrendingDown className="w-3.5 h-3.5 sm:w-4.5 sm:h-4.5" />
               </div>
-              <h3 className="font-serif font-bold text-base sm:text-xl text-[#131b2f] mb-1 sm:mb-2">Escoar Stock Parado</h3>
+              <h3 className="font-serif font-bold text-sm sm:text-lg text-[#131b2f] mb-1">Escoar Stock Parado</h3>
               <p className="text-slate-500 font-light leading-relaxed text-xs">
                 Priorização de inventário e identificação de produtos próximos do risco de caducidade.
               </p>
             </div>
 
-            <div className="bg-white border-t-[4px] border-[#14b8a6] p-4 sm:p-6 rounded-b-xl shadow-lg flex flex-col items-start border border-slate-100">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-teal-50 rounded-full flex items-center justify-center mb-2 sm:mb-4 text-teal-600">
-                <Megaphone className="w-4 h-4 sm:w-5 sm:h-5" />
+            <div className="bg-white border-t-[4px] border-[#14b8a6] p-3 sm:p-5 rounded-b-xl shadow-lg flex flex-col items-start border border-slate-100">
+              <div className="w-7 h-7 sm:w-9 sm:h-9 bg-teal-50 rounded-full flex items-center justify-center mb-2 sm:mb-3 text-teal-600">
+                <Megaphone className="w-3.5 h-3.5 sm:w-4.5 sm:h-4.5" />
               </div>
-              <h3 className="font-serif font-bold text-base sm:text-xl text-[#131b2f] mb-1 sm:mb-2">Marketing e Vendas</h3>
+              <h3 className="font-serif font-bold text-sm sm:text-lg text-[#131b2f] mb-1">Marketing e Vendas</h3>
               <p className="text-slate-500 font-light leading-relaxed text-xs">
                 Sugestão de campanhas cruzando produtos parados com o calendário civil.
               </p>
             </div>
           </div>
 
-          {/* VÍDEO FOLHA AÇÕES (conforme o original) */}
-          <div className="relative w-full min-h-[180px] sm:min-h-[240px] md:min-h-[300px] border border-slate-200 rounded-xl bg-black flex items-center justify-center overflow-hidden shadow-2xl">
+          {/* VÍDEO FOLHA AÇÕES (proporção e altura optimizadas para qualquer monitor desktop) */}
+          <div className="relative w-full max-w-4xl mx-auto h-[220px] sm:h-[300px] md:h-[340px] lg:h-[380px] border border-slate-200 rounded-xl bg-black flex items-center justify-center overflow-hidden shadow-2xl">
             <video 
               src="/videos/saude/acoes_semana.mp4" 
               controls 
@@ -682,7 +682,7 @@ export default function PitchEnterprise() {
               muted 
               loop 
               playsInline 
-              className="w-full h-full object-cover aspect-video"
+              className="w-full h-full object-contain"
             />
           </div>
         </div>
@@ -692,11 +692,11 @@ export default function PitchEnterprise() {
       {/* SLIDE 8: Orquestração Silenciosa (Slate-50) */}
       {/* ======================================================== */}
       <section 
-        className={`absolute inset-0 w-full h-full flex flex-col justify-start md:justify-center px-4 sm:px-8 md:px-16 transition-opacity duration-700 overflow-y-auto overflow-x-hidden pt-20 pb-28 md:py-16 ${
+        className={`absolute inset-0 w-full h-full flex flex-col justify-start px-4 sm:px-8 md:px-16 transition-opacity duration-700 overflow-y-auto overflow-x-hidden pt-24 sm:pt-28 pb-24 sm:pb-28 ${
           currentSlide === 7 ? 'opacity-100 pointer-events-auto z-10' : 'opacity-0 pointer-events-none z-0'
         } bg-slate-50 text-[#131b2f]`}
       >
-        <div className="max-w-6xl mx-auto w-full text-center px-2 sm:px-6 my-0 md:my-auto py-4 sm:py-8 md:py-12">
+        <div className="max-w-6xl mx-auto w-full text-center px-2 sm:px-6 my-auto py-2 sm:py-6">
           <span className="text-teal-600 font-bold tracking-widest uppercase text-xs mb-3 sm:mb-4 block">
             Orquestração Silenciosa
           </span>
@@ -754,11 +754,11 @@ export default function PitchEnterprise() {
       {/* SLIDE 9: Ação no Terreno com Telemóvel Android e Vídeo 3 (Navy) */}
       {/* ======================================================== */}
       <section 
-        className={`absolute inset-0 w-full h-full flex flex-col justify-start md:justify-center px-4 sm:px-8 md:px-16 transition-opacity duration-700 overflow-y-auto overflow-x-hidden pt-20 pb-28 md:py-16 ${
+        className={`absolute inset-0 w-full h-full flex flex-col justify-start px-4 sm:px-8 md:px-16 transition-opacity duration-700 overflow-y-auto overflow-x-hidden pt-24 sm:pt-28 pb-24 sm:pb-28 ${
           currentSlide === 8 ? 'opacity-100 pointer-events-auto z-10' : 'opacity-0 pointer-events-none z-0'
         } bg-[#131b2f] text-white`}
       >
-        <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center px-2 sm:px-6 my-0 md:my-auto py-4 sm:py-8 md:py-12">
+        <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center px-2 sm:px-6 my-auto py-2 sm:py-6">
           <div className="lg:pr-12">
             <span className="text-teal-500 font-bold tracking-widest uppercase text-xs mb-3 sm:mb-4 block">
               A Última Milha
@@ -861,11 +861,11 @@ export default function PitchEnterprise() {
       {/* SLIDE 10: Aplicabilidade no Tecido Empresarial (White - GENÉRICO) */}
       {/* ======================================================== */}
       <section 
-        className={`absolute inset-0 w-full h-full flex flex-col justify-start md:justify-center px-4 sm:px-8 md:px-12 transition-opacity duration-700 overflow-y-auto overflow-x-hidden pt-20 pb-28 md:py-16 ${
+        className={`absolute inset-0 w-full h-full flex flex-col justify-start px-4 sm:px-8 md:px-12 transition-opacity duration-700 overflow-y-auto overflow-x-hidden pt-24 sm:pt-28 pb-24 sm:pb-28 ${
           currentSlide === 9 ? 'opacity-100 pointer-events-auto z-10' : 'opacity-0 pointer-events-none z-0'
         } bg-white text-[#131b2f]`}
       >
-        <div className="max-w-7xl mx-auto w-full flex flex-col justify-center items-center px-2 sm:px-6 text-center my-0 md:my-auto py-4 sm:py-8 md:py-10">
+        <div className="max-w-7xl mx-auto w-full flex flex-col justify-center items-center px-2 sm:px-6 text-center my-auto py-2 sm:py-6">
           <div className="mb-6 sm:mb-10">
             <span className="text-teal-600 font-bold tracking-widest uppercase text-xs mb-2 block">
               Escala & Expansão
@@ -956,11 +956,11 @@ export default function PitchEnterprise() {
       {/* SLIDE 11: Sessão de Diagnóstico Executivo (Dark Navy - GENÉRICO) */}
       {/* ======================================================== */}
       <section 
-        className={`absolute inset-0 w-full h-full flex flex-col justify-start md:justify-center items-center px-4 sm:px-8 md:px-16 transition-opacity duration-700 overflow-y-auto overflow-x-hidden pt-20 pb-28 md:py-16 ${
+        className={`absolute inset-0 w-full h-full flex flex-col justify-start items-center px-4 sm:px-8 md:px-16 transition-opacity duration-700 overflow-y-auto overflow-x-hidden pt-24 sm:pt-28 pb-24 sm:pb-28 ${
           currentSlide === 10 ? 'opacity-100 pointer-events-auto z-10' : 'opacity-0 pointer-events-none z-0'
         } bg-[#131b2f] text-white text-center relative overflow-hidden`}
       >
-        <div className="max-w-4xl mx-auto w-full px-2 sm:px-6 relative z-10 flex flex-col items-center justify-center my-0 md:my-auto py-4 sm:py-8 md:py-12">
+        <div className="max-w-4xl mx-auto w-full px-2 sm:px-6 relative z-10 flex flex-col items-center justify-center my-auto py-2 sm:py-6">
           <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-bold mb-4 sm:mb-6 tracking-wide leading-tight text-white">
             Sessão de Diagnóstico Executivo
           </h2>
