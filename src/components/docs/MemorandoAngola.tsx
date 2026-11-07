@@ -171,7 +171,7 @@ export default function MemorandoAngola() {
               </h3>
               <ul className="list-disc pl-5 sm:pl-6 space-y-1 text-sm sm:text-[10.5pt] leading-relaxed text-[#334155]">
                 <li><strong className="text-[#131b2f]">Ação:</strong> Roll-out da arquitetura institucional em larga escala corporativa.</li>
-                <li><strong className="text-[#131b2f]">Objetivo:</strong> Para além da instalação tecnológica, a Nuelltech compromete-se a formar e capacitar as equipas operacionais e os quadros de gestão angolanos para integrarem e governarem ferramentas de IA de classe mundial.</li>
+                <li><strong className="text-[#131b2f]">Objetivo:</strong> Para além da instalação tecnológica, a Nuelltech compromete-se a formar e capacitar as equipas operacionais e os quadros de gestão angolanos para integrarem e governarem ferramentas de IA.</li>
               </ul>
             </div>
           </div>
