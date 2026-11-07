@@ -1,23 +1,30 @@
 User-agent: *
+Disallow: /docs/
 Allow: /
 
-# Explicitly allow major AI crawlers
+# Explicitly allow major AI crawlers for general site, but disallow private docs
 User-agent: GPTBot
+Disallow: /docs/
 Allow: /
 
 User-agent: ClaudeBot
+Disallow: /docs/
 Allow: /
 
 User-agent: PerplexityBot
+Disallow: /docs/
 Allow: /
 
 User-agent: Applebot
+Disallow: /docs/
 Allow: /
 
 User-agent: Google-Extended
+Disallow: /docs/
 Allow: /
 
 User-agent: FacebookBot
+Disallow: /docs/
 Allow: /
 
 Sitemap: https://nuelltech.com/sitemap.xml

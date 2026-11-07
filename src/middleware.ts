@@ -33,11 +33,24 @@ export function middleware(request: NextRequest) {
 
   if (pathnameHasLocale) return;
 
-  // Skip public assets, api requests, business cards (/c/), sitemap, robots, etc.
+  // Redirect folder root visits (/docs or /docs/estrategia) straight to homepage
+  if (
+    pathname === '/docs' ||
+    pathname === '/docs/' ||
+    pathname === '/docs/estrategia' ||
+    pathname === '/docs/estrategia/'
+  ) {
+    request.nextUrl.pathname = '/';
+    return NextResponse.redirect(request.nextUrl);
+  }
+
+  // Skip public assets, api requests, business cards (/c/), docs (/docs/), sitemap, robots, etc.
   const isAssetOrApi = 
     pathname.startsWith('/api') ||
     pathname.startsWith('/c/') ||
     pathname === '/c' ||
+    pathname.startsWith('/docs/') ||
+    pathname === '/docs' ||
     pathname.startsWith('/_next') ||
     pathname.includes('.') || // e.g. favicon.ico, sitemap.xml, robots.txt
     pathname === '/robots.txt' ||

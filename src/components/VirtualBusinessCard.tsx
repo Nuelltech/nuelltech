@@ -339,11 +339,25 @@ export default function VirtualBusinessCard({ employee }: VirtualBusinessCardPro
     badgeColor: string;
     path: string;
     fullUrl: string;
-    icon: 'health' | 'corporate';
+    icon: 'health' | 'corporate' | 'strategy';
     getMessage: (recipientName?: string) => string;
   }
 
   const availablePresentations: PresentationOption[] = [
+    {
+      id: 'angola',
+      title: 'Memorando Estratégico Angola',
+      subtitle: 'Plano de Abordagem ao Mercado Angolano • Otimização Institucional através de IA',
+      badge: 'Angola • Estratégia',
+      badgeColor: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40',
+      path: '/docs/estrategia/memorando_angola',
+      fullUrl: 'https://nuelltech.com/docs/estrategia/memorando_angola',
+      icon: 'strategy',
+      getMessage: (name?: string) => {
+        const greeting = name ? `Olá ${name}!` : 'Olá!';
+        return `${greeting} Partilho o Memorando Estratégico da Nuelltech com o nosso plano de abordagem e otimização institucional com IA para Angola: https://nuelltech.com/docs/estrategia/memorando_angola`;
+      },
+    },
     {
       id: 'saude',
       title: 'Inteligência Ativa na Saúde',
@@ -1269,9 +1283,19 @@ export default function VirtualBusinessCard({ employee }: VirtualBusinessCardPro
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-start gap-2.5">
                       <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${
-                        pres.icon === 'health' ? 'bg-teal-500/20 text-teal-400' : 'bg-orange-500/20 text-orange-400'
+                        pres.icon === 'health' 
+                          ? 'bg-teal-500/20 text-teal-400' 
+                          : pres.icon === 'strategy'
+                          ? 'bg-emerald-500/20 text-emerald-400'
+                          : 'bg-orange-500/20 text-orange-400'
                       }`}>
-                        {pres.icon === 'health' ? <HeartPulse className="w-4 h-4" /> : <FileText className="w-4 h-4" />}
+                        {pres.icon === 'health' ? (
+                          <HeartPulse className="w-4 h-4" />
+                        ) : pres.icon === 'strategy' ? (
+                          <Building2 className="w-4 h-4" />
+                        ) : (
+                          <FileText className="w-4 h-4" />
+                        )}
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
