@@ -33,26 +33,32 @@ export function middleware(request: NextRequest) {
 
   if (pathnameHasLocale) return;
 
-  // Redirect folder root visits (/docs, /docs/estrategia, /docs/pitch) straight to homepage
+  // Redirect folder root visits (/docs, /docs/estrategia, /docs/pitch, /proposta, /propostas) straight to homepage
   if (
     pathname === '/docs' ||
     pathname === '/docs/' ||
     pathname === '/docs/estrategia' ||
     pathname === '/docs/estrategia/' ||
     pathname === '/docs/pitch' ||
-    pathname === '/docs/pitch/'
+    pathname === '/docs/pitch/' ||
+    pathname === '/proposta' ||
+    pathname === '/proposta/' ||
+    pathname === '/propostas' ||
+    pathname === '/propostas/'
   ) {
     request.nextUrl.pathname = '/';
     return NextResponse.redirect(request.nextUrl);
   }
 
-  // Skip public assets, api requests, business cards (/c/), docs (/docs/), sitemap, robots, etc.
+  // Skip public assets, api requests, business cards (/c/), docs (/docs/), proposals (/proposta/, /propostas/), sitemap, robots, etc.
   const isAssetOrApi = 
     pathname.startsWith('/api') ||
     pathname.startsWith('/c/') ||
     pathname === '/c' ||
     pathname.startsWith('/docs/') ||
     pathname === '/docs' ||
+    pathname.startsWith('/proposta/') ||
+    pathname.startsWith('/propostas/') ||
     pathname.startsWith('/_next') ||
     pathname.includes('.') || // e.g. favicon.ico, sitemap.xml, robots.txt
     pathname === '/robots.txt' ||
