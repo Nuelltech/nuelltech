@@ -10,12 +10,10 @@ interface ProposalPageProps {
 
 export async function generateStaticParams() {
   const ids = [
-    'prp-2026-bruno',
+    'pwa-terapeutico',
     'pwa-terapeutica',
+    'prp-2026-bruno',
     'bruno',
-    'psicologo-bruno',
-    'dr-bruno',
-    'prp-bruno',
   ];
   return ids.map((id) => ({ id }));
 }

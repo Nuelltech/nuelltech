@@ -2,13 +2,13 @@ import { ProposalData } from './types';
 
 export const proposals: ProposalData[] = [
   {
-    id: 'prp-2026-bruno',
-    code: 'PRP-2026-BRUNO',
+    id: 'pwa-terapeutico',
+    code: 'PWA-TERAPEUTICO',
     title: 'Plataforma de Acompanhamento Terapêutico (PWA)',
     subtitle: 'Solução digital premium para prescrição clínica, engajamento familiar e rentabilização de consultas',
-    clientName: 'Dr. Bruno',
-    clientRole: 'Psicólogo Clínico',
-    organization: 'Prática Clínica & Terapêutica',
+    clientName: '',
+    clientRole: 'Psicologia Clínica & Acompanhamento Terapêutico',
+    organization: 'Clínica & Prática Terapêutica',
     date: 'Novembro de 2026',
     validUntil: '16 de Dezembro de 2026',
     summary:
@@ -76,7 +76,7 @@ export const proposals: ProposalData[] = [
           {
             title: 'Cumprimento Legal & Artigo 28.º RGPD',
             description:
-              'Implementação do "Direito ao Apagamento". Inclui contrato formal de subcontratação: o Dr. Bruno é o responsável pelo tratamento; a Nuelltech trata os dados estritamente sob sua instrução.',
+              'Implementação do "Direito ao Apagamento". Inclui contrato formal de subcontratação (Art. 28.º do RGPD): o psicólogo/terapeuta é o responsável pelo tratamento; a Nuelltech trata os dados estritamente sob sua instrução.',
           },
           {
             title: 'Acessos Seguros e Auditoria',
@@ -220,7 +220,7 @@ export const proposals: ProposalData[] = [
       calendlyUrl: 'https://calendly.com/nuelltech/30min',
       whatsappNumber: '351966665571',
       whatsappMessage:
-        'Olá Nuno! Sou o Bruno. Estive a analisar a proposta da Plataforma PWA Terapêutica da Nuelltech e gostaria de agendar uma breve reunião.',
+        'Olá Nuno! Estive a analisar a proposta da Plataforma PWA Terapêutica da Nuelltech e gostaria de agendar uma breve reunião.',
       email: 'nuno.miguel@nuelltech.com',
     },
   },
@@ -233,17 +233,13 @@ export function getProposalById(id: string): ProposalData | undefined {
     (p) =>
       p.id === normalized ||
       p.code?.toLowerCase() === normalized ||
-      normalized === 'prp-2026-bruno' ||
-      normalized === 'prp-bruno' ||
-      normalized === 'prp-bruno-9481' ||
-      normalized === 'bruno' ||
-      normalized === 'psicologo-bruno' ||
-      normalized === 'dr-bruno' ||
+      normalized === 'pwa-terapeutico' ||
       normalized === 'pwa-terapeutica' ||
-      (normalized.includes('bruno') && p.id === 'prp-2026-bruno') ||
-      (normalized.includes('terapeut') && p.id === 'prp-2026-bruno') ||
-      (normalized.includes('psico') && p.id === 'prp-2026-bruno') ||
-      (normalized.includes('pwa') && p.id === 'prp-2026-bruno') ||
+      normalized === 'prp-2026-bruno' ||
+      normalized === 'bruno' ||
+      (normalized.includes('terapeut') && p.id === 'pwa-terapeutico') ||
+      (normalized.includes('psico') && p.id === 'pwa-terapeutico') ||
+      (normalized.includes('pwa') && p.id === 'pwa-terapeutico') ||
       normalized === 'demo'
   );
 }
