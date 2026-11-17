@@ -27,10 +27,10 @@ import {
   ChevronRight,
   FileText,
 } from 'lucide-react';
-import { ProposalData, InvestmentOption } from '@/data/proposals/types';
+import { PwaProposalData, InvestmentOption } from '@/data/proposals/types';
 
 interface ProposalViewProps {
-  proposal: ProposalData;
+  proposal: PwaProposalData;
   customClientName?: string;
 }
 

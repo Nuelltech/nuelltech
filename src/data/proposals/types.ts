@@ -24,50 +24,53 @@ export interface InvestmentOption {
   idealProfile: string;
   setupPrice: number;
   setupFormatted: string;
+  setupWithVatFormatted?: string;
   monthlyFee: string;
   hostingAndRgpd: string;
   codeOwnership: string;
   dataOwnership: string;
   supportLevel: string;
   highlights: string[];
+  deliverables?: string[];
+  importantNote?: string;
 }
 
-export interface ProposalData {
+export interface TechnicalAnswer {
+  number: number;
+  question: string;
+  shortAnswer: string;
+  details: string;
+  bullets?: string[];
+}
+
+export interface MaintenancePlan {
+  priceFormatted: string;
+  priceWithVatFormatted: string;
+  coverage: string[];
+  commitment: string;
+  freeMonthNote: string;
+}
+
+export interface BaseProposal {
   id: string;
-  code?: string; // e.g. "PRP-2026-084"
+  code?: string;
   title: string;
   subtitle: string;
   clientName: string;
   clientRole?: string;
   organization?: string;
+  location?: string;
   date: string;
   validUntil: string;
   summary: string;
   executivePitch: string;
-  modules: {
-    psychologist: ProposalModule;
-    family: ProposalModule;
-    securityRgpd: ProposalModule;
-    futureEvolutions: {
-      title: string;
-      description: string;
-      items: string[];
-    };
-  };
-  phases: ProposalPhase[];
-  phasesNotes: string;
   options: InvestmentOption[];
-  roiSimulation: {
-    defaultFamilyFee: number; // e.g. 15€
-    defaultFamiliesCount: number; // e.g. 20
-    note: string;
-  };
   paymentTerms: {
     percentage: string;
     stage: string;
     description: string;
   }[];
-  guarantee: {
+  guarantee?: {
     title: string;
     description: string;
   };
@@ -80,3 +83,36 @@ export interface ProposalData {
     email: string;
   };
 }
+
+export interface PwaProposalData extends BaseProposal {
+  type: 'pwa';
+  guarantee: {
+    title: string;
+    description: string;
+  };
+  modules: {
+    psychologist: ProposalModule;
+    family: ProposalModule;
+    securityRgpd: ProposalModule;
+    futureEvolutions: {
+      title: string;
+      description: string;
+      items: string[];
+    };
+  };
+  phases: ProposalPhase[];
+  phasesNotes: string;
+  roiSimulation: {
+    defaultFamilyFee: number;
+    defaultFamiliesCount: number;
+    note: string;
+  };
+}
+
+export interface AlojamentoProposalData extends BaseProposal {
+  type: 'alojamento';
+  technicalAnswers: TechnicalAnswer[];
+  maintenancePlan: MaintenancePlan;
+}
+
+export type ProposalData = PwaProposalData | AlojamentoProposalData;

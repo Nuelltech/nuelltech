@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import ProposalView from '@/components/proposal/ProposalView';
+import ProposalAlojamentoView from '@/components/proposal/ProposalAlojamentoView';
 import { getProposalById, proposals } from '@/data/proposals';
 
 interface ProposalPageProps {
@@ -10,6 +11,9 @@ interface ProposalPageProps {
 
 export async function generateStaticParams() {
   const ids = [
+    'alojamento-trancoso',
+    'trancoso',
+    'al-trancoso',
     'pwa-terapeutico',
     'pwa-terapeutica',
     'prp-2026-bruno',
@@ -38,7 +42,7 @@ export async function generateMetadata({
       ? sParams.cliente
       : typeof sParams.nome === 'string'
       ? sParams.nome
-      : proposal.clientName;
+      : proposal.clientName || 'Cliente';
 
   const title = `Proposta Comercial — ${proposal.title} | Nuelltech`;
   const description = `Proposta técnica e comercial preparada para ${customClient} pela Nuelltech.`;
@@ -77,6 +81,15 @@ export default async function ProposalSlugPage({
       : typeof sParams.nome === 'string'
       ? sParams.nome
       : undefined;
+
+  if (proposal.type === 'alojamento') {
+    return (
+      <ProposalAlojamentoView
+        proposal={proposal}
+        customClientName={customClientName}
+      />
+    );
+  }
 
   return (
     <ProposalView proposal={proposal} customClientName={customClientName} />
