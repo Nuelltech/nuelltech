@@ -316,12 +316,12 @@ export const proposals: ProposalData[] = [
       {
         number: 1,
         question: 'Plataforma a utilizar (WordPress, Wix, código à medida ou outra)?',
-        shortAnswer: 'WordPress (com WooCommerce / Motor de Reservas Dedicado)',
+        shortAnswer: 'Flexibilidade Nuelltech: WordPress Dedicado ou Engenharia de Código Próprio',
         details:
-          'Para este tipo de projeto (especialmente a Opção B com gestão hoteleira), utilizamos WordPress. É a plataforma mais robusta a nível global para hotelaria independente, garantindo que o painel de gestão é extremamente intuitivo para o cliente atualizar preços, datas e fotografias.',
+          'Na Nuelltech combinamos duas abordagens de acordo com a ambição e o orçamento de cada cliente:',
         bullets: [
-          'Sendo a Nuelltech uma empresa de engenharia de software, também desenvolvemos soluções de raiz em código custom (Next.js/React); contudo, para a escala e orçamento deste projeto, o WordPress é a escolha mais inteligente, económica e sustentável a longo prazo.',
-          'Interface em Português e fácil de usar sem conhecimentos de programação.',
+          'Solução em WordPress Dedicado (Recomendada para este orçamento): Plataforma líder global em hotelaria independente. Garante que o motor de reservas e o painel de administração são simples, intuitivos e 100% controláveis por si para atualizar tarifas, calendários e imagens sem depender de equipas técnicas.',
+          'Desenvolvimento Próprio / Engenharia À Medida Nuelltech (Next.js / React / Node): Sendo a Nuelltech uma empresa de engenharia de software e inteligência artificial, desenvolvemos soluções proprietárias de raiz quando o cliente exige arquitetura à medida, máxima velocidade ou fluxos exclusivos. Esta capacidade garante que o seu projeto tem o respaldo de uma equipa técnica sénior que pode escalar a plataforma sem limitações no futuro.',
         ],
       },
       {

@@ -28,6 +28,7 @@ import {
   Building2,
   Camera,
   MapPin,
+  FileText,
 } from 'lucide-react';
 import { AlojamentoProposalData } from '@/data/proposals/types';
 
@@ -42,6 +43,12 @@ export default function ProposalAlojamentoView({
 }: ProposalAlojamentoViewProps) {
   const [copied, setCopied] = useState(false);
   const [selectedOptionId, setSelectedOptionId] = useState<string>('opcao-b');
+
+  const currentOption =
+    proposal.options.find((o) => o.id === selectedOptionId) ||
+    proposal.options[1];
+
+  const dynamicWhatsappMessage = `Olá Nuno! Estive a analisar a proposta para os apartamentos em Trancoso e pretendo avançar com a ${currentOption.name} (${currentOption.setupFormatted} + IVA). Gostaria de agendar a reunião de arranque.`;
 
   const handleCopyLink = () => {
     if (typeof window !== 'undefined') {
@@ -200,12 +207,16 @@ export default function ProposalAlojamentoView({
           </div>
 
           {/* Summary / Enquadramento Callout */}
-          <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200/80 text-slate-700 text-base sm:text-lg leading-relaxed space-y-2">
-            <p className="font-medium text-slate-900">
-              Obrigado pelo contacto e pela clareza e rigor com que apresentou os seus requisitos.
+          <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200/80 text-slate-700 space-y-2.5">
+            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-900">
+              <FileText className="w-4 h-4 text-slate-700" />
+              <span>Resumo Executivo da Proposta</span>
+            </div>
+            <p className="text-sm sm:text-base text-slate-800 leading-relaxed">
+              Esta proposta apresenta a solução técnica e financeira fechada da <strong>Nuelltech</strong> para a criação do website bilingue (Português e Inglês) dedicado aos <strong>2 apartamentos de Alojamento Local em Trancoso</strong>.
             </p>
-            <p className="text-sm sm:text-base text-slate-600">
-              É exatamente com este nível de organização e transparência que gostamos de trabalhar na Nuelltech. Abaixo apresentamos a nossa proposta comercial e técnica fechada, estruturada em duas opções distintas para a sua tomada de decisão.
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+              Estruturámos a solução em <strong>duas opções transparentes</strong>: um site focado em apresentação institucional e reencaminhamento de tráfego para as plataformas onde já operam (Airbnb), ou uma solução autónoma com motor de reservas próprio para receber pagamentos diretos (Stripe/MBWay) sem comissões de intermediação e com sincronização de calendários iCal. Abaixo encontra o detalhe de investimento, prazos fechados, respostas aos requisitos técnicos e plano de manutenção.
             </p>
           </div>
         </section>
@@ -620,6 +631,58 @@ export default function ProposalAlojamentoView({
             </p>
           </div>
 
+          {/* Dynamic Selected Option Badge & Switcher */}
+          <div className="max-w-xl mx-auto p-4 rounded-2xl bg-slate-50 border border-slate-200 text-left space-y-2.5">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-slate-500 uppercase tracking-wider font-semibold">
+                Opção Selecionada para Arranque:
+              </span>
+              <span className="font-bold text-slate-900 bg-white px-2.5 py-0.5 rounded-md border border-slate-200 shadow-2xs">
+                {currentOption.setupFormatted} + IVA
+              </span>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-1">
+              <div>
+                <div className="text-base font-bold text-slate-900 flex items-center gap-2">
+                  <span>{currentOption.name}</span>
+                  {currentOption.isRecommended && (
+                    <span className="text-amber-600 text-xs font-semibold">⭐ Recomendada</span>
+                  )}
+                </div>
+                <div className="text-xs text-slate-500 mt-0.5">
+                  Prazo de entrega estimado: {currentOption.id === 'opcao-a' ? '2 a 3 semanas' : '3 a 4 semanas'}
+                </div>
+              </div>
+
+              {/* Fast Option Toggle */}
+              <div className="flex items-center gap-1.5 p-1 rounded-xl bg-white border border-slate-200 self-stretch sm:self-auto justify-center shadow-2xs shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setSelectedOptionId('opcao-a')}
+                  className={`whitespace-nowrap px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
+                    selectedOptionId === 'opcao-a'
+                      ? 'bg-slate-900 text-white'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Opção A
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedOptionId('opcao-b')}
+                  className={`whitespace-nowrap px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
+                    selectedOptionId === 'opcao-b'
+                      ? 'bg-slate-900 text-white'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Opção B ⭐
+                </button>
+              </div>
+            </div>
+          </div>
+
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
             <a
               href={proposal.nextSteps.calendlyUrl}
@@ -634,14 +697,14 @@ export default function ProposalAlojamentoView({
 
             <a
               href={`https://wa.me/${proposal.nextSteps.whatsappNumber}?text=${encodeURIComponent(
-                proposal.nextSteps.whatsappMessage
+                dynamicWhatsappMessage
               )}`}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-white hover:bg-slate-50 text-slate-800 border border-slate-300 font-medium text-sm transition-all shadow-2xs"
             >
               <MessageCircle className="w-4 h-4 text-emerald-600" />
-              <span>Falar via WhatsApp</span>
+              <span>Falar via WhatsApp ({currentOption.name.split(':')[0]})</span>
             </a>
           </div>
 
